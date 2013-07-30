@@ -1,0 +1,406 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta name="copyright" content="OpenSim Ltd.">
+  <meta NAME="Author" CONTENT="Andras Varga">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <link rel="STYLESHEET" href="../book.css"  type="text/css">
+  <title>OMNeT++ - Manual</title>
+</head>
+<body>
+
+<p><hr><b><a href="chap15.html">[Prev]</A>&nbsp;<a href="chap17.html">[Next]</A>&nbsp;<a href="toc.html#toc_16.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p><h1><a name="sec464"/>16 Plug-in Extensions</h1>
+<a name="cha:plugin-exts"></a>
+
+<p><h2><a name="sec465"/>16.1 Overview</h2>
+
+<p>OMNeT++ is an open system, and several details of its operation
+can be customized via plug-ins. To create a plug-in, you generally
+need to write a C++ class that implements a certain interface
+(i.e. subclasses from a C++ abstract class), and register it in OMNeT++.
+The plug-in class can be activated for a particular simulation
+with a corresponding configuration option.
+
+<p>The following plug-in interfaces are supported:
+
+<p><ul>
+   <li><tt><a href="../api/classcRNG.html">cRNG</a></tt>. Interface for random number generators.
+   <li><tt><a href="../api/classcScheduler.html">cScheduler</a></tt>. The scheduler class. This plug-in interface
+     allows for implementing real-time, hardware-in-the-loop, distributed
+     and distributed parallel simulation.
+   <li><tt><a href="../api/classcConfigurationEx.html">cConfigurationEx</a></tt>. Configuration provider plug-in.
+     This plug-in interface lets you replace <tt>omnetpp.ini</tt>
+     with some other implementation, for example a database.
+   <li><tt><a href="../api/classcOutputScalarManager.html">cOutputScalarManager</a></tt>. It handles recording the scalar output data.
+     The default output scalar manager is <tt>cFileOutputScalarManager</tt>,
+     defined in the Envir library.
+   <li><tt><a href="../api/classcOutputVectorManager.html">cOutputVectorManager</a></tt>. It handles recording the output
+     from <tt><a href="../api/classcOutVector.html">cOutVector</a></tt> objects. The default output vector manager is
+     <tt>cIndexedFileOutputVectorManager</tt>, defined in the Envir library.
+   <li><tt><a href="../api/classcSnapshotManager.html">cSnapshotManager</a></tt>. It provides an output stream to which
+     snapshots are written (see section <a href="chap7.html#sec297">[7.10.5]</a>).
+     The default snapshot manager is <tt>cFileSnapshotManager</tt>,
+     defined in the Envir library.
+</ul>
+
+<p><a name="sec:ch-plugin-exts:customization"></a>
+
+<p>The classes (<tt><a href="../api/classcRNG.html">cRNG</a></tt>, <tt><a href="../api/classcScheduler.html">cScheduler</a></tt>, etc.) are documented in
+the API Reference.
+
+<p>To actually implement and select a plug-in for use:
+
+<p><ol>
+   <li> Subclass the given interface class (e.g. for a custom RNG, <tt><a href="../api/classcRNG.html">cRNG</a></tt>)
+     to create your own version.
+   <li> Register the class by putting the <tt>Register_Class(MyRNGClass)</tt>
+     line into the C++ source.
+   <li> Compile and link your interface class into the OMNeT++ simulation
+     executable. IMPORTANT: make sure the executable actually contains
+     the code of your class! Over-optimizing linkers (esp. on Unix)
+     tend to leave out code to which there seem to be no external reference.
+   <li> Add an entry to <tt>omnetpp.ini</tt> to tell Envir use your class
+     instead of the default class. For RNGs, this setting is <tt>rng-class</tt>
+     in the <tt>[General]</tt> section.
+</ol>
+
+<p>
+<h2><a name="sec466"/>16.2 Plug-in Descriptions</h2>
+
+<p>
+<h3><a name="sec467"/>16.2.1 Defining a New Random Number Generator</h3>
+<a name="sec:plugin-exts:rng"></a>
+
+<p>The new RNG C++ class must implement the <tt><a href="../api/classcRNG.html">cRNG</a></tt> interface,
+and can be activated with the <tt>rng-class</tt> configuration option.
+
+<p>
+<h3><a name="sec468"/>16.2.2 Defining a New Scheduler</h3>
+<a name="sec:plugin-exts:scheduler"></a>
+
+<p>The scheduler plug-in interface allows for implementing real-time,
+hardware-in-the-loop, distributed and distributed parallel simulation.
+
+The scheduler C++ class must implement the <tt><a href="../api/classcScheduler.html">cScheduler</a></tt> interface,
+and can be activated with the <tt>scheduler-class</tt> configuration option.
+
+<p>To see examples of scheduler classes, check the <tt><a href="../api/classcRealTimeScheduler.html">cRealTimeScheduler</a></tt>
+class in the simulation kernel, and <tt>cSocketRTScheduler</tt> which is part
+of the <i>Sockets</i> sample simulation.
+
+<p>
+<h3><a name="sec469"/>16.2.3 Defining a New Configuration Provider</h3>
+<a name="sec:plugin-exts:configuration"></a>
+
+<p><p class="subheading">Overview</p>
+
+<p>The configuration provider plug-in lets you replace ini files
+with some other storage implementation, for example a database.
+The configuration provider C++ class must implement the
+<tt><a href="../api/classcConfigurationEx.html">cConfigurationEx</a></tt> interface, and can be activated with
+the <tt>configuration-class</tt> configuration option.
+
+<p>The <tt><a href="../api/classcConfigurationEx.html">cConfigurationEx</a></tt> interface abstracts the inifile-based
+data model to some degree. It assumes that the configuration data
+consists of several <i>named configurations</i>. Before every
+simulation run, one of the <i>named configurations</i> is
+activated, and from then on, all queries into the configuration
+operate on the <i>active named configuration</i> only.
+
+<p>It practice, you will probably use the <tt>SectionBasedConfiguration</tt>
+class (in <tt>src/envir</tt>) or subclass from it, because it already
+implements a lot of functionality that you would otherwise have to.
+
+<p><tt>SectionBasedConfiguration</tt> does not assume ini files or
+any other particular storage format; instead, it accepts
+an object that implements the <tt><a href="../api/classcConfigurationReader.html">cConfigurationReader</a></tt>
+interface to provide the data in raw form to it.
+The default implementation of <tt><a href="../api/classcConfigurationReader.html">cConfigurationReader</a></tt> is
+<tt>InifileReader</tt>.
+
+<p><p class="subheading">The Startup Sequence</p>
+
+<p>From the configuration plug-in's point of view, the startup sequence
+looks like the following (see <tt>src/envir/startup.cc</tt> in the source code):
+
+<p><ol>
+  <li> First, ini files specified on the command-line are read into a
+     <i>boot-time configuration object</i>. The boot-time configuration
+     is always a <tt>SectionBasedConfiguration</tt> with
+     <tt>InifileReader</tt>.
+  <li> Shared libraries are loaded (see the <tt>-l</tt> command-line option,
+     and the <tt>load-libs</tt> configuration option). This allows
+     configuration classes to come from shared libraries.
+  <li> The <tt>configuration-class</tt> configuration option is examined.
+     If it is present, a configuration object of the given class
+     is instantiated, and replaces the boot-time configuration.
+     The new configuration object is initialized from the boot-time
+     configuration, so that it can read parameters (e.g. database
+     connection parameters, XML file name, etc) from it.
+     Then the boot-time configuration object is deallocated.
+  <li> The <tt>load-libs</tt> option from the new configuration object is
+     processed.
+  <li> Then everything goes on as normally, using the new configuration
+     object.
+</ol>
+
+<p><p class="subheading">Providing a Custom Configuration Class</p>
+
+<p>To replace the configuration object with your custom implementation,
+you would write the class:
+
+<pre class="cpp">
+#include "cconfiguration.h"
+
+class CustomConfiguration : public <a href="../api/classcConfigurationEx.html">cConfigurationEx</a>
+{
+   ...
+};
+
+Register_Class(CustomConfiguration);
+</pre>
+<p>
+and then activate it in the boot-time configuration:
+
+<pre class="inifile">
+[General]
+configuration-class = CustomConfiguration
+</pre>
+<p>
+
+<p><p class="subheading">Providing a Custom Reader for SectionBasedConfiguration</p>
+
+<p>As said already, writing a configuration class from scratch can
+be a lot of work, and it may be more practical to reuse
+<tt>SectionBasedConfiguration</tt> with a different configuration
+reader class. This can be done with <tt>sectionbasedconfig-configreader-class</tt>
+config option, interpreted by <tt>SectionBasedConfiguration</tt>.
+Specify the following in your boot-time ini file:
+
+<pre class="inifile">
+[General]
+configuration-class = SectionBasedConfiguration
+sectionbasedconfig-configreader-class = &lt;my new reader class&gt;
+</pre>
+<p>
+The configuration reader class should look like this:
+
+<pre class="cpp">
+#include "cconfigreader.h"
+
+class DatabaseConfigurationReader : public <a href="../api/classcConfigurationReader.html">cConfigurationReader</a>
+{
+   ...
+};
+
+Register_Class(DatabaseConfigurationReader);
+</pre>
+<p>
+
+<p><h3><a name="sec470"/>16.2.4 Defining a New Output Scalar Manager</h3>
+<a name="sec:plugin-exts:outputscalarmanager"></a>
+
+<p><tt><a href="../api/classcOutputScalarManager.html">cOutputScalarManager</a></tt> handles recording the scalar output data.
+The default output scalar manager is <tt>cFileOutputScalarManager</tt>,
+defined in the Envir library.
+
+<p>The new class can be activated with the <tt>outputscalarmanager-class</tt>
+configuration option.
+
+<p>
+<h3><a name="sec471"/>16.2.5 Defining a New Output Vector Manager</h3>
+<a name="sec:plugin-exts:outputvectormanager"></a>
+
+<p><tt><a href="../api/classcOutputVectorManager.html">cOutputVectorManager</a></tt> handles recording the output from <tt><a href="../api/classcOutVector.html">cOutVector</a></tt> objects.
+The default output vector manager is <tt>cIndexedFileOutputVectorManager</tt>,
+defined in the Envir library.
+
+<p>The new class can be activated with the <tt>outputvectormanager-class</tt>
+configuration option.
+
+<p>
+<h3><a name="sec472"/>16.2.6 Defining a New Snapshot Manager</h3>
+<a name="sec:plugin-exts:snapshotmanager"></a>
+
+<p><tt><a href="../api/classcSnapshotManager.html">cSnapshotManager</a></tt> provides an output stream to which snapshots are written
+(see section <a href="chap7.html#sec297">[7.10.5]</a>). The default snapshot manager
+is <tt>cFileSnapshotManager</tt>, defined in the Envir library.
+
+<p>The new class can be activated with the <tt>snapshotmanager-class</tt>
+configuration option.
+
+<p>
+<h2><a name="sec473"/>16.3 Accessing the Configuration</h2>
+<a name="sec:plugin-exts:accessing-config"></a>
+
+<p><h3><a name="sec474"/>16.3.1 Defining New Configuration Options</h3>
+
+<p>New configuration options need to be declared with one of the appropriate
+registration macros. These macros are:
+
+<pre class="cpp">
+Register_GlobalConfigOption(ID, NAME, TYPE, DEFAULTVALUE, DESCRIPTION)
+Register_PerRunConfigOption(ID, NAME, TYPE, DEFAULTVALUE, DESCRIPTION)
+Register_GlobalConfigOptionU(ID, NAME, UNIT, DEFAULTVALUE, DESCRIPTION)
+Register_PerRunConfigOptionU(ID, NAME, UNIT, DEFAULTVALUE, DESCRIPTION)
+Register_PerObjectConfigOption(ID, NAME, TYPE, DEFAULTVALUE, DESCRIPTION)
+Register_PerObjectConfigOptionU(ID, NAME, UNIT, DEFAULTVALUE, DESCRIPTION)
+</pre>
+<p>
+Config options come in three flavors, as indicated by the macro names:
+
+<p><ul>
+  <li> <i>Global</i> options affect all configurations (i.e. they are
+      only accepted in the <tt>[General]</tt> section but not in
+      <tt>[Config &lt;name&gt;]</tt> sections)
+  <li> <i>Per-Run</i> options can be specified in any section
+      (i.e. both in <tt>[General]</tt> and in <tt>[Config &lt;name&gt;]</tt> sections).
+      They are specific to a particular section. Their names always contain
+      a hyphen (-) character.
+  <li> <i>Per-Object</i> options can be specified in any section
+      (i.e. both in <tt>[General]</tt> and in <tt>[Config &lt;name&gt;]</tt> sections).
+      They are specific to an object or group of objects and their name must
+      not contain a hypen (-) character.
+</ul>
+
+<p>The macro arguments are as follows:
+<ul>
+  <li> <i>ID</i> is a C++ identifier that will let you refer to
+        the configuration option in <i><a href="../api/classcConfiguration.html">cConfiguration</a></i> member functions.
+        (It is actually pointer to a <tt><a href="../api/classcConfigOption.html">cConfigOption</a></tt> object that
+        the macro creates.)
+  <li> <i>NAME</i> is the name of the option (a string).
+  <li> <i>TYPE</i> is the data type of the option; it must be one of:
+        <tt>CFG_BOOL</tt>, <tt>CFG_INT</tt>, <tt>CFG_DOUBLE</tt>, <tt>CFG_STRING</tt>,
+        <tt>CFG_FILENAME</tt>, <tt>CFG_FILENAMES</tt>, <tt>CFG_PATH</tt>, <tt>CFG_CUSTOM</tt>.
+        The most significant difference between filesystem-related types
+        (filename, filenames, path) and plain strings is that relative
+        filenames and paths are automatically converted to absolute
+        when the configuration is read, with the base directory being the
+        location of the ini file where the configuration entry was read from.
+  <li> <i>UNIT</i> is a string that names the measurement unit in which
+        the option's value is to be interpreted; it implies type <tt>CFG_DOUBLE</tt>.
+  <li> <i>DEFAULTVALUE</i> is the default value in textual form (string);
+        this should be <tt>NULL</tt> if the option has no default value.
+  <li> <i>DESCRIPTION</i> is an arbitrarily long string that describes
+        the purpose and and operation of the option. It will be used in
+        help texts etc.
+</ul>
+
+<p>For example, the <tt>debug-on-errors</tt> macro is declared in the following way:
+
+<pre class="cpp">
+Register_GlobalConfigOption(CFGID_DEBUG_ON_ERRORS,
+                            "debug-on-errors", CFG_BOOL, "false",
+                            "When enabled, runtime errors will etc etc...");
+</pre>
+<p>
+<ul class="note"><b>NOTE</b><br>
+Registration is necessary because from the 4.0 version, OMNeT++ validates
+the configuration on startup, in order to be able to report invalid or
+mistyped option names and other errors.
+</ul>
+
+<p>
+<h3><a name="sec475"/>16.3.2 Reading Values from the Configuration</h3>
+
+<p>The configuration is accessible via the <tt>getConfig()</tt> method of <tt><a href="../api/classcEnvir.html">cEnvir</a></tt>.
+It returns a pointer to the configuration object (<tt><a href="../api/classcConfiguration.html">cConfiguration</a></tt>):
+
+<pre class="cpp">
+<a href="../api/classcConfiguration.html">cConfiguration</a> *config = ev.getConfig();
+</pre>
+<p>
+<tt><a href="../api/classcConfiguration.html">cConfiguration</a></tt> provides several methods for querying the configuration.
+
+<p><ul class="note"><b>NOTE</b><br>
+The configuration object provides a flattened view of the ini file. Sections
+inheriting from each other are merged for you. Configuration options provided
+on the command line in the form <tt>--option=value</tt> are added first to the object.
+This ensures that the command line options take precedence over the values specified
+in the INI file.
+</ul>
+
+<pre class="cpp">
+const char *getAsCustom(<a href="../api/classcConfigOption.html">cConfigOption</a> *entry, const char *fallbackValue=NULL);
+bool getAsBool(<a href="../api/classcConfigOption.html">cConfigOption</a> *entry, bool fallbackValue=false);
+long getAsInt(<a href="../api/classcConfigOption.html">cConfigOption</a> *entry, long fallbackValue=0);
+double getAsDouble(<a href="../api/classcConfigOption.html">cConfigOption</a> *entry, double fallbackValue=0);
+std::string getAsString(<a href="../api/classcConfigOption.html">cConfigOption</a> *entry, const char *fallbackValue="");
+std::string getAsFilename(<a href="../api/classcConfigOption.html">cConfigOption</a> *entry);
+std::vector&lt;std::string&gt; getAsFilenames(<a href="../api/classcConfigOption.html">cConfigOption</a> *entry);
+std::string getAsPath(<a href="../api/classcConfigOption.html">cConfigOption</a> *entry);
+</pre>
+<p>
+<i>fallbackValue</i> is returned if the value is not specified in the configuration,
+and there is no default value.
+
+<pre class="cpp">
+bool debug = ev.getConfig()-&gt;getAsBool(CFGID_PARSIM_DEBUG);
+</pre>
+<p>
+
+<p><h2><a name="sec476"/>16.4 Implementing a New User Interface</h2>
+<a name="sec:plugin-exts:userinterface"></a>
+
+<p>It is possible to extend OMNeT++ with a new user interface. The new
+user interface will have fully equal rights to Cmdenv and Tkenv; that is,
+it can be activated by starting the simulation executable with the
+<tt>-u</tt> <i>&lt;name&gt;</i> command-line or the <tt>user-interface</tt>
+configuration option, it can be made the default user interface,
+it can define new command-line options and configuration options,
+and so on.
+
+<p>User interfaces must implement (i.e. subclass from) <tt><a href="../api/classcRunnableEnvir.html">cRunnableEnvir</a></tt>,
+and must be registered to OMNeT++ with the <tt>Register_OmnetApp()</tt> macro.
+In practice, you will almost always want to subclass <tt>EnvirBase</tt>
+instead of <tt><a href="../api/classcRunnableEnvir.html">cRunnableEnvir</a></tt>, because <tt>EnvirBase</tt> already
+implements lots of functionality that otherwise you'd have to.
+
+<p><ul class="note"><b>NOTE</b><br>
+If you want something completely different from what <tt>EnvirBase</tt>
+provides, such as embedding the simulation kernel into another
+application, then you should be reading section <a href="chap17.html#sec479">[17.2]</a>,
+not this one.
+</ul>
+
+<p>An example user interface:
+
+<pre class="cpp">
+#include "envirbase.h"
+
+class FooEnv : public EnvirBase
+{
+    ...
+};
+
+Register_OmnetApp("FooEnv", FooEnv, 30, "an experimental user interface");
+</pre>
+<p>
+The <tt>envirbase.h</tt> header comes from the <tt>src/envir</tt> directory,
+so it is necessary to add it to the include path (<tt>-I</tt>).
+
+<p>The arguments to <tt>Register_OmnetApp()</tt> include the user interface name
+(for use with the <tt>-u</tt> and <b><tt>user-interface</tt></b> options),
+the C++ class that implements it, a weight for default user interface selection
+(if <tt>-u</tt> is missing, the user interface with the largest weight will be
+activated), and a description string (for help and other purposes).
+
+<p>The C++ class should implement all methods left pure virtual in
+<tt>EnvirBase</tt>, and possibly others if you want to customize
+their behavior. One method that you will surely want to reimplement is
+<tt>run()</tt> -- this is where your user interface runs. When this method
+exits, the simulation program exits.
+
+<p><ul class="note"><b>NOTE</b><br>
+A good starting point for implementing your own user interface is
+Cmdenv -- just copy and modify its source code to quickly get going.
+</ul>
+
+<p>
+
+<hr class='pgbr'><p><hr><b><a href="chap15.html">[Prev]</A>&nbsp;<a href="chap17.html">[Next]</A>&nbsp;<a href="toc.html#toc_16.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p>
+
+</body>
+</html>

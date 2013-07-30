@@ -1,0 +1,127 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Custom Wizard Pages</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="IDE Customization Guide"><link rel="up" href="ch01.html" title="Chapter 1. Writing Wizards"><link rel="prev" href="ch01s07.html" title="Templates"><link rel="next" href="ch01s09.html" title="Extending the Wizards in Java"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Custom Wizard Pages</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch01s07.html">Prev</a> </td><th width="60%" align="center">Chapter 1. Writing Wizards</th><td width="20%" align="right"> <a accesskey="n" href="ch01s09.html">Next</a></td></tr></table><hr></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_custom_wizard_pages"></a>Custom Wizard Pages</h2></div></div></div><p>The following properties can be used to define custom pages in the wizard. <code class="literal">&lt;i&gt;</code> is
+an integer page ID (starting with 1); its ordering defines the order of wizard
+pages.</p><div class="variablelist"><dl><dt><span class="term">
+<code class="literal">page.&lt;i&gt;.file</code> 
+</span></dt><dd>
+                The name of the XSWT file that describes the wizard page layout.
+</dd><dt><span class="term">
+<code class="literal">page.&lt;i&gt;.class</code> 
+</span></dt><dd>
+                In addition to XSWT files, custom Java pages may also be defined
+                in Java code. This can be useful when the wizard page would be
+                too complex to describe with XSWT, when it would need to have significant
+                active behavior, or when the wizard page code already exists
+                in Java form. See below for further discussion about custom pages.
+</dd><dt><span class="term">
+<code class="literal">page.&lt;i&gt;.title</code> 
+</span></dt><dd>
+                Title of the wizard page, displayed in the page&#8217;s title area.
+                Defaults to the template name.
+</dd><dt><span class="term">
+<code class="literal">page.&lt;i&gt;.description</code> 
+</span></dt><dd>
+                Description of the wizard page, shown in the dialog&#8217;s title area
+                below the title. Defaults to text in the format "Page 1 of 3".
+</dd><dt><span class="term">
+<code class="literal">page.&lt;i&gt;.condition</code> 
+</span></dt><dd>
+                A condition for showing the page. If it evaluates to false, the
+                page will be skipped when it would normally come in the page
+                sequence of the wizard. This makes it possible not only to skip
+                pages, but also to show different pages based on some choice
+                or choices the user made earlier in the wizard (decision tree).
+                The condition will be evaluated by the template engine, so any
+                valid FreeMarker expression that can produce true or "true" as
+                a result will do. The expression must be supplied without the
+                <code class="literal">${</code> and <code class="literal">}</code> marks. The string you enter will be substituted into
+                the "<code class="literal">${( &lt;condition&gt; )?string}</code>" string (will replace "<code class="literal">&lt;condition&gt;</code>"),
+                and evaluate as such. An example will be provided later.
+</dd></dl></div><p>All property file entries are available as template variables, too. In addition, most
+property values may refer to other property values or template variables, using
+the <code class="literal">${name}</code> syntax.</p><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_xswt_forms"></a>XSWT Forms</h3></div></div></div><p>An XSWT form is defined in an XML file with the root element <code class="literal">&lt;xswt&gt;</code>.
+Some XSWT specific elements and attributes (<code class="literal">import</code> and <code class="literal">package</code>
+declarations, <code class="literal">id</code> and <code class="literal">class</code> attributes to name a few) are
+defined in the <code class="literal">http://sweet_swt.sf.net/xswt</code> XML namespace
+(we use the <code class="literal">x</code> namespace prefix here).</p><p>Controls that can be used in XSWT are instantiated by an element
+with same name as the control (but starting with lowercase).</p><p>Controls and classes used in an XSWT file must be imported before they can be used.</p><pre class="literallayout">&lt;xswt xmlns:x="http://sweet_swt.sf.net/xswt"&gt;
+  &lt;x:import&gt;
+    &lt;package name="java.lang"/&gt;
+    &lt;package name="org.eclipse.swt.widgets" /&gt;
+    &lt;package name="org.eclipse.swt.custom" /&gt;
+    &lt;package name="org.eclipse.swt.graphics" /&gt;
+    &lt;package name="org.eclipse.swt.layout" /&gt;
+    &lt;package name="org.omnetpp.common.wizard.support" /&gt;
+    &lt;package name="org.omnetpp.ned.editor.wizards.support" /&gt;
+    &lt;package name="org.omnetpp.cdt.wizard.support" /&gt;
+  &lt;/x:import&gt;
+  &lt;label text="Hello"/&gt;
+&lt;/xswt&gt;</pre><p>Entities and attributes in an XSWT file are directly mapped to the corresponding
+SWT controls and their properties. For example, a <code class="literal">&lt;styledText&gt;</code> tag creates
+an <code class="literal">org.eclipse.swt.custom.StyledText</code> control. Similarly, a <code class="literal">text</code> attribute
+causes the <code class="literal">setText()</code> method of the control to be called.</p><pre class="literallayout">&lt;styledText text="Hello world!" /&gt;</pre><p>Alternatively, it is possible to call a public method on the control
+by embedding a "call" as a child tag and supplying the parameters as <code class="literal">p0</code>, <code class="literal">p1</code>, etc.:</p><pre class="literallayout">&lt;styledText&gt;
+  &lt;setText x:p0="Hello World"/&gt;
+&lt;/styledText&gt;</pre><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>Because of a limitation in XSWT, only methods accepting <code class="literal">String</code> parameters can be
+      accessed this way.</p></div><p>Integer constants in controls (<code class="literal">public static final int</code> fields) can be used in an
+XSWT file by appending the Java class name before them:</p><pre class="literallayout">&lt;gateChooser gateFilter="GateChooser.INOUT|GateChooser.VECTOR"/&gt;</pre><p>Constants in the SWT class do not need the <code class="literal">SWT.</code> prefix. You can write:</p><pre class="literallayout">&lt;button x:style="RADIO"/&gt;</pre><p>Children can be added to a compound control inside the <code class="literal">&lt;x:children&gt;&lt;/x:children&gt;</code> tags.</p><pre class="literallayout">&lt;group text="Hello"&gt;
+  &lt;x:children&gt;
+    &lt;label text="Label 1" /&gt;
+    &lt;label text="Label 2" /&gt;
+  &lt;/x:children&gt;
+&lt;/group&gt;</pre><p>Layout and layout data can also be added as a new tag inside a control element:</p><pre class="literallayout">&lt;text x:id="numServers" x:style="BORDER"&gt;
+  &lt;layoutData x:class="GridData" horizontalAlignment="FILL"
+              grabExcessHorizontalSpace="true"/&gt;
+&lt;/text&gt;</pre><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>Layout is always needed; otherwise, the control will not appear on the page.</p></div><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Tip</h3><p>SWT is documented on the Eclipse website. See:
+     <span class="emphasis"><em>http://www.eclipse.org/swt/docs.php</em></span> for documentation, examples and tutorials.</p></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_binding_of_template_variables_to_widgets"></a>Binding of Template Variables to Widgets</h3></div></div></div><p>XSWT allows one to tag widgets with ID attributes. Widget IDs will become the
+names of template variables with the values being the content of widgets.
+For example, text widgets (org.eclipse.swt.widgets.Text) provide a string value
+(Java type "String"), while checkboxes and radio buttons provide a boolean
+(Java type "Boolean").</p><p>XSWT also allows filling up the widgets with default values
+(e.g. <code class="literal">&lt;styledText text="some text"/&gt;</code> ), but this feature
+should be used with care because the defaults set in XSWT may not make it
+to the file templates. This occurs because if the user clicks <span class="emphasis"><em>Finish</em></span> early,
+the rest of the wizard pages (and their widgets) may not be created at all,
+so values set in the XSWT will take no effect.</p><p>For this reason, defaults should always be set in the property file. To do so,
+simply use a key with the ID of the widget; those values will be written
+into the wizard page when the page is created. For example, if you have a
+text widget with <code class="literal">x:id="numNodes"</code> and a checkbox with <code class="literal">x:id="generateTraffic"</code>, then
+the following lines</p><pre class="literallayout">numNodes = 100
+generateTraffic = true</pre><p>will fill in the text widget with "100" and select the checkbox. Widgets that
+do not have such lines in the property file will be left alone.
+The property file takes precedence over values specified in the XSWT file.</p><p>Compound data structures (arrays, maps, and any combination of them) can be
+specified in the JSON syntax (<span class="emphasis"><em>http://json.org</em></span>). They can be iterated over
+in the templates and can be used as input/output for custom compound widgets.
+Examples:</p><pre class="literallayout">apps = ["ftp", "smtp", "news"]
+layers = {"datalink":"ieee80211", "network":"ip", "transport":["tcp","udp"]}</pre><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Tip</h3><p>If you get an error about syntax errors in a JSON entry, the
+<span class="emphasis"><em>http://jsonlint.com</em></span> website can help you locate the problem.</p></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_conditional_pages"></a>Conditional Pages</h3></div></div></div><p>Now that we have covered basic XSWT, we can revisit how one can use page
+conditions. Consider the following practical example of creating a wizard
+for wireless networks.</p><p>On the first page of the wizard you could have a <span class="emphasis"><em>[] Configure routing</em></span> checkbox
+with the ID <code class="literal">wantRouting</code>. If this checkbox is selected, you want to display
+a second page where the user can select a routing protocol, followed by
+configuration pages determined by the chosen routing protocol.</p><p>To achieve this, you would add the following lines to <code class="literal">template.properties</code>:</p><pre class="literallayout"># page with the "wantRouting" checkbox
+page.1.title = General
+# page with the "protocol" combobox
+page.2.title = Choose Routing Protocol
+page.3.title = AODV Options
+page.4.title = DSDV Options</pre><pre class="literallayout">page.2.condition = wantRouting
+page.3.condition = wantRouting &amp;&amp; protocol=="AODV"
+page.4.condition = wantRouting &amp;&amp; protocol=="DSDV"</pre><p>The <code class="literal">.condition</code> keys will make the wizard include only the pages where
+the condition evaluates to true. Conditions can be arbitrary FreeMarker
+expressions that evaluate to <code class="literal">true</code> (as boolean) or <code class="literal">"true"</code> (as string).
+Conditions are re-evaluated after every page, so you can depend on variables
+edited on earlier pages.</p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_conditional_widgets"></a>Conditional Widgets</h3></div></div></div><p>It is also possible to create controls conditionally.
+To overcome the limitation that XSWT page descriptions are completely static,
+XSWT files undergo FreeMarker template processing before giving them to the
+XSWT engine for instantiation. This template processing occurs right before
+the page gets displayed, so data entered on previous pages can also be
+used as input for generating XSWT source. This feature can be useful in making
+conditional widgets (i.e. using <code class="literal">&lt;#if&gt;</code> to make part of the page appear only
+when a certain option has been activated on earlier pages), to create a
+previously unknown number of widgets (using a <code class="literal">&lt;#list&gt;..&lt;/#list&gt;</code> loop),
+to populate combo boxes, listboxes or other widgets with options, and more.</p><pre class="literallayout">&lt;!-- Show only if the wizard is run from the New Simulation wizard--&gt;
+&lt;#if wizardType=="simulation"&gt;
+&lt;label text="Description how the wizard works for new simulations."/&gt;
+&lt;/#if&gt;</pre><p>If the user navigates in the wizard back and forth several times (using the
+Next and Back buttons), the contents of wizard pages are always re-created
+with the current values of template variables just before getting
+displayed, so they will always be up to date.</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch01s07.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch01.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch01s09.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Templates </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Extending the Wizards in Java</td></tr></table></div></body></html>

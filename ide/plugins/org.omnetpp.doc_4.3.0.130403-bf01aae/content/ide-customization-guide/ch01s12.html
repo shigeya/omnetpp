@@ -1,0 +1,274 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Appendix A - Widgets in XSWT</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="IDE Customization Guide"><link rel="up" href="ch01.html" title="Chapter 1. Writing Wizards"><link rel="prev" href="ch01s11.html" title="XSWT Tips and Tricks"><link rel="next" href="ch01s13.html" title="Appendix B - Predefined Template Variables"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Appendix A - Widgets in XSWT</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch01s11.html">Prev</a> </td><th width="60%" align="center">Chapter 1. Writing Wizards</th><td width="20%" align="right"> <a accesskey="n" href="ch01s13.html">Next</a></td></tr></table><hr></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_appendix_a_widgets_in_xswt"></a>Appendix A - Widgets in XSWT</h2></div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_standard_swt_widgets"></a>Standard SWT widgets</h3></div></div></div><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Tip</h3><p>The SWT controls are documented on the Eclipse web site. See:
+<span class="emphasis"><em>http://help.eclipse.org/galileo/topic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/swt/widgets/package-summary.html</em></span></p></div><p>It is possible to bind template variables to a specific control by using the <code class="literal">x:id</code>
+attribute.</p><pre class="literallayout">&lt;text x:id="templateVariableName" /&gt;</pre><p>This is the way that template variables are bound to the controls (R=read, W=write):</p><div class="variablelist"><dl><dt><span class="term">
+Button
+</span></dt><dd><p>
+This SWT class represents buttons, checkboxes and radio
+                buttons, depending on its style attribute (<code class="literal">SWT.PUSH,
+                SWT.CHECK, SWT.RADIO</code>).
+</p><div class="itemizedlist"><ul type="disc"><li>
+W: the string "true" selects the checkbox/radio button;
+                   everything else clears it.
+</li><li>
+R: returns a Boolean.
+</li></ul></div></dd><dt><span class="term">
+Combo, CCombo
+</span></dt><dd><p>
+Represent a combo box and a custom combo box. It can be
+                made read-only (with the <code class="literal">SWT.READ_ONLY</code> style). A read-only
+                combo allows list selection but no manual editing.
+                The list items can be specified from XSWT. Variables only
+                work with the textedit part (cannot add/remove list items).
+</p><div class="itemizedlist"><ul type="disc"><li>
+W: the string value gets written into the combo. If the combo
+                   is read-only and contains no such item, nothing happens.
+</li><li>
+R: returns the currently selected item as string.
+</li></ul></div></dd><dt><span class="term">
+DateTime
+</span></dt><dd><p>
+A widget for editing date/time.
+</p><div class="itemizedlist"><ul type="disc"><li>
+W: accepts a string in the following format: "yyyy-mm-dd hh:mm:ss".
+                   If the string is not in the right format, an error occurs.
+</li><li>
+R: returns a string in the same format, "yyyy-mm-dd hh:mm:ss".
+</li></ul></div></dd><dt><span class="term">
+Label
+</span></dt><dd><p>
+Label widget (not interactive).
+</p><div class="itemizedlist"><ul type="disc"><li>
+W: sets the label to the string.
+</li><li>
+R: returns the label.
+</li></ul></div></dd><dt><span class="term">
+List
+</span></dt><dd><p>
+A listbox widget that allows selection of one or more items,
+                depending on the style attribute (<code class="literal">SWT.SINGLE</code> or <code class="literal">SWT.MULTI</code>).
+                List items can be specified from XSWT. Template variables only
+                work with the selection (cannot add/remove list items).
+</p><div class="itemizedlist"><ul type="disc"><li>
+W: accepts a string with comma-separated items and selects the
+                   corresponding item(s) in the listbox. Items that are not
+                   among the listbox items are ignored.
+</li><li>
+R: Returns a string array object (String[]) that can be
+                   iterated over in the template.
+</li></ul></div></dd><dt><span class="term">
+Scale
+</span></dt><dd><p>
+A graphical widget for selecting a numeric value.
+</p><div class="itemizedlist"><ul type="disc"><li>
+W: accepts strings with an integer value. Non-numeric strings
+                   will cause an error (a message dialog will be displayed).
+</li><li>
+R: returns an Integer which can be used in arithmetic
+                   expressions in the template.
+</li></ul></div></dd><dt><span class="term">
+Slider
+</span></dt><dd>
+A scrollbar-like widget for selecting a positive numeric value.
+                Handled in a similar way as Scale.
+</dd><dt><span class="term">
+Spinner
+</span></dt><dd>
+Similar to a textedit, but contains little up and down arrows
+                and can be used to input an integer number.
+                Handled in a similar way as Scale.
+</dd><dt><span class="term">
+StyledText
+</span></dt><dd>
+A textedit widget which allows displaying and editing of
+                styled text. Handled similarly to Text.
+</dd><dt><span class="term">
+Text
+</span></dt><dd><p>
+A textedit widget. It can be single-line or multi-line,
+                depending on the style attribute (<code class="literal">SWT.SINGLE, SWT.MULTI</code>).
+</p><div class="itemizedlist"><ul type="disc"><li>
+W: accepts a (potentially multiline) string.
+</li><li>
+R: returns the edited text as a string.
+</li></ul></div></dd></dl></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_custom_widgets"></a>Custom widgets</h3></div></div></div><div class="variablelist"><dl><dt><span class="term">
+HttpLink
+</span></dt><dd><p>
+A control containing a text and a hyperlink between <code class="literal">&lt;a&gt;&lt;/a&gt;</code> tags. An URL can
+                be specified to be opened in an external browser.
+</p><div class="itemizedlist"><ul type="disc"><li>
+W: accepts a string with the target URL.
+</li><li>
+R: returns the target URL as string.
+</li><li><p>
+Other attributes:
+</p><div class="itemizedlist"><ul type="circle" compact><li>
+text : the textual content of the control <code class="literal">&lt;a&gt;&lt;/a&gt;</code> denotes the link inside.
+</li><li>
+URL: the target URL where the control points to.
+</li></ul></div></li></ul></div></dd><dt><span class="term">
+InfoLink
+</span></dt><dd><p>
+A control that displays a text with embedded link(s). Clicking
+                on a link will display a hover text in a window. The hover text can be given
+                with the setHoverText method (i.e. the hoverText XSWT attribute), or bound
+                to a template variable (using the x:id XSWT attribute).
+</p><div class="itemizedlist"><ul type="disc"><li>
+W: accepts a string with the hover text for the control.
+</li><li>
+R: returns the hover text as string.
+</li><li><p>
+Other attributes:
+</p><div class="itemizedlist"><ul type="circle" compact><li>
+text: the content of the control.
+</li><li>
+hoverText: the html formatted text displayed in the hover control.
+</li><li>
+hoverMinimumWidth: the minimum width for the hover control.
+</li><li>
+hoverMinimumHeight: the minimum height for the hover control.
+</li><li>
+hoverPreferredWidth: the preferred width for the hover control.
+</li><li>
+hoverPreferredHeight: the preferred height for the hover control.
+</li></ul></div></li></ul></div></dd><dt><span class="term">
+FileLink
+</span></dt><dd><p>
+A control for displaying the name of a resource as a link. When clicked, it shows
+                the resource (opens Project Explorer and focuses it to the resource).
+</p><div class="itemizedlist"><ul type="disc"><li>
+W: accepts a string with the workspace path of the resource to be shown.
+</li><li>
+R: returns the full workspace path of the resource.
+</li><li><p>
+Other attributes:
+</p><div class="itemizedlist"><ul type="circle" compact><li>
+resourcePath: the full workspace path of the file.
+</li></ul></div></li></ul></div></dd><dt><span class="term">
+FileChooser
+</span></dt><dd><p>
+A control for selecting a file from the workspace. Implemented as a Composite with
+                a single-line Text and a Browse button.
+</p><div class="itemizedlist"><ul type="disc"><li>
+W: accepts a string with the workspace file name.
+</li><li>
+R: returns the name of the selected file as a string from the workspace.
+</li><li><p>
+Other attributes:
+</p><div class="itemizedlist"><ul type="circle" compact><li>
+fileName : the full workspace path of the selected file.
+</li></ul></div></li></ul></div></dd><dt><span class="term">
+ExternalFileChooser
+</span></dt><dd><p>
+                A control for selecting a file from the filesystem. Implemented as a Composite with
+                a single-line Text and a Browse button.
+</p><div class="itemizedlist"><ul type="disc"><li>
+W: accepts a string with the full file name.
+</li><li>
+R: returns the name of the selected file as a string from the filesystem.
+</li><li><p>
+Other attributes:
+</p><div class="itemizedlist"><ul type="circle" compact><li>
+fileName : the full filesystem path of the selected file.
+</li></ul></div></li></ul></div></dd><dt><span class="term">
+SaveAsChooser
+</span></dt><dd><p>
+A control for selecting a name for a new file from the workspace.
+                Implemented as a Composite with a single-line Text and a Browse button.
+</p><div class="itemizedlist"><ul type="disc"><li>
+W: accepts a string with the workspace file name.
+</li><li>
+R: returns the name of the selected file as a string from the workspace.
+</li><li><p>
+Other attributes:
+</p><div class="itemizedlist"><ul type="circle" compact><li>
+fileName : the full workspace path for the new file.
+</li></ul></div></li></ul></div></dd><dt><span class="term">
+ExternalSaveAsChooser
+</span></dt><dd><p>
+                A control for selecting a name for a new file in the filesystem.
+                Implemented as a Composite with a single-line Text and a Browse button.
+</p><div class="itemizedlist"><ul type="disc"><li>
+W: accepts a string with the full file name.
+</li><li>
+R: returns the name (with full filesystem path) of the new file as a string.
+</li><li><p>
+Other attributes:
+</p><div class="itemizedlist"><ul type="circle" compact><li>
+fileName : the full filesystem path for the new file.
+</li></ul></div></li></ul></div></dd><dt><span class="term">
+GateChooser
+</span></dt><dd><p>
+A control for selecting a gate of a NED module type. If the module
+                exists, it lets the user select one of its gates from a combo;
+                if the module does not exist, it lets the user enter a gate name.
+</p><div class="itemizedlist"><ul type="disc"><li>
+W: accepts strings with a gate name.
+</li><li>
+R: returns the name of the selected gate as a string.
+</li><li><p>
+Other attributes:
+</p><div class="itemizedlist"><ul type="circle" compact><li>
+gateName: the name of the selected gate.
+</li><li>
+nedTypeName : the NED type whose gates should be enumerated.
+</li><li><p>
+gateFilter : type filter for the enumerated gates. Expects a
+                  binary OR (|) of the following values: <code class="literal">GateChooser.INPUT,
+                  GateChooser.OUTPUT, GateChooser.INOUT, GateChooser.VECTOR,
+                  GateChooser.SCALAR</code>.
+</p><pre class="literallayout">&lt;gateChooser x:id="gateName"
+  nedTypeName="${nodeType}"
+  gateFilter="GateChooser.INOUT|GateChooser.VECTOR"/&gt;</pre></li></ul></div></li></ul></div></dd><dt><span class="term">
+NedTypeChooser
+</span></dt><dd><p>
+                A control for selecting a NED module type. An existing type name can be selected
+                or a new one can be entered.
+</p><div class="itemizedlist"><ul type="disc"><li>
+W: accepts strings with a NED type name.
+</li><li>
+R: returns the name of the selected NED type as a string.
+</li><li><p>
+Other attributes:
+</p><div class="itemizedlist"><ul type="circle" compact><li>
+nedName: the NED module type as a string.
+</li><li><p>
+acceptedTypes : filter for the enumeration of types. Expects a
+                  binary OR (|) of the following values: <code class="literal">NedTypeChooser.MODULE,
+                NedTypeChooser.SIMPLE_MODULE, NedTypeChooser.COMPOUND_MODULE,
+                NedTypeChooser.MODULEINTERFACE, NedTypeChooser.CHANNEL,
+                NedTypeChooser.CHANNELINTERFACE, NedTypeChooser.NETWORK</code>.
+</p><pre class="literallayout">&lt;nedTypeChooser x:id="channelType"
+     acceptedTypes="NedTypeChooser.CHANNEL"/&gt;</pre></li></ul></div></li></ul></div></dd></dl></div><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>Table and tree widgets are currently not supported in a useful way; the main
+reason being that SWT Tables and Trees are not editable by default.</p></div><p>Some non-interactive widgets which cannot be connected to template variables
+but are useful in forms as structuring elements:</p><div class="variablelist"><dl><dt><span class="term">
+Composite
+</span></dt><dd><p>
+Used to group two or more controls into a single one.
+</p><pre class="literallayout">&lt;composite&gt;
+  &lt;layoutData x:class="GridData" horizontalSpan="2"/&gt;
+  &lt;layout x:class="GridLayout"/&gt;
+  &lt;x:children&gt;
+    &lt;button x:id="dynamic" text="Dynamic" x:style="RADIO"/&gt;
+    &lt;button x:id="static" text="Static" x:style="RADIO"/&gt;
+  &lt;/x:children&gt;
+&lt;/composite&gt;</pre></dd><dt><span class="term">
+Group
+</span></dt><dd><p>
+Used to group the controls with a visual heading.
+</p><pre class="literallayout">&lt;group text="Heading text"&gt;
+  &lt;x:children&gt;
+     &lt;label text="Control 1"/&gt;
+     &lt;label text="Control 2"/&gt;
+  &lt;/x:children&gt;
+&lt;/group&gt;</pre></dd><dt><span class="term">
+TabFolder/TabItem
+</span></dt><dd><p>
+Can be used to group the controls into separate pages.
+</p><pre class="literallayout">&lt;tabFolder&gt;
+  &lt;x:children&gt;
+    &lt;composite x:id="page1"&gt;&lt;/composite&gt;
+    &lt;composite x:id="page2"&gt;&lt;/composite&gt;
+    &lt;tabItem text="Tab 1" control="page1"/&gt;
+    &lt;tabItem text="Tab 2" control="page2"/&gt;
+  &lt;/x:children&gt;
+&lt;/tabFolder&gt;</pre></dd></dl></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch01s11.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch01.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch01s13.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">XSWT Tips and Tricks </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Appendix B - Predefined Template Variables</td></tr></table></div></body></html>

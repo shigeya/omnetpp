@@ -1,0 +1,279 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta name="copyright" content="OpenSim Ltd.">
+  <meta NAME="Author" CONTENT="Andras Varga">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <link rel="STYLESHEET" href="../book.css"  type="text/css">
+  <title>OMNeT++ - Manual</title>
+</head>
+<body>
+
+<p><hr><b><a href="chap25.html">[Prev]</A>&nbsp;<a href="toc.html#toc_26.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p><hr class='pgbr'><h1><a name="sec559"/>26 Appendix&#58; Eventlog File Format</h1>
+<a name="cha:eventlog-file-format"></a>
+
+<p>This appendix documents the format of the eventlog file. Eventlog
+files are written by the simulation (when enabled). Everything
+that happens during the simulation is recorded into the file,
+  <br><ul><font size=-1>[With certain granularity of course, and subject to
+  filters that were active during simulation]</font></ul>
+so the file can later be used to reproduce the history of the
+simulation on a sequence chart, or in some other form.
+
+<p>The file is a line-oriented text file. Blank lines and lines beginning
+with "#" (comments) will be ignored. Other lines begin with an
+<i>entry identifier</i> like <tt>E</tt> for <i>Event</i> or
+<tt>BS</tt> for <i>BeginSend</i>, followed by <i>attribute-identifier</i>
+and <i>value</i> pairs. One exception is debug output
+(recorded from <tt>ev&lt;&lt;...</tt> statements), which are represented
+by lines that begin with a hyphen, and continue with the actual text.
+
+<p>The grammar of the eventlog file is the following:
+
+<pre class="verbatim">
+&lt;file&gt; ::= &lt;line&gt;*
+&lt;line&gt; ::= &lt;empty-line&gt; | &lt;user-log-message&gt; | &lt;event-log-entry&gt;
+&lt;empty-line&gt; ::= CR LF
+&lt;user-log-message&gt; ::= - SPACE &lt;text&gt; CR LF
+&lt;event-log-entry&gt; ::= &lt;event-log-entry-type&gt; SPACE &lt;parameters&gt; CR LF
+&lt;event-log-entry-type&gt; ::= SB | SE | BU | MB | ME | MC | MD | MR | GC | GD |
+                           CC | CD | CS | MS | CE | BS | ES | SD | SH | DM | E
+&lt;parameters&gt; ::= (&lt;parameter&gt;)*
+&lt;parameter&gt; ::= &lt;name&gt; SPACE &lt;value&gt;
+&lt;name&gt; ::= &lt;text&gt;
+&lt;value&gt; ::= &lt;boolean&gt; | &lt;integer&gt; | &lt;text&gt; | &lt;quoted-text&gt;
+</pre>
+<p>
+The eventlog file must also fulfill the following requirements:
+<ul>
+   <li> simulation events are in increasing event number and simulation time order
+</ul>
+
+<p>Here is a fragment of an existing eventlog file as an example:
+
+<pre class="filelisting">
+E # 14 t 1.018454036455 m 8 ce 9 msg 6
+BS id 6 tid 6 c <a href="../api/classcMessage.html">cMessage</a> n send/endTx pe 14
+ES t 4.840247053855
+MS id 8 d t=TRANSMIT,,#808000;i=device/pc_s
+MS id 8 d t=,,#808000;i=device/pc_s
+
+E # 15 t 1.025727827674 m 2 ce 13 msg 25
+- another frame arrived while receiving -- collision!
+CE id 0 pe 12
+BS id 0 tid 0 c <a href="../api/classcMessage.html">cMessage</a> n end-reception pe 15
+ES t 1.12489449434
+BU id 2 txt "Collision! (3 frames)"
+DM id 25 pe 15
+</pre>
+<p>
+<h2><a name="sec560"/>26.1 Supported Entry Types and Their Attributes</h2>
+
+<p>The following entries and attributes are supported in the eventlog file:
+
+
+<b>SB</b> <i>(SimulationBegin)</i>: mandatory first line of an eventlog file
+
+<p><ul>
+  <li> <b>v</b> (<i>version</i>, int): OMNeT++ version, e.g. 0x401 (=1025) is release 4.1
+  <li> <b>rid</b> (<i>runId</i>, string): identifies the simulation run
+  <li> <b>b</b> (<i>keyframeBlockSize</i>, int): the distance between keyframes in event numbers
+</ul>
+
+<p><b>SE</b> <i>(SimulationEnd)</i>: optional last line of an eventlog file
+
+<p><ul>
+  <li> <b>e</b> (<i>isError</i>, bool): specifies if the simulation terminated due to an error
+  <li> <b>c</b> (<i>resultCode</i>, int): the error code in case of an error, otherwise the normal result code
+  <li> <b>m</b> (<i>message</i>, string): human readable description
+</ul>
+
+<p><b>BU</b> <i>(Bubble)</i>: display a bubble message
+
+<p><ul>
+  <li> <b>id</b> (<i>moduleId</i>, int): id of the module which printed the bubble message
+  <li> <b>txt</b> (<i>text</i>, string): displayed message text
+</ul>
+
+<p><b>MB</b> <i>(ModuleMethodBegin)</i>: beginning of a call to another module
+
+<p><ul>
+  <li> <b>sm</b> (<i>fromModuleId</i>, int): id of the caller module
+  <li> <b>tm</b> (<i>toModuleId</i>, int): id of the module being called
+  <li> <b>m</b> (<i>method</i>, string): C++ method name
+</ul>
+
+<p><b>ME</b> <i>(ModuleMethodEnd)</i>: end of a call to another module
+
+<p><ul>
+  <li> no parameters
+</ul>
+
+<p><b>MC</b> <i>(ModuleCreated)</i>: creating a module
+
+<p><ul>
+  <li> <b>id</b> (<i>moduleId</i>, int): id of the new module
+  <li> <b>c</b> (<i>moduleClassName</i>, string): C++ class name of the module
+  <li> <b>t</b> (<i>nedTypeName</i>, string): fully qualified NED type name
+  <li> <b>pid</b> (<i>parentModuleId</i>, int): id of the parent module
+  <li> <b>n</b> (<i>fullName</i>, string): full dotted hierarchical module name
+  <li> <b>cm</b> (<i>compoundModule</i>, bool): whether module is a simple or compound module
+</ul>
+
+<p><b>MD</b> <i>(ModuleDeleted)</i>: deleting a module
+
+<p><ul>
+  <li> <b>id</b> (<i>moduleId</i>, int): id of the module being deleted
+</ul>
+
+<p><b>MR</b> <i>(ModuleReparented)</i>: reparenting a module
+
+<p><ul>
+  <li> <b>id</b> (<i>moduleId</i>, int): id of the module being reparented
+  <li> <b>p</b> (<i>newParentModuleId</i>, int): id of the new parent module
+</ul>
+
+<p><b>GC</b> <i>(GateCreated)</i>: gate created
+
+<p><ul>
+  <li> <b>m</b> (<i>moduleId</i>, int): module in which the gate was created
+  <li> <b>g</b> (<i>gateId</i>, int): id of the new gate
+  <li> <b>n</b> (<i>name</i>, string): gate name
+  <li> <b>i</b> (<i>index</i>, int): gate index if vector, -1 otherwise
+  <li> <b>o</b> (<i>isOutput</i>, bool): whether the gate is input or output
+</ul>
+
+<p><b>GD</b> <i>(GateDeleted)</i>: gate deleted
+
+<p><ul>
+  <li> <b>m</b> (<i>moduleId</i>, int): module in which the gate was created
+  <li> <b>g</b> (<i>gateId</i>, int): id of the deleted gate
+</ul>
+
+<p><b>CC</b> <i>(ConnectionCreated)</i>: creating a connection
+
+<p><ul>
+  <li> <b>sm</b> (<i>sourceModuleId</i>, int): id of the source module identifying the connection
+  <li> <b>sg</b> (<i>sourceGateId</i>, int): id of the gate at the source module identifying the connection
+  <li> <b>dm</b> (<i>destModuleId</i>, int): id of the destination module
+  <li> <b>dg</b> (<i>destGateId</i>, int): id of the gate at the destination module
+</ul>
+
+<p><b>CD</b> <i>(ConnectionDeleted)</i>: deleting a connection
+
+<p><ul>
+  <li> <b>sm</b> (<i>sourceModuleId</i>, int): id of the source module identifying the connection
+  <li> <b>sg</b> (<i>sourceGateId</i>, int): id of the gate at the source module identifying the connection
+</ul>
+
+<p><b>CS</b> <i>(ConnectionDisplayStringChanged)</i>: a connection display string change
+
+<p><ul>
+  <li> <b>sm</b> (<i>sourceModuleId</i>, int): id of the source module identifying the connection
+  <li> <b>sg</b> (<i>sourceGateId</i>, int): id of the gate at the source module identifying the connection
+  <li> <b>d</b> (<i>displayString</i>, string): the new display string
+</ul>
+
+<p><b>MS</b> <i>(ModuleDisplayStringChanged)</i>: a module display string change
+
+<p><ul>
+  <li> <b>id</b> (<i>moduleId</i>, int): id of the module
+  <li> <b>d</b> (<i>displayString</i>, string): the new display string
+</ul>
+
+<p><b>E</b> <i>(Event)</i>: an event that is processing a message
+
+<p><ul>
+  <li> <b>#</b> (<i>eventNumber</i>, eventnumber_t): unique event number
+  <li> <b>t</b> (<i>simulationTime</i>, simtime_t): simulation time when the event occurred
+  <li> <b>m</b> (<i>moduleId</i>, int): id of the processing module
+  <li> <b>ce</b> (<i>causeEventNumber</i>, eventnumber_t): event number from which the message being processed was sent, or -1 if the message was sent from initialize
+  <li> <b>msg</b> (<i>messageId</i>, long): lifetime-unique id of the message being processed
+</ul>
+
+<p><b>KF</b> <i>(Keyframe)</i>:
+
+<p><ul>
+  <li> <b>p</b> (<i>previousKeyframeFileOffset</i>, int64): file offset of the previous keyframe entry
+  <li> <b>c</b> (<i>consequenceLookaheadLimits</i>, string): consequence lookahead data
+  <li> <b>s</b> (<i>simulationStateEntries</i>, string): simulation state data
+</ul>
+
+<p><b>abstract</b> <i>(Message)</i>: base class for entries referring to a message
+
+<p><ul>
+  <li> <b>id</b> (<i>messageId</i>, long): lifetime-unique id of the message
+  <li> <b>tid</b> (<i>messageTreeId</i>, long): id of the message inherited by dup
+  <li> <b>eid</b> (<i>messageEncapsulationId</i>, long): id of the message inherited by encapsulation
+  <li> <b>etid</b> (<i>messageEncapsulationTreeId</i>, long): id of the message inherited by both dup and encapsulation
+  <li> <b>c</b> (<i>messageClassName</i>, string): C++ class name of the message
+  <li> <b>n</b> (<i>messageName</i>, string): message name
+  <li> <b>k</b> (<i>messageKind</i>, short): message kind
+  <li> <b>p</b> (<i>messagePriority</i>, short): message priority
+  <li> <b>l</b> (<i>messageLength</i>, int64): message length in bits
+  <li> <b>er</b> (<i>hasBitError</i>, bool): true indicates that the message has bit errors
+  <li> <b>d</b> (<i>detail</i>, string): detailed information of message content when recording message data is turned on
+  <li> <b>pe</b> (<i>previousEventNumber</i>, eventnumber_t): event number from which the message being cloned was sent, or -1 if the message was sent from initialize
+</ul>
+
+<p><b>CE</b> <i>(CancelEvent)</i>: canceling an event caused by a self message
+
+<p><ul>
+  <li> no parameters
+</ul>
+
+<p><b>BS</b> <i>(BeginSend)</i>: beginning to send a message
+
+<p><ul>
+  <li> no parameters
+</ul>
+
+<p><b>ES</b> <i>(EndSend)</i>: prediction of the arrival of a message
+
+<p><ul>
+  <li> <b>t</b> (<i>arrivalTime</i>, simtime_t): when the message will arrive to its destination module
+  <li> <b>is</b> (<i>isReceptionStart</i>, bool): true indicates the message arrives with the first bit
+</ul>
+
+<p><b>SD</b> <i>(SendDirect)</i>: sending a message directly to a destination gate
+
+<p><ul>
+  <li> <b>sm</b> (<i>senderModuleId</i>, int): id of the source module from which the message is being sent
+  <li> <b>dm</b> (<i>destModuleId</i>, int): id of the destination module to which the message is being sent
+  <li> <b>dg</b> (<i>destGateId</i>, int): id of the gate at the destination module to which the message is being sent
+  <li> <b>pd</b> (<i>propagationDelay</i>, simtime_t): propagation delay as the message is propagated through the connection
+  <li> <b>td</b> (<i>transmissionDelay</i>, simtime_t): transmission duration as the whole message is sent from the source gate
+</ul>
+
+<p><b>SH</b> <i>(SendHop)</i>: sending a message through a connection identified by its source module and gate id
+
+<p><ul>
+  <li> <b>sm</b> (<i>senderModuleId</i>, int): id of the source module from which the message is being sent
+  <li> <b>sg</b> (<i>senderGateId</i>, int): id of the gate at the source module from which the message is being sent
+  <li> <b>pd</b> (<i>propagationDelay</i>, simtime_t): propagation delay as the message is propagated through the connection
+  <li> <b>td</b> (<i>transmissionDelay</i>, simtime_t): transmission duration as the whole message is sent from the source gate
+</ul>
+
+<p><b>CM</b> <i>(CreateMessage)</i>: creating a message
+
+<p><ul>
+  <li> no parameters
+</ul>
+
+<p><b>CL</b> <i>(CloneMessage)</i>: cloning a message either via the copy constructor or dup
+
+<p><ul>
+  <li> <b>cid</b> (<i>cloneId</i>, long): lifetime-unique id of the clone
+</ul>
+
+<p><b>DM</b> <i>(DeleteMessage)</i>: deleting a message
+
+<p><ul>
+  <li> no parameters
+</ul>
+
+<p><hr><b><a href="chap25.html">[Prev]</A>&nbsp;<a href="toc.html#toc_26.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p>
+
+</body>
+</html>

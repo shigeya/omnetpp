@@ -1,0 +1,40 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Extending the Wizards in Java</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="IDE Customization Guide"><link rel="up" href="ch01.html" title="Chapter 1. Writing Wizards"><link rel="prev" href="ch01s08.html" title="Custom Wizard Pages"><link rel="next" href="ch01s10.html" title="Common Pitfalls"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Extending the Wizards in Java</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch01s08.html">Prev</a> </td><th width="60%" align="center">Chapter 1. Writing Wizards</th><td width="20%" align="right"> <a accesskey="n" href="ch01s10.html">Next</a></td></tr></table><hr></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_extending_the_wizards_in_java"></a>Extending the Wizards in Java</h2></div></div></div><p>It is possible to create new Wizard pages, custom widgets or add new template
+variables by extending the wizards in Java.</p><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_creating_wizard_pages"></a>Creating Wizard Pages</h3></div></div></div><p>Defining a wizard page in Java requires that you install the Eclipse
+Plug-in Development Environment (PDE) and that you have some Eclipse development skills.</p><p>The <code class="literal">template.properties</code> key for denoting a Java-based wizard page is <code class="literal">page.&lt;NN&gt;.class</code>,
+and the value should be the fully qualified name of the Java class that implements
+the wizard page. The requirements for the class are:</p><div class="itemizedlist"><ul type="disc"><li>
+the class must be accessible to the class loader,
+</li><li>
+the class must extend <code class="literal">org.omnetpp.common.wizard.ICustomWizardPage, and</code>
+</li><li>
+the class must have a public constructor with the following argument list:
+  <code class="literal">(String name, IContentTemplate creatorTemplate, String condition)</code>
+</li></ul></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_creating_custom_widgets"></a>Creating Custom Widgets</h3></div></div></div><p>Since XSWT works via Java reflection, your own custom widgets can be used in
+forms, similar to normal SWT widgets. No glue or registration code
+is needed; simply add their package to the <code class="literal">&lt;import&gt;</code> tags at the top of the XSWT
+file.</p><p>However, some Java code is needed so that the wizard knows how to write
+template variables into your widgets and how to extract them after editing.
+This functionality can be added via the <code class="literal">org.omnetpp.common.wizard.IWidgetAdapter</code>
+interface. This interface must be implemented either by the widget class
+itself, or by a class named <code class="literal">&lt;widgetclass&gt;Adapter</code> in the same package.
+The interface has methods to tell whether the adapter supports a given widget,
+to read the value out of the widget, and to write a value into the widget.</p><p>In addition to basic data types (<code class="literal">Boolean, Integer, Double, String, etc.</code>),
+it is possible to use compound data types as well (i.e. those composed of
+the List and Map interfaces of the Java Collections API). The default values
+can be given in the <code class="literal">template.properties</code> file in the JSON notation and the
+result can be used in the templates (iteration via <code class="literal">&lt;#list&gt;</code>, etc.).</p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_extending_your_template_with_custom_classes_and_widgets"></a>Extending your Template with Custom Classes and Widgets</h3></div></div></div><p>Jar files placed into the <code class="literal">plugins/</code> subdirectory of an OMNeT++ project will be
+loaded automatically and will be available to all templates. Jar files in
+that directory may be plain Java jars and Eclipse plug-in jars (the latter
+makes it also possible to contribute new functionality into the IDE via
+various extension points, but this is outside the scope of this discussion
+about wizards).</p><p>Jar files placed in the folder of the template will
+be loaded automatically when the template is used and the classes in it will
+be available for that template. Custom SWT widget classes can be imported and
+used in XSWT forms, and other code can be used in the template files via the
+FreeMarker Bean Wrapper (e.g. <code class="literal">${classes["org.example.SomeClass"].someStaticMethod(...)}</code>,
+see the example wizards.) Like <code class="literal">.xswt</code> files and <code class="literal">template.properties</code>, jar files
+are not copied over into the destination folder when the wizard executes.</p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_extending_the_template_processing"></a>Extending the Template Processing</h3></div></div></div><p>If you are skilled in writing Eclipse plug-ins, there are ways you can extend
+content templates. One is to contribute to the <code class="literal">org.omnetpp.common.wizard.templatecontributor</code>
+extension point, which lets you supply <code class="literal">IContentTemplateContributor</code> objects
+that can extend the content template implementation in various ways. You can
+contribute new variables, functions or macros to the template context.</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch01s08.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch01.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch01s10.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Custom Wizard Pages </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Common Pitfalls</td></tr></table></div></body></html>

@@ -1,0 +1,90 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Debugging a Simulation</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="OMNeT&#8288;+&#8288;+ User Guide"><link rel="up" href="ch06.html" title="Chapter 6. Launching and Debugging"><link rel="prev" href="ch06s04.html" title="Batch Execution"><link rel="next" href="ch06s06.html" title="Profiling a Simulation on Linux"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Debugging a Simulation</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch06s04.html">Prev</a> </td><th width="60%" align="center">Chapter 6. Launching and Debugging</th><td width="20%" align="right"> <a accesskey="n" href="ch06s06.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id278813"></a>Debugging a Simulation</h2></div></div></div><p>
+      The OMNeT&#8288;+&#8288;+ IDE integrates with the CDT (C/C++ Development Tooling) of Eclipse which
+      also includes debugging support. The CDT debugger UI relies on <span class="emphasis"><em>gdb</em></span> for doing the
+      actual work.
+    </p><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id278828"></a>Starting a Debug Session</h3></div></div></div><p>
+        Launching a simulation in debug mode is very similar to running it (see previous sections),
+        only you have to select the <span class="emphasis"><em>Debug</em></span> toolbar icon or menu item instead on <span class="emphasis"><em>Run</em></span>.
+        The same launch configurations are used for debugging that for running, that is,
+        if you open the <span class="emphasis"><em>Debug Configurations...</em></span> dialog, you will see the same launch
+        configurations as in the <span class="emphasis"><em>Run</em></span> dialog. The dialog will have extra tab pages where
+        you can configure the debugger and other details.
+      </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+        If you have problems with starting the debug session, check whether:
+        <div class="itemizedlist"><ul type="disc"><li>your executable is built with debug information,</li><li>
+            you can run the same executable without problem (using the same launch
+            configuration), and
+          </li><li>
+            the debugger type is set properly on the <span class="emphasis"><em>Debugger</em></span> tab of the <span class="emphasis"><em>Launch</em></span> dialog.
+          </li></ul></div></div><div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Warning</h3>
+        Batch (and parallel) execution is not possible in this launch type, so you may
+        specify only a single run number.
+      </div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id278887"></a>Using the Debugger</h3></div></div></div><p>
+        The CDT debugger provides functionality that can be expected from a good
+        C/C++ debugger: run control (run, suspend, step into, step over, return from function,
+        drop to stack frame); breakpoints (also conditional and counting breakpoints);
+        watchpoints (a.k.a. expression breakpoints, breakpoints that stop the execution
+        whenever the value of a given expression changes); watching and inspecting variables;
+        and access to machine-level details such as disassembly, registers and memory.
+      </p><p>
+        Source code is shown in the editor area; additional information and controls are
+        displayed in various Views: <span class="emphasis"><em>Debug</em></span>, <span class="emphasis"><em>Breakpoints</em></span>, <span class="emphasis"><em>Expressions</em></span>, <span class="emphasis"><em>Variables</em></span>,
+        <span class="emphasis"><em>Registers, Memory</em></span>, etc.
+      </p><p>
+        CDT's conversation with gdb can also be viewed, in the appropriate pages of the <span class="emphasis"><em>Console View</em></span>.
+        (Click the <span class="emphasis"><em>Display Selected Console</em></span> icon, and choose <span class="emphasis"><em>gdb</em></span> or <span class="emphasis"><em>gdb traces</em></span> from the menu.)
+      </p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Tip</h3>
+        One little tip that we found useful: if you have a pointer in the program that actually
+        points to an array (of objects, etc), you can have it displayed as an array, too. In
+        <span class="emphasis"><em>Variables</em></span>, right-click the variable and choose <span class="emphasis"><em>Display As Array...</em></span> from the menu.
+        You will be prompted for a start index and the number of elements to display.
+      </div><p>
+        More information on the debugger is available in the CDT documentation, which is
+        part of the IDE's Help system. See <span class="emphasis"><em>C/C++ Development User Guide</em></span>,
+        chapter <span class="emphasis"><em>Running and debugging projects</em></span>.
+      </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id278968"></a>Pretty Printers</h3></div></div></div><p>
+        Many programs contain data structures whose contents is difficult to comprehend
+        by looking at "raw" variables in the program. One example is the <code class="literal">std::map&lt;T&gt;</code>
+        class, which is essentially a dictionary but implemented with a binary tree, so
+        it is practically impossible to figure out with a C++ debugger what data
+        a concrete map instance contains.
+      </p><p>
+        The solution gdb offers to this problem is pretty printers. Pretty printers
+        are Python classes that gdb invokes to transform some actual data structure
+        to something that is easier for humans to understand. The <code class="literal">*.py</code> files that
+        provide and register these pretty printers are usually loaded via gdb's startup
+        script, <code class="literal">.gdbinit</code> (or some <code class="literal">.gdbinit.py</code> script, because gdb allows startup
+        scripts to be written in Python, too).
+      </p><div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Warning</h3><p>Pretty printers are not available on Mac OS X, because OS X ships with an older gdb
+        version that predates the addition of Python pretty printer support.</p></div><p>
+        The OMNeT&#8288;+&#8288;+ IDE comes with pretty printers for container classes in the
+        standard C++ library (<code class="literal">std::map&lt;T&gt;</code>, <code class="literal">std::vector&lt;T&gt;</code>, etc.)
+        and also for certain OMNeT&#8288;+&#8288;+ data types, for example <code class="literal">simtime_t</code>. These
+        scripts are located under <code class="literal">misc/gdb/</code> in the OMNeT&#8288;+&#8288;+ root directory.
+        The IDE also supports project-specific pretty printers: if the debugged
+        project's root folder contains a <code class="literal">.gdbinit.py</code> file, it will be loaded
+        by gdb. (The project's <code class="literal">.gdbinit.py</code> can then load further Python scripts,
+        e.g. from an <code class="literal">etc/gdb/</code> folder of the project.)
+      </p><p>
+        Pretty printer loading works in the following way. The IDE invokes gdb with
+        <code class="literal">misc/gdb/gdbinit.py</code> as startup script (for new launch configurations, the
+        <span class="emphasis"><em>GDB command file</em></span> field on the <span class="emphasis"><em>Debugger</em></span> tab is set to
+        <code class="literal">${opp_root}/misc/gdb/gdbinit.py</code>). This script loads the pretty printers
+        under <code class="literal">misc/gdb</code>, and also the project-specific pretty printers.
+      </p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Tip</h3>
+        If you want to write your own pretty printers, refer to the gdb documentation.
+        It is available online e.g. here: http://sourceware.org/gdb/current/onlinedocs/gdb/
+      </div><p>
+        Some pretty-printers may occasionally interfere with the debugged program
+        (especially if the program's state is already corrupted by earlier errors),
+        so at times it may be may be useful to temporarily turn off pretty printers.
+        To prevent pretty printers from being loaded for a session, clear the
+        <span class="emphasis"><em>GDB command file</em></span> setting in the launch configuration. To disable them
+        for a currently active debug session, switch to the <span class="emphasis"><em>gdb</em></span> page in the <span class="emphasis"><em>Console</em></span>,
+        and enter the following gdb command:
+      </p><pre class="screen">disable pretty-printer global</pre><p>
+        Or, to only disable OMNeT&#8288;+&#8288;+-specific pretty printers (but leave the standard
+        C++ library printers on):
+      </p><pre class="screen">disable pretty-printer global omnetpp;.*</pre><p>
+        Pretty printer support was introduced in OMNeT&#8288;+&#8288;+ 4.3.
+      </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch06s04.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch06.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch06s06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Batch Execution </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Profiling a Simulation on Linux</td></tr></table></div></body></html>

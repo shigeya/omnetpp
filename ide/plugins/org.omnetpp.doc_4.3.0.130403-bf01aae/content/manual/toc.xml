@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<toc label="OMNeT++ Manual" topic="index.html">
+  <topic label="1 Introduction" href="content/manual/chap1.html#sec100">
+    <topic label="1.1 What Is OMNeT++?" href="content/manual/chap1.html#sec101"/>
+    <topic label="1.2 Organization of This Manual" href="content/manual/chap1.html#sec102"/>
+  </topic>
+  <topic label="2 Overview" href="content/manual/chap2.html#sec103">
+    <topic label="2.1 Modeling Concepts" href="content/manual/chap2.html#sec104">
+      <topic label="2.1.1 Hierarchical Modules" href="content/manual/chap2.html#sec105"/>
+      <topic label="2.1.2 Module Types" href="content/manual/chap2.html#sec106"/>
+      <topic label="2.1.3 Messages, Gates, Links" href="content/manual/chap2.html#sec107"/>
+      <topic label="2.1.4 Modeling of Packet Transmissions" href="content/manual/chap2.html#sec108"/>
+      <topic label="2.1.5 Parameters" href="content/manual/chap2.html#sec109"/>
+      <topic label="2.1.6 Topology Description Method" href="content/manual/chap2.html#sec110"/>
+    </topic>
+    <topic label="2.2 Programming the Algorithms" href="content/manual/chap2.html#sec111"/>
+    <topic label="2.3 Using OMNeT++" href="content/manual/chap2.html#sec112">
+      <topic label="2.3.1 Building and Running Simulations" href="content/manual/chap2.html#sec113"/>
+      <topic label="2.3.2 What Is in the Distribution" href="content/manual/chap2.html#sec114"/>
+    </topic>
+  </topic>
+  <topic label="3 The NED Language" href="content/manual/chap3.html#sec115">
+    <topic label="3.1 NED Overview" href="content/manual/chap3.html#sec116"/>
+    <topic label="3.2 NED Quickstart" href="content/manual/chap3.html#sec117">
+      <topic label="3.2.1 The Network" href="content/manual/chap3.html#sec118"/>
+      <topic label="3.2.2 Introducing a Channel" href="content/manual/chap3.html#sec119"/>
+      <topic label="3.2.3 The App, Routing, and Queue Simple Modules" href="content/manual/chap3.html#sec120"/>
+      <topic label="3.2.4 The Node Compound Module" href="content/manual/chap3.html#sec121"/>
+      <topic label="3.2.5 Putting It Together" href="content/manual/chap3.html#sec122"/>
+    </topic>
+    <topic label="3.3 Simple Modules" href="content/manual/chap3.html#sec123"/>
+    <topic label="3.4 Compound Modules" href="content/manual/chap3.html#sec124"/>
+    <topic label="3.5 Channels" href="content/manual/chap3.html#sec125"/>
+    <topic label="3.6 Parameters" href="content/manual/chap3.html#sec126"/>
+    <topic label="3.7 Gates" href="content/manual/chap3.html#sec127"/>
+    <topic label="3.8 Submodules" href="content/manual/chap3.html#sec128"/>
+    <topic label="3.9 Connections" href="content/manual/chap3.html#sec129"/>
+    <topic label="3.10 Multiple Connections" href="content/manual/chap3.html#sec130">
+      <topic label="3.10.1 Connection Patterns" href="content/manual/chap3.html#sec131"/>
+    </topic>
+    <topic label="3.11 Parametric Submodule and Connection Types" href="content/manual/chap3.html#sec132">
+      <topic label="3.11.1 Parametric Submodule Types" href="content/manual/chap3.html#sec133"/>
+      <topic label="3.11.2 Parametric Connection Types" href="content/manual/chap3.html#sec134"/>
+    </topic>
+    <topic label="3.12 Metadata Annotations (Properties)" href="content/manual/chap3.html#sec135"/>
+    <topic label="3.13 Inheritance" href="content/manual/chap3.html#sec136"/>
+    <topic label="3.14 Packages" href="content/manual/chap3.html#sec137"/>
+  </topic>
+  <topic label="4 Simple Modules" href="content/manual/chap4.html#sec138">
+    <topic label="4.1 Simulation Concepts" href="content/manual/chap4.html#sec139">
+      <topic label="4.1.1 Discrete Event Simulation" href="content/manual/chap4.html#sec140"/>
+      <topic label="4.1.2 The Event Loop" href="content/manual/chap4.html#sec141"/>
+      <topic label="4.1.3 Events and Event Execution Order in OMNeT++" href="content/manual/chap4.html#sec142"/>
+      <topic label="4.1.4 Simulation Time" href="content/manual/chap4.html#sec143"/>
+      <topic label="4.1.5 FES Implementation" href="content/manual/chap4.html#sec144"/>
+    </topic>
+    <topic label="4.2 Components, Simple Modules, Channels" href="content/manual/chap4.html#sec145"/>
+    <topic label="4.3 Defining Simple Module Types" href="content/manual/chap4.html#sec146">
+      <topic label="4.3.1 Overview" href="content/manual/chap4.html#sec147"/>
+      <topic label="4.3.2 Constructor" href="content/manual/chap4.html#sec148"/>
+      <topic label="4.3.3 Initialization and Finalization" href="content/manual/chap4.html#sec149"/>
+    </topic>
+    <topic label="4.4 Adding Functionality to cSimpleModule" href="content/manual/chap4.html#sec150">
+      <topic label="4.4.1 handleMessage()" href="content/manual/chap4.html#sec151"/>
+      <topic label="4.4.2 activity()" href="content/manual/chap4.html#sec152"/>
+      <topic label="4.4.3 How to Avoid Global Variables" href="content/manual/chap4.html#sec153"/>
+      <topic label="4.4.4 Reusing Module Code via Subclassing" href="content/manual/chap4.html#sec154"/>
+    </topic>
+    <topic label="4.5 Accessing Module Parameters" href="content/manual/chap4.html#sec155">
+      <topic label="4.5.1 Volatile and Non-Volatile Parameters" href="content/manual/chap4.html#sec156"/>
+      <topic label="4.5.2 Changing a Parameter's Value" href="content/manual/chap4.html#sec157"/>
+      <topic label="4.5.3 Further cPar Methods" href="content/manual/chap4.html#sec158"/>
+      <topic label="4.5.4 Emulating Parameter Arrays" href="content/manual/chap4.html#sec159"/>
+      <topic label="4.5.5 handleParameterChange()" href="content/manual/chap4.html#sec160"/>
+    </topic>
+    <topic label="4.6 Accessing Gates and Connections" href="content/manual/chap4.html#sec161">
+      <topic label="4.6.1 Gate Objects" href="content/manual/chap4.html#sec162"/>
+      <topic label="4.6.2 Connections" href="content/manual/chap4.html#sec163"/>
+      <topic label="4.6.3 The Connection's Channel" href="content/manual/chap4.html#sec164"/>
+    </topic>
+    <topic label="4.7 Sending and Receiving Messages" href="content/manual/chap4.html#sec165">
+      <topic label="4.7.1 Self-Messages" href="content/manual/chap4.html#sec166"/>
+      <topic label="4.7.2 Sending Messages" href="content/manual/chap4.html#sec167"/>
+      <topic label="4.7.3 Broadcasts and Retransmissions" href="content/manual/chap4.html#sec168"/>
+      <topic label="4.7.4 Delayed Sending" href="content/manual/chap4.html#sec169"/>
+      <topic label="4.7.5 Direct Message Sending" href="content/manual/chap4.html#sec170"/>
+      <topic label="4.7.6 Packet Transmissions" href="content/manual/chap4.html#sec171"/>
+      <topic label="4.7.7 Receiving Messages with activity()" href="content/manual/chap4.html#sec172"/>
+    </topic>
+    <topic label="4.8 Channels" href="content/manual/chap4.html#sec173">
+      <topic label="4.8.1 Overview" href="content/manual/chap4.html#sec174"/>
+      <topic label="4.8.2 The Channel API" href="content/manual/chap4.html#sec175"/>
+      <topic label="4.8.3 Channel Examples" href="content/manual/chap4.html#sec176"/>
+    </topic>
+    <topic label="4.9 Stopping the Simulation" href="content/manual/chap4.html#sec177">
+      <topic label="4.9.1 Normal Termination" href="content/manual/chap4.html#sec178"/>
+      <topic label="4.9.2 Raising Errors" href="content/manual/chap4.html#sec179"/>
+    </topic>
+    <topic label="4.10 Finite State Machines" href="content/manual/chap4.html#sec180"/>
+    <topic label="4.11 Navigating the Module Hierarchy" href="content/manual/chap4.html#sec181"/>
+    <topic label="4.12 Direct Method Calls Between Modules" href="content/manual/chap4.html#sec182"/>
+    <topic label="4.13 Dynamic Module Creation" href="content/manual/chap4.html#sec183">
+      <topic label="4.13.1 When Do You Need Dynamic Module Creation" href="content/manual/chap4.html#sec184"/>
+      <topic label="4.13.2 Overview" href="content/manual/chap4.html#sec185"/>
+      <topic label="4.13.3 Creating Modules" href="content/manual/chap4.html#sec186"/>
+      <topic label="4.13.4 Deleting Modules" href="content/manual/chap4.html#sec187"/>
+      <topic label="4.13.5 Module Deletion and finish()" href="content/manual/chap4.html#sec188"/>
+      <topic label="4.13.6 Creating Connections" href="content/manual/chap4.html#sec189"/>
+      <topic label="4.13.7 Removing Connections" href="content/manual/chap4.html#sec190"/>
+    </topic>
+    <topic label="4.14 Signals" href="content/manual/chap4.html#sec191">
+      <topic label="4.14.1 Design Considerations and Rationale" href="content/manual/chap4.html#sec192"/>
+      <topic label="4.14.2 The Signals Mechanism" href="content/manual/chap4.html#sec193"/>
+      <topic label="4.14.3 Listening to Model Changes" href="content/manual/chap4.html#sec194"/>
+    </topic>
+    <topic label="4.15 Signal-Based Statistics Recording" href="content/manual/chap4.html#sec195">
+      <topic label="4.15.1 Motivation" href="content/manual/chap4.html#sec196"/>
+      <topic label="4.15.2 Declaring Statistics" href="content/manual/chap4.html#sec197"/>
+      <topic label="4.15.3 Emitting Signals" href="content/manual/chap4.html#sec198"/>
+      <topic label="4.15.4 Writing Result Filters and Recorders" href="content/manual/chap4.html#sec199"/>
+    </topic>
+  </topic>
+  <topic label="5 Messages and Packets" href="content/manual/chap5.html#sec200">
+    <topic label="5.1 Overview" href="content/manual/chap5.html#sec201"/>
+    <topic label="5.2 The cMessage Class" href="content/manual/chap5.html#sec202">
+      <topic label="5.2.1 Basic Usage" href="content/manual/chap5.html#sec203"/>
+      <topic label="5.2.2 Duplicating Messages" href="content/manual/chap5.html#sec204"/>
+      <topic label="5.2.3 Message IDs" href="content/manual/chap5.html#sec205"/>
+      <topic label="5.2.4 Control Info" href="content/manual/chap5.html#sec206"/>
+      <topic label="5.2.5 Information About the Last Arrival" href="content/manual/chap5.html#sec207"/>
+      <topic label="5.2.6 Display String" href="content/manual/chap5.html#sec208"/>
+    </topic>
+    <topic label="5.3 Self-Messages" href="content/manual/chap5.html#sec209">
+      <topic label="5.3.1 Using a Message as Self-Message" href="content/manual/chap5.html#sec210"/>
+      <topic label="5.3.2 Context Pointer" href="content/manual/chap5.html#sec211"/>
+    </topic>
+    <topic label="5.4 The cPacket Class" href="content/manual/chap5.html#sec212">
+      <topic label="5.4.1 Basic Usage" href="content/manual/chap5.html#sec213"/>
+      <topic label="5.4.2 Identifying the Protocol" href="content/manual/chap5.html#sec214"/>
+      <topic label="5.4.3 Information About the Last Transmission" href="content/manual/chap5.html#sec215"/>
+      <topic label="5.4.4 Encapsulating Packets" href="content/manual/chap5.html#sec216"/>
+      <topic label="5.4.5 Reference Counting" href="content/manual/chap5.html#sec217"/>
+      <topic label="5.4.6 Encapsulating Several Packets" href="content/manual/chap5.html#sec218"/>
+    </topic>
+    <topic label="5.5 Attaching Parameters and Objects" href="content/manual/chap5.html#sec219">
+      <topic label="5.5.1 Attaching Objects" href="content/manual/chap5.html#sec220"/>
+      <topic label="5.5.2 Attaching Parameters" href="content/manual/chap5.html#sec221"/>
+    </topic>
+  </topic>
+  <topic label="6 Message Definitions" href="content/manual/chap6.html#sec222">
+    <topic label="6.1 Introduction" href="content/manual/chap6.html#sec223">
+      <topic label="6.1.1 The First Message Class" href="content/manual/chap6.html#sec224"/>
+    </topic>
+    <topic label="6.2 Messages and Packets" href="content/manual/chap6.html#sec225">
+      <topic label="6.2.1 Defining Messages and Packets" href="content/manual/chap6.html#sec226"/>
+      <topic label="6.2.2 Field Data Types" href="content/manual/chap6.html#sec227"/>
+      <topic label="6.2.3 Initial Values" href="content/manual/chap6.html#sec228"/>
+      <topic label="6.2.4 Enums" href="content/manual/chap6.html#sec229"/>
+      <topic label="6.2.5 Fixed-Size Arrays" href="content/manual/chap6.html#sec230"/>
+      <topic label="6.2.6 Variable-Size Arrays" href="content/manual/chap6.html#sec231"/>
+      <topic label="6.2.7 Classes and Structs as Fields" href="content/manual/chap6.html#sec232"/>
+      <topic label="6.2.8 Pointer Fields" href="content/manual/chap6.html#sec233"/>
+      <topic label="6.2.9 Inheritance" href="content/manual/chap6.html#sec234"/>
+      <topic label="6.2.10 Assignment of Inherited Fields" href="content/manual/chap6.html#sec235"/>
+    </topic>
+    <topic label="6.3 Classes" href="content/manual/chap6.html#sec236"/>
+    <topic label="6.4 Structs" href="content/manual/chap6.html#sec237"/>
+    <topic label="6.5 Literal C++ Blocks" href="content/manual/chap6.html#sec238"/>
+    <topic label="6.6 Using C++ Types" href="content/manual/chap6.html#sec239">
+      <topic label="6.6.1 Announcing Types to the Message Compiler" href="content/manual/chap6.html#sec240"/>
+      <topic label="6.6.2 Making the C++ Declarations Available" href="content/manual/chap6.html#sec241"/>
+      <topic label="6.6.3 Putting it Together" href="content/manual/chap6.html#sec242"/>
+    </topic>
+    <topic label="6.7 Customizing the Generated Class" href="content/manual/chap6.html#sec243">
+      <topic label="6.7.1 Customizing Method Names" href="content/manual/chap6.html#sec244"/>
+      <topic label="6.7.2 Customizing the Class via Inheritance" href="content/manual/chap6.html#sec245"/>
+      <topic label="6.7.3 Abstract Fields" href="content/manual/chap6.html#sec246"/>
+    </topic>
+    <topic label="6.8 Using Standard Container Classes for Fields" href="content/manual/chap6.html#sec247">
+      <topic label="6.8.1 Typedefs" href="content/manual/chap6.html#sec248"/>
+      <topic label="6.8.2 Abstract Fields" href="content/manual/chap6.html#sec249"/>
+    </topic>
+    <topic label="6.9 Namespaces" href="content/manual/chap6.html#sec250">
+      <topic label="6.9.1 Declaring a Namespace" href="content/manual/chap6.html#sec251"/>
+      <topic label="6.9.2 C++ Blocks and Namespace" href="content/manual/chap6.html#sec252"/>
+      <topic label="6.9.3 Type Announcements and Namespace" href="content/manual/chap6.html#sec253"/>
+    </topic>
+    <topic label="6.10 Descriptor Classes" href="content/manual/chap6.html#sec254"/>
+    <topic label="6.11 Summary" href="content/manual/chap6.html#sec255"/>
+  </topic>
+  <topic label="7 The Simulation Library" href="content/manual/chap7.html#sec256">
+    <topic label="7.1 Class Library Conventions" href="content/manual/chap7.html#sec257">
+      <topic label="7.1.1 Base Class" href="content/manual/chap7.html#sec258"/>
+      <topic label="7.1.2 Setting and Getting Attributes" href="content/manual/chap7.html#sec259"/>
+      <topic label="7.1.3 getClassName()" href="content/manual/chap7.html#sec260"/>
+      <topic label="7.1.4 Object Names" href="content/manual/chap7.html#sec261"/>
+      <topic label="7.1.5 Object Full Name and Full Path" href="content/manual/chap7.html#sec262"/>
+      <topic label="7.1.6 Copying and Duplicating Objects" href="content/manual/chap7.html#sec263"/>
+      <topic label="7.1.7 Iterators" href="content/manual/chap7.html#sec264"/>
+      <topic label="7.1.8 Error Handling" href="content/manual/chap7.html#sec265"/>
+    </topic>
+    <topic label="7.2 Logging from Modules" href="content/manual/chap7.html#sec266"/>
+    <topic label="7.3 Simulation Time Conversion" href="content/manual/chap7.html#sec267"/>
+    <topic label="7.4 Generating Random Numbers" href="content/manual/chap7.html#sec268">
+      <topic label="7.4.1 Random Number Generators" href="content/manual/chap7.html#sec269"/>
+      <topic label="7.4.2 Random Number Streams, RNG Mapping" href="content/manual/chap7.html#sec270"/>
+      <topic label="7.4.3 Accessing The RNGs" href="content/manual/chap7.html#sec271"/>
+      <topic label="7.4.4 Random Variates" href="content/manual/chap7.html#sec272"/>
+      <topic label="7.4.5 Random Numbers from Histograms" href="content/manual/chap7.html#sec273"/>
+    </topic>
+    <topic label="7.5 Container Classes" href="content/manual/chap7.html#sec274">
+      <topic label="7.5.1 Queue class: cQueue" href="content/manual/chap7.html#sec275"/>
+      <topic label="7.5.2 Expandable Array: cArray" href="content/manual/chap7.html#sec276"/>
+    </topic>
+    <topic label="7.6 Routing Support: cTopology" href="content/manual/chap7.html#sec277">
+      <topic label="7.6.1 Overview" href="content/manual/chap7.html#sec278"/>
+      <topic label="7.6.2 Basic Usage" href="content/manual/chap7.html#sec279"/>
+      <topic label="7.6.3 Shortest Paths" href="content/manual/chap7.html#sec280"/>
+    </topic>
+    <topic label="7.7 Pattern Matching" href="content/manual/chap7.html#sec281">
+      <topic label="7.7.1 cPatternMatcher" href="content/manual/chap7.html#sec282"/>
+      <topic label="7.7.2 cMatchExpression" href="content/manual/chap7.html#sec283"/>
+    </topic>
+    <topic label="7.8 Statistics and Distribution Estimation" href="content/manual/chap7.html#sec284">
+      <topic label="7.8.1 cStatistic and Descendants" href="content/manual/chap7.html#sec285"/>
+      <topic label="7.8.2 Distribution Estimation" href="content/manual/chap7.html#sec286"/>
+      <topic label="7.8.3 The k-split Algorithm" href="content/manual/chap7.html#sec287"/>
+      <topic label="7.8.4 Transient Detection and Result Accuracy" href="content/manual/chap7.html#sec288"/>
+    </topic>
+    <topic label="7.9 Recording Simulation Results" href="content/manual/chap7.html#sec289">
+      <topic label="7.9.1 Output Vectors: cOutVector" href="content/manual/chap7.html#sec290"/>
+      <topic label="7.9.2 Output Scalars" href="content/manual/chap7.html#sec291"/>
+    </topic>
+    <topic label="7.10 Watches and Snapshots" href="content/manual/chap7.html#sec292">
+      <topic label="7.10.1 Basic Watches" href="content/manual/chap7.html#sec293"/>
+      <topic label="7.10.2 Read-write Watches" href="content/manual/chap7.html#sec294"/>
+      <topic label="7.10.3 Structured Watches" href="content/manual/chap7.html#sec295"/>
+      <topic label="7.10.4 STL Watches" href="content/manual/chap7.html#sec296"/>
+      <topic label="7.10.5 Snapshots" href="content/manual/chap7.html#sec297"/>
+      <topic label="7.10.6 Getting Coroutine Stack Usage" href="content/manual/chap7.html#sec298"/>
+    </topic>
+    <topic label="7.11 Defining New NED Functions" href="content/manual/chap7.html#sec299">
+      <topic label="7.11.1 Define_NED_Function()" href="content/manual/chap7.html#sec300"/>
+      <topic label="7.11.2 Define_NED_Math_Function()" href="content/manual/chap7.html#sec301"/>
+    </topic>
+    <topic label="7.12 Deriving New Classes" href="content/manual/chap7.html#sec302">
+      <topic label="7.12.1 cOwnedObject or Not?" href="content/manual/chap7.html#sec303"/>
+      <topic label="7.12.2 cOwnedObject Virtual Methods" href="content/manual/chap7.html#sec304"/>
+      <topic label="7.12.3 Class Registration" href="content/manual/chap7.html#sec305"/>
+      <topic label="7.12.4 Details" href="content/manual/chap7.html#sec306"/>
+    </topic>
+    <topic label="7.13 Object Ownership Management" href="content/manual/chap7.html#sec307">
+      <topic label="7.13.1 The Ownership Tree" href="content/manual/chap7.html#sec308"/>
+      <topic label="7.13.2 Managing Ownership" href="content/manual/chap7.html#sec309"/>
+    </topic>
+  </topic>
+  <topic label="8 Building Simulation Programs" href="content/manual/chap8.html#sec310">
+    <topic label="8.1 Overview" href="content/manual/chap8.html#sec311"/>
+    <topic label="8.2 Using gcc" href="content/manual/chap8.html#sec312">
+      <topic label="8.2.1 The opp_makemake Tool" href="content/manual/chap8.html#sec313"/>
+      <topic label="8.2.2 Basic Use" href="content/manual/chap8.html#sec314"/>
+      <topic label="8.2.3 Debug and Release Builds" href="content/manual/chap8.html#sec315"/>
+      <topic label="8.2.4 Debugging the Makefile" href="content/manual/chap8.html#sec316"/>
+      <topic label="8.2.5 Using External C/C++ Libraries" href="content/manual/chap8.html#sec317"/>
+      <topic label="8.2.6 Building Directory Trees" href="content/manual/chap8.html#sec318"/>
+      <topic label="8.2.7 Automatic Include Dirs" href="content/manual/chap8.html#sec319"/>
+      <topic label="8.2.8 Dependency Handling" href="content/manual/chap8.html#sec320"/>
+      <topic label="8.2.9 Out-of-Directory Build" href="content/manual/chap8.html#sec321"/>
+      <topic label="8.2.10 Building Shared and Static Libraries" href="content/manual/chap8.html#sec322"/>
+      <topic label="8.2.11 Recursive Builds" href="content/manual/chap8.html#sec323"/>
+      <topic label="8.2.12 Customizing the Makefile" href="content/manual/chap8.html#sec324"/>
+      <topic label="8.2.13 Projects with Multiple Source Trees" href="content/manual/chap8.html#sec325"/>
+      <topic label="8.2.14 A Multi-Directory Example" href="content/manual/chap8.html#sec326"/>
+    </topic>
+  </topic>
+  <topic label="9 Configuring Simulations" href="content/manual/chap9.html#sec327">
+    <topic label="9.1 The Configuration File" href="content/manual/chap9.html#sec328">
+      <topic label="9.1.1 An Example" href="content/manual/chap9.html#sec329"/>
+      <topic label="9.1.2 File Syntax" href="content/manual/chap9.html#sec330"/>
+      <topic label="9.1.3 File Inclusion" href="content/manual/chap9.html#sec331"/>
+    </topic>
+    <topic label="9.2 Sections" href="content/manual/chap9.html#sec332">
+      <topic label="9.2.1 The [General] Section" href="content/manual/chap9.html#sec333"/>
+      <topic label="9.2.2 Named Configurations" href="content/manual/chap9.html#sec334"/>
+      <topic label="9.2.3 Section Inheritance" href="content/manual/chap9.html#sec335"/>
+    </topic>
+    <topic label="9.3 Assigning Module Parameters" href="content/manual/chap9.html#sec336">
+      <topic label="9.3.1 Using Wildcard Patterns" href="content/manual/chap9.html#sec337"/>
+      <topic label="9.3.2 Using the Default Values" href="content/manual/chap9.html#sec338"/>
+    </topic>
+    <topic label="9.4 Parameter Studies" href="content/manual/chap9.html#sec339">
+      <topic label="9.4.1 Iterations" href="content/manual/chap9.html#sec340"/>
+      <topic label="9.4.2 Named Iteration Variables" href="content/manual/chap9.html#sec341"/>
+      <topic label="9.4.3 Parallel Iteration" href="content/manual/chap9.html#sec342"/>
+      <topic label="9.4.4 Predefined Variables, Run ID" href="content/manual/chap9.html#sec343"/>
+      <topic label="9.4.5 Constraint Expression" href="content/manual/chap9.html#sec344"/>
+      <topic label="9.4.6 Repeating Runs with Different Seeds" href="content/manual/chap9.html#sec345"/>
+      <topic label="9.4.7 Experiment-Measurement-Replication" href="content/manual/chap9.html#sec346"/>
+    </topic>
+    <topic label="9.5 Configuring the Random Number Generators" href="content/manual/chap9.html#sec347">
+      <topic label="9.5.1 Number of RNGs" href="content/manual/chap9.html#sec348"/>
+      <topic label="9.5.2 RNG Choice" href="content/manual/chap9.html#sec349"/>
+      <topic label="9.5.3 RNG Mapping" href="content/manual/chap9.html#sec350"/>
+      <topic label="9.5.4 Automatic Seed Selection" href="content/manual/chap9.html#sec351"/>
+      <topic label="9.5.5 Manual Seed Configuration" href="content/manual/chap9.html#sec352"/>
+    </topic>
+  </topic>
+  <topic label="10 Running Simulations" href="content/manual/chap10.html#sec353">
+    <topic label="10.1 Introduction" href="content/manual/chap10.html#sec354">
+      <topic label="10.1.1 Running a Simulation Executable" href="content/manual/chap10.html#sec355"/>
+      <topic label="10.1.2 Running a Shared Library" href="content/manual/chap10.html#sec356"/>
+      <topic label="10.1.3 Controlling the Run" href="content/manual/chap10.html#sec357"/>
+    </topic>
+    <topic label="10.2 Cmdenv: the Command-Line Interface" href="content/manual/chap10.html#sec358">
+      <topic label="10.2.1 Example Run" href="content/manual/chap10.html#sec359"/>
+      <topic label="10.2.2 Command-Line Options" href="content/manual/chap10.html#sec360"/>
+      <topic label="10.2.3 Cmdenv Ini File Options" href="content/manual/chap10.html#sec361"/>
+      <topic label="10.2.4 Interpreting Cmdenv Output" href="content/manual/chap10.html#sec362"/>
+    </topic>
+    <topic label="10.3 Tkenv: the Graphical User Interface" href="content/manual/chap10.html#sec363">
+      <topic label="10.3.1 Command-Line and Configuration Options" href="content/manual/chap10.html#sec364"/>
+    </topic>
+    <topic label="10.4 Batch Execution" href="content/manual/chap10.html#sec365">
+      <topic label="10.4.1 Using Cmdenv" href="content/manual/chap10.html#sec366"/>
+      <topic label="10.4.2 Using Shell Scripts" href="content/manual/chap10.html#sec367"/>
+      <topic label="10.4.3 Using opp_runall" href="content/manual/chap10.html#sec368"/>
+    </topic>
+    <topic label="10.5 Akaroa Support: Multiple Replications in Parallel" href="content/manual/chap10.html#sec369">
+      <topic label="10.5.1 Introduction" href="content/manual/chap10.html#sec370"/>
+      <topic label="10.5.2 What Is Akaroa" href="content/manual/chap10.html#sec371"/>
+      <topic label="10.5.3 Using Akaroa with OMNeT++" href="content/manual/chap10.html#sec372"/>
+    </topic>
+    <topic label="10.6 Troubleshooting" href="content/manual/chap10.html#sec373">
+      <topic label="10.6.1 Unrecognized Configuration Option" href="content/manual/chap10.html#sec374"/>
+      <topic label="10.6.2 Stack Problems" href="content/manual/chap10.html#sec375"/>
+      <topic label="10.6.3 Memory Leaks and Crashes" href="content/manual/chap10.html#sec376"/>
+      <topic label="10.6.4 Simulation Executes Slowly" href="content/manual/chap10.html#sec377"/>
+    </topic>
+  </topic>
+  <topic label="11 Network Graphics And Animation" href="content/manual/chap11.html#sec378">
+    <topic label="11.1 Display Strings" href="content/manual/chap11.html#sec379">
+      <topic label="11.1.1 Display String Syntax" href="content/manual/chap11.html#sec380"/>
+      <topic label="11.1.2 Display String Placement" href="content/manual/chap11.html#sec381"/>
+      <topic label="11.1.3 Display String Inheritance" href="content/manual/chap11.html#sec382"/>
+      <topic label="11.1.4 Display String Tags Used in Submodule Context" href="content/manual/chap11.html#sec383"/>
+      <topic label="11.1.5 Display String Tags Used in Module Background Context" href="content/manual/chap11.html#sec384"/>
+      <topic label="11.1.6 Connection Display Strings" href="content/manual/chap11.html#sec385"/>
+      <topic label="11.1.7 Message Display Strings" href="content/manual/chap11.html#sec386"/>
+    </topic>
+    <topic label="11.2 Parameter Substitution" href="content/manual/chap11.html#sec387"/>
+    <topic label="11.3 Colors" href="content/manual/chap11.html#sec388">
+      <topic label="11.3.1 Color Names" href="content/manual/chap11.html#sec389"/>
+      <topic label="11.3.2 Icon Colorization" href="content/manual/chap11.html#sec390"/>
+    </topic>
+    <topic label="11.4 Icons" href="content/manual/chap11.html#sec391">
+      <topic label="11.4.1 The Image Path" href="content/manual/chap11.html#sec392"/>
+      <topic label="11.4.2 Categorized Icons" href="content/manual/chap11.html#sec393"/>
+      <topic label="11.4.3 Icon Size" href="content/manual/chap11.html#sec394"/>
+    </topic>
+    <topic label="11.5 Layouting" href="content/manual/chap11.html#sec395"/>
+    <topic label="11.6 Enhancing Animation" href="content/manual/chap11.html#sec396">
+      <topic label="11.6.1 Changing Display Strings at Runtime" href="content/manual/chap11.html#sec397"/>
+      <topic label="11.6.2 Bubbles" href="content/manual/chap11.html#sec398"/>
+    </topic>
+  </topic>
+  <topic label="12 Result Recording and Analysis" href="content/manual/chap12.html#sec399">
+    <topic label="12.1 Result Recording" href="content/manual/chap12.html#sec400">
+      <topic label="12.1.1 Using Signals and Declared Statistics" href="content/manual/chap12.html#sec401"/>
+      <topic label="12.1.2 Direct Result Recording" href="content/manual/chap12.html#sec402"/>
+    </topic>
+    <topic label="12.2 Configuring Result Collection" href="content/manual/chap12.html#sec403">
+      <topic label="12.2.1 Configuring Signal-Based Statistics Recording" href="content/manual/chap12.html#sec404"/>
+      <topic label="12.2.2 Warm-up Period" href="content/manual/chap12.html#sec405"/>
+      <topic label="12.2.3 Result File Names" href="content/manual/chap12.html#sec406"/>
+      <topic label="12.2.4 Configuring Scalar Results" href="content/manual/chap12.html#sec407"/>
+      <topic label="12.2.5 Configuring Output Vectors" href="content/manual/chap12.html#sec408"/>
+      <topic label="12.2.6 Saving Parameters as Scalars" href="content/manual/chap12.html#sec409"/>
+      <topic label="12.2.7 Recording Precision" href="content/manual/chap12.html#sec410"/>
+    </topic>
+    <topic label="12.3 Overview of the Result File Formats" href="content/manual/chap12.html#sec411">
+      <topic label="12.3.1 Output Vector Files" href="content/manual/chap12.html#sec412"/>
+      <topic label="12.3.2 Scalar Result Files" href="content/manual/chap12.html#sec413"/>
+    </topic>
+    <topic label="12.4 The Analysis Tool in the Simulation IDE" href="content/manual/chap12.html#sec414"/>
+    <topic label="12.5 Scave Tool" href="content/manual/chap12.html#sec415">
+      <topic label="12.5.1 The filter Command" href="content/manual/chap12.html#sec416"/>
+      <topic label="12.5.2 The index Command" href="content/manual/chap12.html#sec417"/>
+      <topic label="12.5.3 The summary Command" href="content/manual/chap12.html#sec418"/>
+    </topic>
+    <topic label="12.6 Alternative Statistical Analysis and Plotting Tools" href="content/manual/chap12.html#sec419">
+      <topic label="12.6.1 GNU R" href="content/manual/chap12.html#sec420"/>
+      <topic label="12.6.2 NumPy, SciPy and MatPlotLib" href="content/manual/chap12.html#sec421"/>
+      <topic label="12.6.3 MATLAB or Octave" href="content/manual/chap12.html#sec422"/>
+      <topic label="12.6.4 Gnuplot" href="content/manual/chap12.html#sec423"/>
+      <topic label="12.6.5 ROOT" href="content/manual/chap12.html#sec424"/>
+      <topic label="12.6.6 Grace" href="content/manual/chap12.html#sec425"/>
+      <topic label="12.6.7 Spreadsheet Programs" href="content/manual/chap12.html#sec426"/>
+    </topic>
+  </topic>
+  <topic label="13 Eventlog" href="content/manual/chap13.html#sec427">
+    <topic label="13.1 Introduction" href="content/manual/chap13.html#sec428"/>
+    <topic label="13.2 Configuration" href="content/manual/chap13.html#sec429">
+      <topic label="13.2.1 File Name" href="content/manual/chap13.html#sec430"/>
+      <topic label="13.2.2 Recording Intervals" href="content/manual/chap13.html#sec431"/>
+      <topic label="13.2.3 Recording Modules" href="content/manual/chap13.html#sec432"/>
+      <topic label="13.2.4 Recording Message Data" href="content/manual/chap13.html#sec433"/>
+    </topic>
+    <topic label="13.3 Eventlog Tool" href="content/manual/chap13.html#sec434">
+      <topic label="13.3.1 Filter" href="content/manual/chap13.html#sec435"/>
+      <topic label="13.3.2 Echo" href="content/manual/chap13.html#sec436"/>
+    </topic>
+  </topic>
+  <topic label="14 Documenting NED and Messages" href="content/manual/chap14.html#sec437">
+    <topic label="14.1 Overview" href="content/manual/chap14.html#sec438"/>
+    <topic label="14.2 Documentation Comments" href="content/manual/chap14.html#sec439">
+      <topic label="14.2.1 Private Comments" href="content/manual/chap14.html#sec440"/>
+      <topic label="14.2.2 More on Comment Placement" href="content/manual/chap14.html#sec441"/>
+    </topic>
+    <topic label="14.3 Referring to Other NED and Message Types" href="content/manual/chap14.html#sec442">
+      <topic label="14.3.1 Automatic Linking" href="content/manual/chap14.html#sec443"/>
+      <topic label="14.3.2 Tilde Linking" href="content/manual/chap14.html#sec444"/>
+    </topic>
+    <topic label="14.4 Text Layout and Formatting" href="content/manual/chap14.html#sec445">
+      <topic label="14.4.1 Paragraphs and Lists" href="content/manual/chap14.html#sec446"/>
+      <topic label="14.4.2 Special Tags" href="content/manual/chap14.html#sec447"/>
+      <topic label="14.4.3 Text Formatting Using HTML" href="content/manual/chap14.html#sec448"/>
+      <topic label="14.4.4 Escaping HTML Tags" href="content/manual/chap14.html#sec449"/>
+    </topic>
+    <topic label="14.5 Customizing and Adding Pages" href="content/manual/chap14.html#sec450">
+      <topic label="14.5.1 Adding a Custom Title Page" href="content/manual/chap14.html#sec451"/>
+      <topic label="14.5.2 Adding Extra Pages" href="content/manual/chap14.html#sec452"/>
+      <topic label="14.5.3 Incorporating Externally Created Pages" href="content/manual/chap14.html#sec453"/>
+    </topic>
+    <topic label="14.6 File inclusion" href="content/manual/chap14.html#sec454"/>
+  </topic>
+  <topic label="15 Parallel Distributed Simulation" href="content/manual/chap15.html#sec455">
+    <topic label="15.1 Introduction to Parallel Discrete Event Simulation" href="content/manual/chap15.html#sec456"/>
+    <topic label="15.2 Assessing Available Parallelism in a Simulation Model" href="content/manual/chap15.html#sec457"/>
+    <topic label="15.3 Parallel Distributed Simulation Support in OMNeT++" href="content/manual/chap15.html#sec458">
+      <topic label="15.3.1 Overview" href="content/manual/chap15.html#sec459"/>
+      <topic label="15.3.2 Parallel Simulation Example" href="content/manual/chap15.html#sec460"/>
+      <topic label="15.3.3 Placeholder Modules, Proxy Gates" href="content/manual/chap15.html#sec461"/>
+      <topic label="15.3.4 Configuration" href="content/manual/chap15.html#sec462"/>
+      <topic label="15.3.5 Design of PDES Support in OMNeT++" href="content/manual/chap15.html#sec463"/>
+    </topic>
+  </topic>
+  <topic label="16 Plug-in Extensions" href="content/manual/chap16.html#sec464">
+    <topic label="16.1 Overview" href="content/manual/chap16.html#sec465"/>
+    <topic label="16.2 Plug-in Descriptions" href="content/manual/chap16.html#sec466">
+      <topic label="16.2.1 Defining a New Random Number Generator" href="content/manual/chap16.html#sec467"/>
+      <topic label="16.2.2 Defining a New Scheduler" href="content/manual/chap16.html#sec468"/>
+      <topic label="16.2.3 Defining a New Configuration Provider" href="content/manual/chap16.html#sec469"/>
+      <topic label="16.2.4 Defining a New Output Scalar Manager" href="content/manual/chap16.html#sec470"/>
+      <topic label="16.2.5 Defining a New Output Vector Manager" href="content/manual/chap16.html#sec471"/>
+      <topic label="16.2.6 Defining a New Snapshot Manager" href="content/manual/chap16.html#sec472"/>
+    </topic>
+    <topic label="16.3 Accessing the Configuration" href="content/manual/chap16.html#sec473">
+      <topic label="16.3.1 Defining New Configuration Options" href="content/manual/chap16.html#sec474"/>
+      <topic label="16.3.2 Reading Values from the Configuration" href="content/manual/chap16.html#sec475"/>
+    </topic>
+    <topic label="16.4 Implementing a New User Interface" href="content/manual/chap16.html#sec476"/>
+  </topic>
+  <topic label="17 Embedding the Simulation Kernel" href="content/manual/chap17.html#sec477">
+    <topic label="17.1 Architecture" href="content/manual/chap17.html#sec478"/>
+    <topic label="17.2 Embedding the OMNeT++ Simulation Kernel" href="content/manual/chap17.html#sec479">
+      <topic label="17.2.1 The main() Function" href="content/manual/chap17.html#sec480"/>
+      <topic label="17.2.2 The simulate() Function" href="content/manual/chap17.html#sec481"/>
+      <topic label="17.2.3 Providing an Environment Object" href="content/manual/chap17.html#sec482"/>
+      <topic label="17.2.4 Providing a Configuration Object" href="content/manual/chap17.html#sec483"/>
+      <topic label="17.2.5 Loading NED Files" href="content/manual/chap17.html#sec484"/>
+      <topic label="17.2.6 How to Eliminate NED Files" href="content/manual/chap17.html#sec485"/>
+      <topic label="17.2.7 Assigning Module Parameters" href="content/manual/chap17.html#sec486"/>
+      <topic label="17.2.8 Extracting Statistics from the Model" href="content/manual/chap17.html#sec487"/>
+      <topic label="17.2.9 The Simulation Loop" href="content/manual/chap17.html#sec488"/>
+      <topic label="17.2.10 Multiple, Coexisting Simulations" href="content/manual/chap17.html#sec489"/>
+      <topic label="17.2.11 Installing a Custom Scheduler" href="content/manual/chap17.html#sec490"/>
+      <topic label="17.2.12 Multi-Threaded Programs" href="content/manual/chap17.html#sec491"/>
+    </topic>
+  </topic>
+  <topic label="18 Appendix&#58; NED Reference" href="content/manual/chap18.html#sec492">
+    <topic label="18.1 Syntax" href="content/manual/chap18.html#sec493">
+      <topic label="18.1.1 NED File Name Extension" href="content/manual/chap18.html#sec494"/>
+      <topic label="18.1.2 NED File Encoding" href="content/manual/chap18.html#sec495"/>
+      <topic label="18.1.3 Reserved Words" href="content/manual/chap18.html#sec496"/>
+      <topic label="18.1.4 Identifiers" href="content/manual/chap18.html#sec497"/>
+      <topic label="18.1.5 Case Sensitivity" href="content/manual/chap18.html#sec498"/>
+      <topic label="18.1.6 Literals" href="content/manual/chap18.html#sec499"/>
+      <topic label="18.1.7 Comments" href="content/manual/chap18.html#sec500"/>
+      <topic label="18.1.8 Grammar" href="content/manual/chap18.html#sec501"/>
+    </topic>
+    <topic label="18.2 Built-in Definitions" href="content/manual/chap18.html#sec502"/>
+    <topic label="18.3 Packages" href="content/manual/chap18.html#sec503">
+      <topic label="18.3.1 Package Declaration" href="content/manual/chap18.html#sec504"/>
+      <topic label="18.3.2 Directory Structure, package.ned" href="content/manual/chap18.html#sec505"/>
+    </topic>
+    <topic label="18.4 Components" href="content/manual/chap18.html#sec506">
+      <topic label="18.4.1 Simple Modules" href="content/manual/chap18.html#sec507"/>
+      <topic label="18.4.2 Compound Modules" href="content/manual/chap18.html#sec508"/>
+      <topic label="18.4.3 Networks" href="content/manual/chap18.html#sec509"/>
+      <topic label="18.4.4 Channels" href="content/manual/chap18.html#sec510"/>
+      <topic label="18.4.5 Module Interfaces" href="content/manual/chap18.html#sec511"/>
+      <topic label="18.4.6 Channel Interfaces" href="content/manual/chap18.html#sec512"/>
+      <topic label="18.4.7 Resolving the C++ Implementation Class" href="content/manual/chap18.html#sec513"/>
+      <topic label="18.4.8 Properties" href="content/manual/chap18.html#sec514"/>
+      <topic label="18.4.9 Parameters" href="content/manual/chap18.html#sec515"/>
+      <topic label="18.4.10 Pattern Assignments" href="content/manual/chap18.html#sec516"/>
+      <topic label="18.4.11 Gates" href="content/manual/chap18.html#sec517"/>
+      <topic label="18.4.12 Submodules" href="content/manual/chap18.html#sec518"/>
+      <topic label="18.4.13 Connections" href="content/manual/chap18.html#sec519"/>
+      <topic label="18.4.14 Conditional and Loop Connections, Connection Groups" href="content/manual/chap18.html#sec520"/>
+      <topic label="18.4.15 Inner Types" href="content/manual/chap18.html#sec521"/>
+      <topic label="18.4.16 Name Uniqueness" href="content/manual/chap18.html#sec522"/>
+      <topic label="18.4.17 Parameter Assignment Order" href="content/manual/chap18.html#sec523"/>
+      <topic label="18.4.18 Type Name Resolution" href="content/manual/chap18.html#sec524"/>
+      <topic label="18.4.19 Resolution of Parametric Types" href="content/manual/chap18.html#sec525"/>
+      <topic label="18.4.20 Implementing an Interface" href="content/manual/chap18.html#sec526"/>
+      <topic label="18.4.21 Inheritance" href="content/manual/chap18.html#sec527"/>
+      <topic label="18.4.22 Network Build Order" href="content/manual/chap18.html#sec528"/>
+    </topic>
+    <topic label="18.5 Expressions" href="content/manual/chap18.html#sec529">
+      <topic label="18.5.1 Operators" href="content/manual/chap18.html#sec530"/>
+      <topic label="18.5.2 Referencing Parameters and Loop Variables" href="content/manual/chap18.html#sec531"/>
+      <topic label="18.5.3 The index Operator" href="content/manual/chap18.html#sec532"/>
+      <topic label="18.5.4 The sizeof() Operator" href="content/manual/chap18.html#sec533"/>
+      <topic label="18.5.5 Functions" href="content/manual/chap18.html#sec534"/>
+      <topic label="18.5.6 Units of Measurement" href="content/manual/chap18.html#sec535"/>
+    </topic>
+  </topic>
+  <topic label="19 Appendix&#58; NED Language Grammar" href="content/manual/chap19.html#sec536"/>
+  <topic label="20 Appendix&#58; NED XML Binding" href="content/manual/chap20.html#sec537"/>
+  <topic label="21 Appendix&#58; NED Functions" href="content/manual/chap21.html#sec538"/>
+  <topic label="22 Appendix&#58; Message Definitions Grammar" href="content/manual/chap22.html#sec539"/>
+  <topic label="23 Appendix&#58; Display String Tags" href="content/manual/chap23.html#sec540">
+    <topic label="23.1 Module and Connection Display String Tags" href="content/manual/chap23.html#sec541"/>
+    <topic label="23.2 Message Display String Tags" href="content/manual/chap23.html#sec542"/>
+  </topic>
+  <topic label="24 Appendix&#58; Configuration Options" href="content/manual/chap24.html#sec543">
+    <topic label="24.1 Configuration Options" href="content/manual/chap24.html#sec544"/>
+    <topic label="24.2 Predefined Configuration Variables" href="content/manual/chap24.html#sec545"/>
+  </topic>
+  <topic label="25 Appendix&#58; Result File Formats" href="content/manual/chap25.html#sec546">
+    <topic label="25.1 Version" href="content/manual/chap25.html#sec547"/>
+    <topic label="25.2 Run Declaration" href="content/manual/chap25.html#sec548"/>
+    <topic label="25.3 Attributes" href="content/manual/chap25.html#sec549"/>
+    <topic label="25.4 Module Parameters" href="content/manual/chap25.html#sec550"/>
+    <topic label="25.5 Scalar Data" href="content/manual/chap25.html#sec551"/>
+    <topic label="25.6 Vector Declaration" href="content/manual/chap25.html#sec552"/>
+    <topic label="25.7 Vector Data" href="content/manual/chap25.html#sec553"/>
+    <topic label="25.8 Index Header" href="content/manual/chap25.html#sec554"/>
+    <topic label="25.9 Index Data" href="content/manual/chap25.html#sec555"/>
+    <topic label="25.10 Statistics Object" href="content/manual/chap25.html#sec556"/>
+    <topic label="25.11 Field" href="content/manual/chap25.html#sec557"/>
+    <topic label="25.12 Histogram Bin" href="content/manual/chap25.html#sec558"/>
+  </topic>
+  <topic label="26 Appendix&#58; Eventlog File Format" href="content/manual/chap26.html#sec559">
+    <topic label="26.1 Supported Entry Types and Their Attributes" href="content/manual/chap26.html#sec560"/>
+  </topic>
+</toc>

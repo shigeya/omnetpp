@@ -1,0 +1,103 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Writing an Example Wizard</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="IDE Customization Guide"><link rel="up" href="ch01.html" title="Chapter 1. Writing Wizards"><link rel="prev" href="ch01s03.html" title="Using the IDE"><link rel="next" href="ch01s05.html" title="Wizard Types"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Writing an Example Wizard</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch01s03.html">Prev</a> </td><th width="60%" align="center">Chapter 1. Writing Wizards</th><td width="20%" align="right"> <a accesskey="n" href="ch01s05.html">Next</a></td></tr></table><hr></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_writing_an_example_wizard"></a>Writing an Example Wizard</h2></div></div></div><p>In the following sections, we will create a simple wizard as an example, which
+will support either creating a simulation (complete with NED and INI files),
+or just a single NED file with a network defined in it. The user will be able to
+specify the type and the number of the submodules the network contains.</p><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_configuring_the_wizard"></a>Configuring the Wizard</h3></div></div></div><p>The first step when creating a wizard is to create a new folder
+under the <code class="literal">templates</code> directory of the project. A file named <code class="literal">template.properties</code>
+must be present in the newly created directory. This file is used to configure
+the wizard. Create a folder a folder named <code class="literal">templates/examplewizard</code> under the
+project, then create <code class="literal">template.properties</code> and add the following lines to it:</p><pre class="literallayout">templateName = New Test Wizard
+templateDescription = Generate an example
+templateCategory = Test Wizards
+supportedWizardTypes = simulation, network</pre><p>These lines specify the name, type and category for the wizard. Category is used to
+specify how the wizards will be grouped in the tree control section of the template selection page.
+Wizard type specifies in which <span class="emphasis"><em>New &#8230; Wizard</em></span>  your wizard will appear.
+You can specify one or more of <code class="literal">project</code>, <code class="literal">simulation</code>, <code class="literal">network</code>, etc.; the list
+of all possible wizard types will be covered later in this document. In this case,
+the wizard will appear in the <span class="emphasis"><em>New Simulation</em></span> and <span class="emphasis"><em>New Network</em></span> wizard dialogs.</p><p>You can now decide what data you would like to ask the user to provide.
+Template variables and their values can be defined as key-value pairs:</p><pre class="literallayout">nodeType = Dummy
+networkSize = 6</pre><p>The <code class="literal">nodeType</code> variable will be used as the submodule type in your network, while
+the <code class="literal">networkSize</code> defines how many submodules you want in the network.</p><p>We define a custom wizard page where the user can specify the values
+of the above variables (i.e. override their default value, specified above).</p><pre class="literallayout">page.1.file = parameters.xswt
+page.1.title = Network parameters</pre><p>We will use the file <code class="literal">parameters.xswt</code> to define the layout and the content of the new wizard page.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>There are numerous other configuration keys that can be used in <code class="literal">template.properties</code>. See the
+"Configuration Keys" section for an exhaustive list of options.</p></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_creating_a_new_wizard_page"></a>Creating a New Wizard Page</h3></div></div></div><p>Files with <code class="literal">.xswt</code> extension (Wizard Page definitions) are used to define the UI and
+add new wizard pages to gather user input for template generation. In the previous
+section, we specified that the file called <code class="literal">parameters.xswt</code> will contain the new
+wizard page definition. We will add a <span class="emphasis"><em>spinner</em></span> control to specify the size of our network
+and a <span class="emphasis"><em>text</em></span> control to specify the node type. Create a new file called <code class="literal">parameters.xswt</code>
+with the following content:</p><pre class="literallayout">&lt;xswt xmlns:x="http://sweet_swt.sf.net/xswt"&gt;
+  &lt;x:import&gt;
+    &lt;!-- Import all widgets and utility classes  --&gt;
+    &lt;package name="java.lang"/&gt;
+    &lt;package name="org.eclipse.swt.widgets" /&gt;
+    &lt;package name="org.eclipse.swt.graphics" /&gt;
+    &lt;package name="org.eclipse.swt.layout" /&gt;
+    &lt;package name="org.eclipse.swt.custom" /&gt;
+    &lt;package name="org.omnetpp.common.wizard.support" /&gt;
+    &lt;package name="org.omnetpp.ned.editor.wizards.support" /&gt;
+    &lt;package name="org.omnetpp.cdt.wizard.support" /&gt;
+  &lt;/x:import&gt;
+  &lt;!-- Create a two-column layout  --&gt;
+  &lt;layout x:class="GridLayout" numColumns="2"/&gt;
+  &lt;x:children&gt;
+    &lt;!-- First row --&gt;
+    &lt;label text="Number of nodes in the network:"/&gt;
+    &lt;spinner x:id="networkSize" minimum="2" x:style="BORDER"/&gt;
+    &lt;!-- Second row --&gt;
+    &lt;label text="Type of nodes:"/&gt;
+    &lt;text x:id="nodeType" x:style="BORDER"/&gt;
+  &lt;/x:children&gt;
+&lt;/xswt&gt;</pre><p>The above defined wizard page will have two columns. The first column contains labels
+and the second contains editable widgets.
+The <code class="literal">x:id="varName"</code> attributes in the spinner and text control definitions are used
+to bind a template variable to the control. When a page is displayed, the content of
+the bound variables are copied into the controls. When the user navigates away from
+the page or presses the <span class="emphasis"><em>Finish</em></span> button, the content of the controls are copied back
+to the bound variables. These variables can be used in the template files we are
+about to define in the following section.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>To see the list of all available widgets, check the Appendix.</p></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_creating_templated_files"></a>Creating Templated Files</h3></div></div></div><p>When the template is used, the contents of the template folder (and its subfolders)
+will be copied over into the new project, thus preserving the directory structure
+with the exception of <code class="literal">template.properties</code> (it is also possible to specify
+other files and folders to be ignored by specifying a file list for the
+<code class="literal">ignoreResources</code> configuration key).</p><p>When the wizard is being used, a pool of variables is kept by the wizard dialog.
+These variables are initialized from the <code class="literal">key = value</code> lines in the
+<code class="literal">template.properties</code> files; they can get displayed and/or edited
+on custom wizard pages. Eventually, they get substituted into <code class="literal">*.ftl</code> files
+(using the <code class="literal">${varname}</code> syntax).</p><p>Some variables have special meaning and are interpreted by the wizard dialog
+(e.g. the <code class="literal">nedSrcFolders</code> variable determines which folders get denoted as
+NED Source Folders by the <span class="emphasis"><em>New OMNeT++ Project</em></span> wizard). Variables can be used
+to generate output file names, can be used as input file names, and can serve
+as input and working variables for arbitrarily complex algorithms programmed
+in the template (<code class="literal">*.ftl</code>) files.</p><p>Let us have a quick look at the FreeMarker template language.
+Variables can be inserted into the output using the <code class="literal">${varname}</code> syntax. One can
+also write expressions inside <code class="literal">${..}</code>. For example, <code class="literal">${numServers?number + 1}</code>
+uses the <code class="literal">number</code> built-in operator to convert the <code class="literal">numServers</code> variable to a number,
+adds one to it, and inserts the result into the template output. FreeMarker
+has many other functions (conversion to string, upper-case version of a string,
+size of an array, etc.) that work as built-in operators.</p><p>Programming facilities can be accessed via directives that have the <code class="literal">&lt;#...&gt;</code> syntax.
+Use <code class="literal">&lt;#if&gt;</code> (<code class="literal">&lt;#if&gt; cond&gt;..&lt;#elseif cond&gt;..&lt;#else&gt;..&lt;/#if&gt;</code>) for conditionals;
+<code class="literal">&lt;#list&gt;</code> for iterations and loops (e.g. <code class="literal">&lt;#list words as w&gt;..&lt;/#list&gt;</code>;
+<code class="literal">&lt;#list 0..9 as i&gt;..&lt;/#list&gt;</code>; <code class="literal">&lt;#list 9..0 as i&gt;..&lt;/#list&gt;</code>); and
+<code class="literal">&lt;#assign&gt;</code> for assigning variables (<code class="literal">&lt;#assign x=5&gt;</code>; <code class="literal">&lt;#assign x&gt;the number ${i}&lt;/#assign&gt;</code>).
+One can define functions (<code class="literal">&lt;#function&gt;</code>) and macros (<code class="literal">&lt;#macros&gt;</code>). You can also include
+other templates (<code class="literal">&lt;#include&gt;</code>). Here, we only covered a small fraction of FreeMarker&#8217;s
+possibilities; we recommend that you read the FreeMarker manual for more information.</p><p>Let us create a file with a filename that has an <code class="literal">.ftl</code> extension (e.g. <code class="literal">untitled.ned.ftl</code>).
+Because of the extension, this file will be processed by the templating engine.
+The actual name of the file does not matter, because the
+<code class="literal">&lt;@setoutput .../&gt;</code> directive instructs the templating engine to output
+everything from the current file into the file that is specified by the
+<code class="literal">targetFileName</code> variable. The <code class="literal">targetFileName</code>, <code class="literal">targetTypeName</code>, <code class="literal">bannerComment</code>
+and <code class="literal">nedPackageName</code> variables are automatically filled out by the wizard, based
+on the filename and folder the user selected on the first wizard page.</p><pre class="literallayout">&lt;@setoutput path=targetFileName /&gt;
+${bannerComment}</pre><pre class="literallayout">&lt;#if nedPackageName!=""&gt;package ${nedPackageName};&lt;/#if&gt;</pre><pre class="literallayout">network ${targetTypeName}
+{
+    node[${networkSize}] : ${nodeType}
+}</pre><p>The template variables will be substituted into the template automatically.</p><p>Specific wizard dialog types will also define extra variables for use in the
+templates. For example, the wizard type that creates a complete simulation (with all required files)
+will put the <code class="literal">simulationName</code> variable into the context. To see all defined variables,
+check the Appendix.</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Tip</h3><p>The <span class="emphasis"><em>New Wizard</em></span> wizard in the IDE provides you with some
+     working examples, useful utilities for writing wizards, and sample code for
+     accessing various features along with other helpful information. The aim of these wizards is to help you become
+     productive in the shortest time possible.</p></div><p>As a last step in our example, we will also create an INI file template:</p><p>Create a file called <code class="literal">omnetpp.ini.ftl</code>, and fill with:</p><pre class="literallayout">&lt;#if wizardType=="simulation"&gt;
+network = ${targetTypeName}
+&lt;/#if&gt;</pre><p>We need the INI file only if we are creating a simulation. If the
+current type is not <code class="literal">simulation</code>, the content will be empty, and the
+file will not be written to the disk.</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch01s03.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch01.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch01s05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Using the IDE </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Wizard Types</td></tr></table></div></body></html>

@@ -1,0 +1,18 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Profiling a Simulation on Linux</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="OMNeT&#8288;+&#8288;+ User Guide"><link rel="up" href="ch06.html" title="Chapter 6. Launching and Debugging"><link rel="prev" href="ch06s05.html" title="Debugging a Simulation"><link rel="next" href="ch06s07.html" title="Controlling the Execution and Progress Reporting"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Profiling a Simulation on Linux</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch06s05.html">Prev</a> </td><th width="60%" align="center">Chapter 6. Launching and Debugging</th><td width="20%" align="right"> <a accesskey="n" href="ch06s07.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id279117"></a>Profiling a Simulation on Linux</h2></div></div></div><p>
+      On Linux systems, the OMNeT&#8288;+&#8288;+ IDE supports executing your simulation using the <span class="emphasis"><em>valgrind</em></span> program.
+      Running your program with valgrind allows you to find memory-related issues and programming errors
+      in your code. The simulation will run in an emulated environment (much slower than normal
+      execution speeds), but valgrind will generate a detailed report when it finishes.
+      The report is shown in a separate <span class="emphasis"><em>Valgrind View</em></span> at the end of the simulation run.
+      The OMNeT&#8288;+&#8288;+ IDE contains support only for the <span class="emphasis"><em>memcheck</em></span> tool. If you want to use
+      other tools (<span class="emphasis"><em>cachegrind, callgrind, massif</em></span> etc.), you may try to install the full 'Linux
+      Tools Project' from the Eclipse Marketplace.
+    </p><p>
+      To start profiling, right-click on your project in the <span class="emphasis"><em>Project Explorer</em></span> tree
+      and select <span class="emphasis"><em>Profile As... | OMNeT&#8288;+&#8288;+ Simulation</em></span>. Valgrind must already be installed
+      on your system.
+    </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+        Simulation executes considerably slower than a normal run. Prepare for long run-times or
+        limit the simulation time in your .INI file. You do not need statistical convergence here,
+        just run long enough that all the code paths are executed in your model.
+    </div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch06s05.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch06.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch06s07.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Debugging a Simulation </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Controlling the Execution and Progress Reporting</td></tr></table></div></body></html>

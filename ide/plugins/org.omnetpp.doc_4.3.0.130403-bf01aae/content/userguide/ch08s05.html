@@ -1,0 +1,91 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Filter Dialog</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="OMNeT&#8288;+&#8288;+ User Guide"><link rel="up" href="ch08.html" title="Chapter 8. Sequence Charts"><link rel="prev" href="ch08s04.html" title="Eventlog Table"><link rel="next" href="ch08s06.html" title="Other Features"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Filter Dialog</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch08s04.html">Prev</a> </td><th width="60%" align="center">Chapter 8. Sequence Charts</th><td width="20%" align="right"> <a accesskey="n" href="ch08s06.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id282490"></a>Filter Dialog</h2></div></div></div><p>
+      The content of an eventlog can be filtered within the OMNeT&#8288;+&#8288;+ IDE. This is
+      on-the-fly filtering as opposed to the file content filtering provided by the <code class="literal">Eventlog</code>
+      tool. To use on the fly filtering, open the filter configuration dialog with the
+      button <span class="guibutton"><img src="icons/filter.png"></span> on the toolbar, enable some of the range, module,
+      message, or trace filters, set the various filter parameters, and apply the settings. The
+      result is another eventlog, resident in memory, that filters out some events.
+      </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+	Similar to the command line <code class="literal">Eventlog</code> tool described in the OMNeT&#8288;+&#8288;+ Manual,
+	the in-memory filtering can only filter out whole events.
+      </div><p>
+    </p><p>
+      In-memory, on-the-fly filtering means that the filter's result is not saved into an
+      eventlog file, but it is computed and stored within memory. This
+      allows rapid switching between different views of the same eventlog within both the
+      Sequence Chart and the Eventlog Table.
+    </p><p>
+      The filter configuration dialog shown in <a class="xref" href="ch08s05.html#pictures/SequenceChart-FilterDialog.png" title="Figure 8.14.  Filter Dialog">Figure 8.14, &#8220;
+      Filter Dialog
+    &#8221;</a> has many options. They are organized into
+      a tree with each part restricting the eventlog's content. The individual filter
+      components may be turned on and off independent of each other. This allows
+      remembering the filter settings even if some of them are temporarily unused.
+    </p><p>
+      The combination of various filter options might be complicated and hard to
+      understand. To make it easier, the <span class="emphasis"><em>Filter Dialog</em></span> automatically
+      displays the current filter in a human readable form at the bottom of the dialog.
+    </p><div class="figure"><a name="pictures/SequenceChart-FilterDialog.png"></a><p class="title"><b>Figure 8.14. 
+      Filter Dialog
+    </b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/SequenceChart-FilterDialog.png" align="middle" alt="Filter Dialog"></div></div></div></div><br class="figure-break"><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id282569"></a>Range Filter</h3></div></div></div><p>
+	This is the simplest filter, which filters out events from the beginning and
+	end of the eventlog. It might help to reduce the computation time dramatically
+	when defining filters, which otherwise would be very expensive to compute for the
+	whole eventlog file.
+      </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id282582"></a>Module Filter</h3></div></div></div><p>
+	With this kind of filter, you can filter out events that did not occur in any of
+	the specified modules. The modules which will be included in the result can be
+	selected by their NED type, full path, module id, or by a match expression. The
+	expression may refer to the raw data present in the lines marked with 'MC' in the
+	eventlog file.
+      </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id282594"></a>Message Filter</h3></div></div></div><p>
+	This filter is the most complicated one. It allows filtering for events, which
+	either process or send specific messages. The messages can be selected based on
+	their C++ class name, message name, various message ids, and a match expression.
+	The expression may refer to the raw data present in the lines marked with 'BS' in
+	the eventlog file.
+      </p><p>
+	There are four different message ids to filter, each with different
+	characteristics. The most basic one is the id, which is unique for each
+	constructed message independent of how it was created. The tree id is special
+	because it gets copied over when a message is created by copying (duplicating)
+	another. The encapsulation id is different in that it gives the id of the
+	innermost encapsulated message. Finally, the encapsulation tree id combines the
+	two by providing the innermost encapsulated message's tree id.
+      </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id282615"></a>Tracing Causes/Consequences</h3></div></div></div><p>
+	The trace filter allows filtering for causes and consequence of a particular event
+	specified by its event number. The cause/consequence relation between two events
+	means that there is a message send/reuse path from the cause event to the
+	consequence event. If there was a message reuse in the path, then the whole path
+	is considered to be a message reuse itself.
+      </p><div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Warning</h3>
+	Since computing the causes and consequences in an eventlog file that is far away from the
+	traced event might be a time consuming task, the user can set extra range limits around
+	the traced event. These limits are separate from the range filter due to
+	being relative to the traced event. This means that if you change the traced event,
+	there is no need to change the range parameters. It is strongly recommended that users
+	provide these limits when tracing events to avoid long running operations.
+      </div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id282636"></a>Collection Limits</h3></div></div></div><p>
+	When an in-memory filter is applied to an eventlog, it does not only filter out
+	events, but it also provides automatic discovery for virtual message sends. It
+	means that two events far away, and not directly related to each other, might have
+	a virtual message send (or reuse) between them. Recall that there is a virtual
+	message send (or reuse) between two events if and only if there is a path of
+	message sends (or reuses) connecting the two.
+      </p><p>
+	The process of collecting these virtual message dependencies is time consuming and
+	thus has to be limited. There are two options. The first one limits the number of
+	virtual message sends collected per event. The other one limits the depth of
+	cause/consequence chains during collection.
+      </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id282656"></a>Long-Running Operations</h3></div></div></div><p>
+	Sometimes, computing the filter's result takes a lot of time, especially when
+	tracing causes/consequences without specifying proper range limits in terms of
+	event numbers or simulation times. If you cancel a long running operation,
+	you can go back to the <span class="emphasis"><em>Filter Dialog</em></span> to modify the filter
+	parameters, or simply turn the filter off. To restart drawing, use the refresh button
+	<span class="guibutton"><img src="icons/refresh.gif"></span> on the toolbar.
+	</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Tip</h3>
+	  Providing a proper range filter is always a good idea to speed up computing the
+	  filter's result.
+	</div><p>
+      </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch08s04.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch08.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch08s06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Eventlog Table </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Other Features</td></tr></table></div></body></html>

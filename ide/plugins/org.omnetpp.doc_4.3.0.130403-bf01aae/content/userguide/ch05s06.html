@@ -1,0 +1,184 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Configuring the Project</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="OMNeT&#8288;+&#8288;+ User Guide"><link rel="up" href="ch05.html" title="Chapter 5. C++ Development"><link rel="prev" href="ch05s05.html" title="Building the Project"><link rel="next" href="ch05s07.html" title="Project Features"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Configuring the Project</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch05s05.html">Prev</a> </td><th width="60%" align="center">Chapter 5. C++ Development</th><td width="20%" align="right"> <a accesskey="n" href="ch05s07.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id276453"></a>Configuring the Project</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id276458"></a>Configuring the Build Process</h3></div></div></div><p>The make invocation can be configured on <span class="emphasis"><em>C/C++ Build</em></span> page of the <span class="emphasis"><em>Project Properties</em></span> dialog.
+        Most settings are already set correctly and do not need to be changed. One exception is the
+        <span class="emphasis"><em>Use parallel build</em></span> option on the <span class="emphasis"><em>Behavior</em></span> tab that you may want to enable, especially
+        if you have a multi-core computer.</p><div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Warning</h3>
+        Do not set the number of parallel jobs to be significantly higher than the number of CPU cores
+        you have. In particular, never turn on the <span class="emphasis"><em>Optimal jobs number</em></span> feature, as it will start
+        an excessive number of processes and you will run out of physical memory!
+        </div><p>We do not recommend that you change any setting on property pages under the
+        <span class="emphasis"><em>C/C++ Build</em></span> tree node.</p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id276502"></a>Managing Build Configurations</h3></div></div></div><p>A project may have several build configurations, where each configuration describes
+            the selected compiler toolchain, debug or release mode, any potential extra include and
+            linker paths, defined symbols, etc. You can activate, create or delete build configurations
+            under the <span class="emphasis"><em>Build Configurations</em></span> submenu of the project context menu.</p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id276519"></a>Configuring the Project Build System</h3></div></div></div><p>OMNeT&#8288;+&#8288;+ uses makefiles to build the project. You can use a single makefile for
+        the whole project, or a hiearchy of makefiles. Each makefile may be hand-written
+        (i.e. provided by you), or generated automatically. The IDE provides several
+        options for automatically created makefiles.
+        </p><p>The build system for an OMNeT&#8288;+&#8288;+ project can be configured on the
+        <span class="emphasis"><em>OMNeT&#8288;+&#8288;+ | Makemake</em></span> page of the <span class="emphasis"><em>Project Properties</em></span> dialog.
+        All settings you do in this page will affect all build configurations.
+        </p><div class="figure"><a name="pictures/CPP-SourceFolder.png"></a><p class="title"><b>Figure 5.14. Configuring Makefiles</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/CPP-SourceFolder.png" align="middle" alt="Configuring Makefiles"></div></div></div></div><p><br class="figure-break">
+        </p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id276566"></a>Folders and Makefiles</h4></div></div></div><p>The page displays the folder tree of the project. Using controls on
+            the page (<span class="emphasis"><em>Build</em></span> group in the top-right corner), you can declare that
+            a selected folder contains a hand-written (custom) makefile, or
+            tell the IDE to generate a makefile for you. Generated makefiles will be
+            automatically refreshed before each build.  If a makefile is configured
+            for a folder, the makefile kind will be indicated with a small
+            decoration on the folder icon.
+            </p><p>The build root folder is indicated with a small arrow. This is the
+            folder in which the IDE's <span class="emphasis"><em>Build</em></span> function will invoke the make command,
+            so it should contain a makefile. It is expected that this makefile
+            will build the whole project, so it is supposed to invoke all other makefiles,
+            either directly or indirectly. By default, the build root folder is
+            the project root.  This is usually fine, but if you really need to change
+            the project build root, overwrite the <span class="emphasis"><em>Build location</em></span> setting
+            in the <span class="emphasis"><em>C/C++ Build</em></span> page of the same dialog.
+            </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+            All generated makefiles will be named <code class="literal">Makefile</code>;
+            custom makefiles are also expected to have this name.
+            </div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id276610"></a>Source Folders</h4></div></div></div><p>In addition to makefiles, you also need to specify where your C++ files are
+            located (source folders). This is usually the <code class="literal">src</code> folder of the project,
+            or, for small projects, the project root. It is also possible to exclude folders
+            from a source folder. The controls on the right-bottom part of the dialog
+            (<span class="emphasis"><em>Source</em></span> group) allow you to set up source folders and exclusions on
+            the project. Source files that are outside source folders or are in an excluded
+            folder will be ignored by both the IDE and the build process.
+            </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+            Source folders and exclusions that you configure on this page actually
+            modify the contents of the <span class="emphasis"><em>Source Location</em></span> tab of the <span class="emphasis"><em>C++ General | Paths and Symbols</em></span>
+            page of the project properties dialog; the changes will affect all build
+            configurations.
+            </div><p>Automatically created makefiles are by default <span class="emphasis"><em>deep</em></span>, meaning that
+            they include all (non-excluded) source files under them in the build.
+            That is, a source file will be included in the build if it is both under
+            a source folder and covered by a makefile. (This applies to automatically
+            generated makefiles; the IDE has obviously no control over the behaviour
+            of custom makefiles.)
+            </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id276654"></a>Makefile Generation</h4></div></div></div><p>Makefile generation for the selected folder can be configured on the
+            <span class="emphasis"><em>Makemake Options</em></span> dialog, which can be brought up by clicking the
+            <span class="emphasis"><em>Options</em></span> button on the page. The dialog is described in the next section.
+            </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id276672"></a>Command-line Build</h4></div></div></div><p>To re-create your makefiles on the command line, you can export the
+            settings by pressing the <span class="emphasis"><em>Export</em></span> button. This action will create a file
+            with the name <code class="literal">makemakefiles</code>. After exporting, execute <code class="literal">make -f makemakefiles</code>
+            from the command line.
+            </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id276695"></a>Configuring Makefile Generation for a Folder</h3></div></div></div><p>Makefile generation for a folder can be configured in the <span class="emphasis"><em>Makemake Options</em></span>
+        dialog. To access the dialog, open the <span class="emphasis"><em>OMNeT++ | Makemake</em></span> page in the
+        <span class="emphasis"><em>Project Properties</em></span> dialog, select the folder, make sure makefile generation
+        is enabled for it, and click the <span class="emphasis"><em>Options</em></span> button.
+        </p><p>The following sections describe each page of the dialog.
+        </p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id276725"></a>The <span class="emphasis"><em>Target</em></span> Tab</h4></div></div></div><p>On the first, <span class="emphasis"><em>Target</em></span> tab of the dialog, you can specify how the final
+          target of the makefile is created.
+            </p><div class="itemizedlist"><ul type="disc"><li><span class="emphasis"><em>Target type</em></span>: The build target can be an executable, a shared or static library,
+                or the linking step may be omitted altogether.
+                Makemake options: <code class="literal">--make-so</code>, <code class="literal">--make-lib</code>, <code class="literal">--nolink</code></li><li><span class="emphasis"><em>Export this shared/static library for other projects</em></span>: This option is observed
+                if a library (shared or static) is selected as target type, and works in conjunction
+                with the <span class="emphasis"><em>Link with libraries exported from referenced projects</em></span> option on the <span class="emphasis"><em>Link</em></span> tab.
+                Namely, referencing projects will automatically link with this library if both the library is
+                exported from this project AND linking with exported libraries is enabled in the referencing project.
+                Makemake option: <code class="literal">--meta:export-library</code></li><li><span class="emphasis"><em>Target name</em></span>: You may set the target name. The default value is derived from the project name.
+                Makemake option: <code class="literal">-o</code></li><li><span class="emphasis"><em>Output directory</em></span>: The output directory specifies where the object files and the final target
+                will be created, relative to the project root. Makemake option: <code class="literal">-O</code></li></ul></div><p>
+          </p><div class="figure"><a name="pictures/CPP-ConfigureProject2.png"></a><p class="title"><b>Figure 5.15. Target definition</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/CPP-ConfigureProject2.png" align="middle" alt="Target definition"></div></div></div></div><br class="figure-break"></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id276829"></a>The <span class="emphasis"><em>Scope</em></span> Tab</h4></div></div></div><div class="figure"><a name="pictures/CPP-ConfigureProject.png"></a><p class="title"><b>Figure 5.16. Scope of makefile</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/CPP-ConfigureProject.png" align="middle" alt="Scope of makefile"></div></div></div></div><br class="figure-break"><p>
+            The <span class="emphasis"><em>Scope</em></span> tab allows you to configure the scope of the makefile and which source files
+            will be included.</p><div class="itemizedlist"><ul type="disc"><li><span class="emphasis"><em>Deep compile</em></span>: When enabled, the makefile will compile the source files in the whole
+              subdirectory tree (except excluded folders and folder covered by other makefiles).
+              When disabled, the makefile only compiles sources in the makefile's folder.
+              Makemake option: <code class="literal">--deep</code></li><li><span class="emphasis"><em>Recursive make</em></span>: When enabled, the build will invoke make in all descendant folders
+              that are configured to contain a makefile.
+              Makemake option: <code class="literal">--meta:recurse</code> (resolves to multiple <code class="literal">-d</code> options)
+            </li><li><span class="emphasis"><em>More » Additionally invoke make in the following directories</em></span>:
+              If you want to invoke additional makefiles from this makefile, specify which directories
+              should be visited (relative to this makefile). This option is useful if you want to
+              invoke makefiles outside this source tree.
+              Makemake option: <code class="literal">-d</code></li></ul></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id276912"></a>The <span class="emphasis"><em>Compile</em></span> Tab</h4></div></div></div><div class="figure"><a name="pictures/CPP-ConfigureProject3-omnetpp.png"></a><p class="title"><b>Figure 5.17. Compiler options</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/CPP-ConfigureProject3-omnetpp.png" align="middle" alt="Compiler options"></div></div></div></div><br class="figure-break"><p>
+            The <span class="emphasis"><em>Compile</em></span> tab allows you to adjust the parameters passed to the compiler during the build
+            process.</p><p>Settings that affect the include path:</p><div class="itemizedlist"><ul type="disc"><li><span class="emphasis"><em>Add all source folders under this deep makefile</em></span>: When turned on, it adds all folders
+              under this makefile to the include path. This means that source files can include header files
+              from any folder just by using the file name; see the discussion below on resolving ambiguities.
+              Makemake option: <code class="literal">--no-deep-includes</code> (negated option)
+            </li><li><span class="emphasis"><em>Automatically add other folders where include files are located</em></span>: This option
+              supplements the above option, and provides an automatic way to handle inclusions
+              from folders outside this source tree. When turned on, it automatically adds the
+              extra folders necessary for compiling the source files under this makefile.
+              It works by analyzing the include statements in the source files, finds out where the
+              included files are located, and adds those folders to the include path. Only looks at
+              folders outside this source tree, and into referenced projects.
+              Makemake option: <code class="literal">--meta:auto-include-path</code> (resolves to multiple <code class="literal">-I</code> options)
+            </li></ul></div><p>
+            Automatic include path works best when include file names are unique, which is usually so.
+            In the case of collisions (two or more include files having the same name), include statements
+            should be qualified with the names of include files' parent folder (or more levels of ancestor
+            folders), otherwise the result will be unpredictable. For instance, if you have two header
+            files <code class="literal">src/ospf/Route.h</code> and <code class="literal">src/ip/base/Route.h</code>, you can include them with
+            <code class="literal">#include "ospf/Route.h"</code> and <code class="literal">#include "base/Route.h"</code> (or <code class="literal">#include "ip/base/Route.h"</code>);
+            do <span class="emphasis"><em>not</em></span> use <code class="literal">#include "Route.h"</code> because it would be ambiguous.
+            If the problematic file is located in the project root, use the form
+            <code class="literal">#include "../projectname/inc.h"</code> to make it unique.
+          </p><p>Source files:</p><div class="itemizedlist"><ul type="disc"><li><span class="emphasis"><em>C++ file extension</em></span>: You can specify the source file extension you are
+              using in the project (<code class="literal">.cc</code> or <code class="literal">.cpp</code>). We recommend that you use <code class="literal">.cc</code>
+              in your projects. Makemake option: <code class="literal">-e</code></li></ul></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id277057"></a>The <span class="emphasis"><em>Link</em></span> Tab</h4></div></div></div><p>
+            Link options allow the user to fine-tune the linking steps at the end of the build process.
+          </p><div class="figure"><a name="pictures/CPP-ConfigureProject4.png"></a><p class="title"><b>Figure 5.18. Linker options</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/CPP-ConfigureProject4.png" align="middle" alt="Linker options"></div></div></div></div><br class="figure-break"><div class="itemizedlist"><ul type="disc"><li><span class="emphasis"><em>Link with libraries exported from referenced projects</em></span>: If your project references other projects
+              that build static or dynamic libraries, you can instruct the linker to
+              automatically link with those libraries by enabling this option. The libraries from
+              the other projects must be exported via the <span class="emphasis"><em>Export this shared/static library for other projects</em></span>
+              option on the <span class="emphasis"><em>Target</em></span> tab.
+              Makemake option: <code class="literal">--meta:use-exported-libs</code></li><li><span class="emphasis"><em>User interface libraries to link with</em></span>: If the makefile target is an executable, you may
+              specify which OMNeT&#8288;+&#8288;+ user interface libraries (Cmdenv, Tkenv, or both) should be linked
+              into the program.
+              Makemake option: <code class="literal">-u</code></li><li><span class="emphasis"><em>More » Additional libraries to link with</em></span>: This box allows you to specify
+              additional libraries to link with. Specify the library name without its path, possible prefix (<code class="literal">lib</code>)
+              and file extension, and also without the <code class="literal">-l</code> option. The library must be on the linker path;
+              the linker path can be edited on the <span class="emphasis"><em>Library Paths</em></span> tab of the <span class="emphasis"><em>C/C++ General | Paths and Symbols</em></span>
+              page of the <span class="emphasis"><em>Project Properties</em></span> dialog.
+              Makemake option: <code class="literal">-l</code></li><li><span class="emphasis"><em>More » Additional objects to link with</em></span>: Additional object files and libraries can be
+              specified here. The files must be given with their full paths and file extension. Wildcards
+              and makefile macros are also accepted. Example: <code class="literal">$O/subdir/*.o</code>.
+              Makemake option: none (files will become plain makemake arguments)
+            </li></ul></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id277174"></a>The <span class="emphasis"><em>Custom</em></span> Tab</h4></div></div></div><p>The <span class="emphasis"><em>Custom</em></span> tab allows the customization of the makefiles by inserting handwritten makefile
+            fragments into the automatically generated makefile. This lets you contribute additional targets,
+            rules, variables, etc.</p><div class="itemizedlist"><ul type="disc"><li><span class="emphasis"><em>Makefile variables</em></span>: Variables (name + value) that you enter here will be inserted
+              into the generated makefile.
+              Makemake option: <code class="literal">-K</code></li><li><span class="emphasis"><em>Makefrag</em></span>: If the folder contains a file named <code class="literal">makefrag</code>,
+              its contents will be automatically copied into the generated makefile, just above the
+              first target rule. <code class="literal">makefrag</code> allows you to customize the generated makefile to some extent;
+              for example, you can add new targets (e.g. to generate documentation or run a test suite),
+              new rules (e.g. to generate source files during the build), override the default target,
+              add new dependencies to existing targets, overwrite variables, etc.
+              The dialog lets you edit the contents of the <code class="literal">makefrag</code> file directly (it will be saved
+              when you accept the dialog).
+              Makemake option: n/a
+            </li><li><span class="emphasis"><em>More » Fragment files to include</em></span>: Here, it is possible to explicitly specify
+              a list of makefile fragment files to include, instead of the default
+              <code class="literal">makefrag</code>.
+              Makemake option: <code class="literal">-i</code></li></ul></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id277248"></a>The <span class="emphasis"><em>Preview</em></span> Tab</h4></div></div></div><p>The <span class="emphasis"><em>Preview</em></span> tab displays the command line options that will be passed to
+            <code class="literal">opp_makemake</code> to generate the makefile. It consists of two parts:
+          </p><div class="itemizedlist"><ul type="disc"><li><span class="emphasis"><em>Makemake options</em></span>: This is an <span class="emphasis"><em>editable</em></span> list of makefile generation options.
+              Most options map directly to checkboxes, edit fields and other controls on the
+              previous tabs of the dialog. For example, if you check the <span class="emphasis"><em>Deep compile</em></span> checkbox
+              on the <span class="emphasis"><em>Scope</em></span> tab, the <code class="literal">--deep</code> option will be added to the command line.
+              Conversely, if you delete <code class="literal">--deep</code> from the command line options, that will cause
+              the <span class="emphasis"><em>Deep compile</em></span> checkbox to be unchecked.
+              Some options are directly <code class="literal">opp_makemake</code> options, others are "meta" options
+              that will be resolved to one or more <code class="literal">opp_makemake</code> options; see below.
+            </li><li><span class="emphasis"><em>Makemake options modified with CDT settings and with meta-options resolved</em></span>:
+              This is a read-only text field, displayed for information purposes only.
+              Not all options in the above options list are directly understood by <code class="literal">opp_makemake</code>;
+              namely, the options that start with <code class="literal">--meta:</code> denote higher-level features offered
+              by the IDE only. Meta options will be translated to <code class="literal">opp_makemake</code> options by the IDE.
+              For example, <code class="literal">--meta:auto-include-path</code> will be resolved by the IDE to multiple
+              <code class="literal">-I</code> options, one for each directory in the C++ source trees of the project.
+              This field shows the <code class="literal">opp_makemake</code> options after the resolution of the meta options.
+            </li></ul></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id277348"></a>Project References and Makefile Generation</h3></div></div></div><p>When your project references another project (say the INET Framework),
+        your project's build will be affected in the following way:</p><div class="itemizedlist"><ul type="disc"><li>
+            Include path: Source folders in referenced projects will be automatically added
+            to the include path of your makefile if the <span class="emphasis"><em>Automatically add other folders
+            where include files are located</em></span> option on the <span class="emphasis"><em>Compile</em></span> tab is checked.
+          </li><li>
+            Linking: If the <span class="emphasis"><em>Link with libraries exported from referenced projects</em></span> option on the
+            <span class="emphasis"><em>Link</em></span> tab is enabled, then the makefile target will be linked with those libraries
+            in referenced projects that have the <span class="emphasis"><em>Export this shared/static library for other projects</em></span>
+            option checked on the <span class="emphasis"><em>Target</em></span> tab.
+          </li><li>
+            NED types: NED types defined in a referenced project are automatically available
+            in referencing projects.
+          </li></ul></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch05s05.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch05.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch05s07.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Building the Project </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Project Features</td></tr></table></div></body></html>

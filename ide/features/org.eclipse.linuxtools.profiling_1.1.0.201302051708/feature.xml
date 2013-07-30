@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.linuxtools.profiling"
+      label="%featureName"
+      version="1.1.0.201302051708"
+      provider-name="%featureProvider">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <url>
+      <update label="Linux Tools Update Site" url="http://download.eclipse.org/linuxtools/update"/>
+   </url>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.cdt.core"/>
+      <import plugin="org.eclipse.cdt.debug.core"/>
+      <import plugin="org.eclipse.core.filesystem"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.debug.core"/>
+      <import plugin="org.eclipse.debug.ui"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.ui.editors"/>
+      <import plugin="org.eclipse.cdt.launch"/>
+      <import plugin="org.eclipse.cdt.ui"/>
+      <import plugin="org.eclipse.ui.console"/>
+      <import feature="org.eclipse.cdt" version="7.0.0" match="greaterOrEqual"/>
+   </requires>
+
+   <plugin
+         id="org.eclipse.linuxtools.profiling.ui"
+         download-size="11"
+         install-size="18"
+         version="1.0.0.201302051708"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.linuxtools.profiling.launch"
+         download-size="93"
+         install-size="196"
+         version="1.2.0.201302051708"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.linuxtools.profiling.launch.ui"
+         download-size="20"
+         install-size="36"
+         version="0.9.2.201302051708"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.linuxtools.binutils"
+         download-size="36"
+         install-size="75"
+         version="4.0.0.201302051708"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.linuxtools.profiling.docs"
+         download-size="426"
+         install-size="457"
+         version="1.0.0.201302051708"/>
+
+</feature>

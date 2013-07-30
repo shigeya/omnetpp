@@ -1,0 +1,42 @@
+Basic Setup
+-----------
+
+When downloading the Image Export Plug In, you get a file called
+
+de.unikassel.imageexport_x.y.z.zip
+
+This archive contains an eclipse directory with the two subdirectories
+plugins and features.  Copy the contents of these two directories
+into the plugins and features directories, respectively, in your
+Eclipse installation directory.
+
+Also copy the logging plug in to the plugins directory of your
+Eclipse installation directory.
+
+Now, the basic export formats (PNG, JPEG, BMP) should be available.
+After restarting Eclipse, you should see the Image Export feature and
+plug ins under Help > About Eclipse SDK > Feature Details / Plugin
+Details.
+
+
+Additional Formats
+------------------
+
+There are plug ins for other formats available as well.  There are
+plug ins for EPS, PDF and SVG, each depending on other plug ins that
+you have to install, too.
+
+EPS, PDF and SVG all depend on the GMF plug in (Graphical Modeling
+Framework). You can install this by selecting "Help > Software
+Updates > Find and Install...", and choose to install "new features"
+from the "Ganymede Update Site".  GMF has a lot of dependencies of
+its own so "Select Required" often comes in handy.
+
+The EPS plug in depends on Apache XML Graphics Commons.  This is
+provided as a download, too.
+
+The PDF plug in depends on iText which you can install like GMF, have
+a look at the section called "Enabling Features".
+
+The SVG plug in depends on Batik which you can install like GMF, have
+a look at the section called "Enabling Features".

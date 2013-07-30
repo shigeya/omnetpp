@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta name="copyright" content="OpenSim Ltd.">
+  <meta NAME="Author" CONTENT="Andras Varga">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <link rel="STYLESHEET" href="../book.css"  type="text/css">
+  <title>OMNeT++ - Manual</title>
+</head>
+<body>
+
+<p><hr><b>&nbsp;<a href="chap2.html">[Next]</A>&nbsp;<a href="toc.html#toc_1.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p><h1><a name="sec100"/>1 Introduction</h1>
+<a name="cha:introduction"></a>
+
+<p>
+<h2><a name="sec101"/>1.1 What Is OMNeT++?</h2>
+
+<p>OMNeT++ is an object-oriented modular discrete event network simulation
+framework. It has a generic architecture, so it can be (and has been)
+used in various problem domains:
+
+<p><ul>
+  <li>modeling of wired and wireless communication networks
+  <li>protocol modeling
+  <li>modeling of queueing networks
+  <li>modeling of multiprocessors and other distributed hardware systems
+  <li>validating of hardware architectures
+  <li>evaluating performance aspects of complex software systems
+  <li>in general, modeling and simulation of
+        any system where the discrete event approach is suitable, and
+        can be conveniently mapped into entities communicating by exchanging
+        messages.
+</ul>
+
+<p>OMNeT++ itself is not a simulator of anything concrete, but rather
+provides infrastructure and tools for <i>writing</i> simulations. One of
+the fundamental ingredients of this infrastructure is a component
+architecture for simulation models. Models are assembled from reusable
+components termed <i>modules</i>. Well-written modules are truly reusable,
+and can be combined in various ways like LEGO blocks.
+
+<p>Modules can be connected with each other via gates (other systems would
+call them ports), and combined to form compound modules. The depth of
+module nesting is not limited. Modules communicate through message passing,
+where messages may carry arbitrary data structures. Modules can pass
+messages along predefined paths via gates and connections, or directly to
+their destination; the latter is useful for wireless simulations, for
+example. Modules may have parameters that can be used to customize module
+behavior and/or to parameterize the model's topology.
+Modules at the lowest level of the module hierarchy are called
+simple modules, and they encapsulate model behavior. Simple modules
+are programmed in C++, and make use of the simulation library.
+
+<p>OMNeT++ simulations can be run under various user interfaces.
+Graphical, animating user interfaces are highly useful for
+demonstration and debugging purposes, and command-line user
+interfaces are best for batch execution.
+
+<p>The simulator as well as user interfaces and tools are highly portable.
+They are tested on the most common operating systems (Linux, Mac OS/X,
+Windows), and they can be compiled out of the box or after trivial
+modifications on most Unix-like operating systems.
+
+<p>OMNeT++ also supports parallel distributed simulation. OMNeT++ can
+use several mechanisms for communication between partitions of
+a parallel distributed simulation, for example MPI or named pipes.
+The parallel simulation algorithm can easily be extended, or new
+ones can be plugged in. Models do not need any special instrumentation
+to be run in parallel -- it is just a matter of configuration.
+OMNeT++ can even be used for classroom presentation of parallel
+simulation algorithms, because simulations can be run in parallel
+even under the GUI that provides detailed feedback on what is going on.
+
+<p>OMNEST is the commercially supported version of OMNeT++.
+OMNeT++ is free only for academic and non-profit use;
+for commercial purposes, one needs to obtain OMNEST licenses
+from Simulcraft Inc.
+
+<p>
+
+<h2><a name="sec102"/>1.2 Organization of This Manual</h2>
+
+<p>The manual is organized as follows:
+
+<p><ul>
+  <li>The Chapters <a href="chap1.html#sec100">[1]</a> and <a href="chap2.html#sec103">[2]</a>
+    contain introductory material
+  <li>The second group of chapters,
+    <a href="chap3.html#sec115">[3]</a>,
+    <a href="chap4.html#sec138">[4]</a> and
+    <a href="chap7.html#sec256">[7]</a>
+    are the programming guide. They present the NED language<!--ned!language-->,
+    describe the simulation concepts and their implementation in OMNeT++, explain
+    how to write simple<!--module!simple--> modules, and describe the class library.
+  <li>The chapters <a href="chap11.html#sec378">[11]</a> and <a href="chap14.html#sec437">[14]</a>
+    explain how to customize
+    the network graphics and how to write NED source code comments
+    from which documentation can be generated.
+  <li>Chapters <a href="chap8.html#sec310">[8]</a>,
+    <a href="chap9.html#sec327">[9]</a>, <a href="chap10.html#sec353">[10]</a> and
+    <a href="chap12.html#sec399">[12]</a> deal with practical issues
+    like building and running simulations and analyzing results, and
+    describe the tools OMNeT++ provides to support these tasks.
+  <li>Chapter <a href="chap15.html#sec455">[15]</a> is devoted to the support
+    of distributed execution.
+  <li>Chapters <a href="chap16.html#sec464">[16]</a> and <a href="chap17.html#sec477">[17]</a>
+    explain the architecture and internals of OMNeT++, as well as
+    ways to extend it and embed it into larger applications.
+  <li>The appendices provide a reference on the NED language,
+    configuration options, file formats, and other details.
+</ul>
+
+<p>
+
+
+
+
+
+<hr class='pgbr'><p><hr><b>&nbsp;<a href="chap2.html">[Next]</A>&nbsp;<a href="toc.html#toc_1.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p>
+
+</body>
+</html>

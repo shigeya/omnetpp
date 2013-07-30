@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<toc label="OMNeT⁠+⁠+ IDE Developers Guide" topic="index.html">
+  <topic label="Introduction" href="content/ide-developersguide/ch01.html"/>
+  <topic label="Installing the Plug-in Development Environment" href="content/ide-developersguide/ch02.html"/>
+  <topic label="Creating The First Plug-in" href="content/ide-developersguide/ch03.html">
+    <topic label="Creating the Plug-in" href="content/ide-developersguide/ch03.html#_creating_the_plug_in"/>
+    <topic label="The project" href="content/ide-developersguide/ch03s02.html"/>
+    <topic label="Testing the Plug-in" href="content/ide-developersguide/ch03s03.html"/>
+    <topic label="Exporting the plug-in" href="content/ide-developersguide/ch03s04.html"/>
+    <topic label="Deploying the plug-in in a project" href="content/ide-developersguide/ch03s05.html"/>
+  </topic>
+  <topic label="Eclipse Plug-in Development" href="content/ide-developersguide/ch04.html"/>
+  <topic label="OMNeT⁠+⁠+ IDE Developer Guide" href="content/ide-developersguide/ch05.html">
+    <topic label="Overview" href="content/ide-developersguide/ch05.html#_overview"/>
+    <topic label="Accessing NED and Message Types" href="content/ide-developersguide/ch05s02.html"/>
+    <topic label="Accessing Projects" href="content/ide-developersguide/ch05s03.html"/>
+    <topic label="Extension Points" href="content/ide-developersguide/ch05s04.html">
+      <topic label="Wizards" href="content/ide-developersguide/ch05s04.html#_wizards"/>
+    </topic>
+  </topic>
+</toc>

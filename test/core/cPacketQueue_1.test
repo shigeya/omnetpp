@@ -1,0 +1,44 @@
+%description:
+test cPacketQueue basic operation
+
+%activity:
+
+cPacketQueue q;
+
+q.insert(new cPacket("one", 0, 10));
+ev << q.info() << "\n";
+
+q.insert(new cPacket("two", 0, 200));
+ev << q.info() << "\n";
+
+q.insert(new cPacket("three", 0, 3000));
+ev << q.info() << "\n";
+
+cPacketQueue copy;
+copy = q;
+ev << "copy: " << q.info() << "\n";
+
+cPacketQueue *dup;
+dup = q.dup();
+ev << "dup: " << dup->info() << "\n";
+delete dup;
+
+delete q.pop();
+ev << q.info() << "\n";
+
+delete q.pop();
+ev << q.info() << "\n";
+
+ev << ".\n";
+
+%contains: stdout
+len=1, 10 bits (2 bytes)
+len=2, 210 bits (27 bytes)
+len=3, 3210 bits (402 bytes)
+copy: len=3, 3210 bits (402 bytes)
+dup: len=3, 3210 bits (402 bytes)
+len=2, 3200 bits (400 bytes)
+len=1, 3000 bits (375 bytes)
+.
+
+

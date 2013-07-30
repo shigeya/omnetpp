@@ -1,0 +1,118 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Eventlog Table</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="OMNeT&#8288;+&#8288;+ User Guide"><link rel="up" href="ch08.html" title="Chapter 8. Sequence Charts"><link rel="prev" href="ch08s03.html" title="Sequence Chart"><link rel="next" href="ch08s05.html" title="Filter Dialog"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Eventlog Table</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch08s03.html">Prev</a> </td><th width="60%" align="center">Chapter 8. Sequence Charts</th><td width="20%" align="right"> <a accesskey="n" href="ch08s05.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id282044"></a>Eventlog Table</h2></div></div></div><p>
+      This section describes the Eventlog Table in details focusing on its features
+      without a particular example.
+      
+    </p><p>
+      The Eventlog Table has one row per line in the eventlog file. It has three columns.
+      The first two are called event number and simulation time respectively. They show the values
+      corresponding to the simulation event where the line was recorded. The third column,
+      called details, contains the actual data, which varies for each line kind. The
+      different kinds of lines can be easily recognized by their icons. Some lines, such as
+      sending a message through a sequence of gates, relate to each other and are
+      indented so that the user can recognize them more easily.
+    </p><p>
+      There are various options, which control how and what the Eventlog Table
+      displays. Some of these are available on the toolbar, while others are
+      accessible only from the context menu.
+    </p><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id282070"></a>Display Mode</h3></div></div></div><p>
+	The eventlog file content may be displayed in two different notations. The
+	<span class="emphasis"><em>Raw</em></span> data notation shows exactly what is present in the file.
+      </p><div class="figure"><a name="pictures/EventlogTable-RawMode.png"></a><p class="title"><b>Figure 8.9. 
+	<span class="emphasis"><em>Raw</em></span> notation
+      </b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/EventlogTable-RawMode.png" align="middle" alt="Raw notation"></div></div></div></div><br class="figure-break"><p>
+	The <span class="emphasis"><em>Descriptive</em></span> notation, after some preprocessing, displays the log
+	file in a readable format. It also resolves
+	references and types, so that less navigation is required to understand what is
+	going on. To switch between the two, use the <span class="emphasis"><em>Display Mode</em></span>
+	<span class="guibutton"><img src="icons/displaymode.png"></span> button on the toolbar or the context menu.
+      </p><div class="figure"><a name="pictures/EventlogTable-DescriptiveMode.png"></a><p class="title"><b>Figure 8.10. 
+	<span class="emphasis"><em>Descriptive</em></span> notation
+      </b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/EventlogTable-DescriptiveMode.png" align="middle" alt="Descriptive notation"></div></div></div></div><br class="figure-break"></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id282151"></a>Name Mode</h3></div></div></div><p>
+	There are three different ways to display names in the Eventlog Table; it is
+	configurable with the <span class="emphasis"><em>Name Mode</em></span> <span class="guibutton"><img src="icons/NameMode.gif"></span>
+	option. Full path and full name shows what you would expect. The smart mode uses
+	the context of the line to decide whether a full path or a full name should
+	be displayed. For each event line, this mode always displays the full path. For all
+	other lines, if the name is the same as the enclosing event's module name, then it
+	shows the full name only. This choice makes lines shorter and allows for faster
+	reading.
+      </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id282174"></a>Type Mode</h3></div></div></div><p>
+	The option called <span class="emphasis"><em>Type Mode</em></span> can be used to switch between
+	displaying the C++ class name or the NED type name in parenthesis before
+	module names. This is rarely used, so it is only available from the context menu.
+      </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id282189"></a>Line Filter</h3></div></div></div><p>
+	The Eventlog Table may be filtered by using the <span class="emphasis"><em>Line Filter</em></span>
+	<span class="guibutton"><img src="icons/LineFilterMode.png"></span> button on the toolbar. This option allows
+	filtering for lines with specific kinds. There are some predefined filters.
+      </p><p>
+	You can also provide a custom filter pattern, referring to fields present in
+	<span class="emphasis"><em>Raw</em></span> mode, using a match expression. The following example is
+	a custom filter, which will show message sends where the message's class is
+	AirFrame. </p><pre class="screen">BS and c(AirFrame)</pre><p> Please refer to the OMNeT&#8288;+&#8288;+
+	Manual for more details on match expressions.
+      </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+	To avoid confusion, event lines marked with green circles <span class="guibutton"><img src="icons/Event.png"></span>
+	are always shown in the Eventlog Table and are independent of the line filter.
+      </div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id282236"></a>Navigation</h3></div></div></div><p>
+	You can navigate using your keyboard and mouse just like in any
+	other table. There are a couple of non-standard navigation options in the context
+	menu, which can also be used with the keyboard.
+      </p><p>
+	The simplest are the <span class="emphasis"><em>Goto Event</em></span> and the <span class="emphasis"><em>Goto
+	Simulation Time</em></span>, both of which simply jump to the designated location.
+      </p><p>
+	There are navigation options for going to the previous (<span class="keycap"><strong>Alt+UP</strong></span>) or
+	next (<span class="keycap"><strong>Alt+DOWN</strong></span>) event in general, and to go to the previous
+	(<span class="keycap"><strong>Shift+UP</strong></span>) or next (<span class="keycap"><strong>Shift+DOWN</strong></span>) event in the
+	same module.
+      </p><p>
+	Some of the navigation options focus on the causes of events and consequences of
+	message sends. To go to the cause event, press <span class="keycap"><strong>Ctrl+UP</strong></span>. To go
+	to the arrival of a message send, press <span class="keycap"><strong>Ctrl+DOWN</strong></span>, after
+	selecting the message being sent.
+      </p><p>
+	Finally, there are navigation options for message reuse relationships. You can go to
+	the original event of a message from the line where it was being reused. In the
+	other direction, you can go to the reused event of a message from the event where
+	it was received. These options are enabled only if they actually make sense for
+	the current selection.
+      </p><div class="figure"><a name="pictures/EventlogTable-NavigationMenu.png"></a><p class="title"><b>Figure 8.11. Navigation context menu</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/EventlogTable-NavigationMenu.png" align="middle" alt="Navigation context menu"></div></div></div></div><br class="figure-break"></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id282331"></a>Selection</h3></div></div></div><p>
+	The Eventlog Table uses multiple selection even though most of the user commands
+	require single selection.
+      </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id282342"></a>Searching</h3></div></div></div><p>
+	For performance reasons, the search <span class="guibutton"><img src="icons/Search.gif"></span> function works
+	directly on the eventlog file and not the text displayed in the Eventlog Table. It
+	means that some static text present in <span class="emphasis"><em>Descriptive</em></span> mode
+	cannot be found. Usually, it is easier to figure out what to search for in
+	<span class="emphasis"><em>Raw</em></span> mode, where the eventlog file's content is directly
+	displayed. The search can work in both directions, starting from the current
+	selection, and may be case insensitive. To repeat the last search, use the
+	<span class="emphasis"><em>Find Next</em></span> <span class="guibutton"><img src="icons/SearchNext.gif"></span> command.
+      </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id282378"></a>Bookmarks</h3></div></div></div><p>
+	For easier navigation, the Eventlog Table supports navigation history. This is
+	accessible from the standard IDE toolbar just like for other kinds of editors. It
+	works by remembering each position where the user stayed more than 3 seconds. The
+	navigation history is temporary and thus it is not saved when the file is closed.
+      </p><p>
+	Persistent bookmarks <span class="guibutton"><img src="icons/bkmrk_nav.gif"></span> are also supported and they can
+	be added from the context menu. A Bookmarked event is highlighted with a different
+	background color.
+      </p><div class="figure"><a name="pictures/EventlogTable-Bookmark.png"></a><p class="title"><b>Figure 8.12. A bookmark</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/EventlogTable-Bookmark.png" align="middle" alt="A bookmark"></div></div></div></div><br class="figure-break"><p>
+	To jump to a bookmark, use the standard Bookmark View (this is possible even after
+	restarting the IDE).
+      </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id282425"></a>Tooltips</h3></div></div></div><p>
+	Currently, only the message send lines have tooltips. If message detail
+	recording was configured for the simulation, then a tooltip will show the recorded
+	content of a message send over the corresponding line.
+      </p><div class="figure"><a name="pictures/EventlogTable-Tooltip.png"></a><p class="title"><b>Figure 8.13. A message send tooltip</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/EventlogTable-Tooltip.png" align="middle" alt="A message send tooltip"></div></div></div></div><br class="figure-break"></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id282457"></a>Associated Views</h3></div></div></div><p>
+	When you open an eventlog file in the Eventlog Table editor, it will automatically
+	open the <span class="emphasis"><em>Sequence Chart View</em></span> with the same file. If you select an event on the
+	Eventlog Table editor, then the <span class="emphasis"><em>Sequence Chart View</em></span> will jump to the same event
+	and vice versa. This interconnection makes navigation easier, and you can
+	immediately see the cause and effect relationships of the selected event.
+      </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id282477"></a>Filtering</h3></div></div></div><p>
+	If the Eventlog Table displays a filtered eventlog, then subsequent events may not
+	have subsequent event numbers. This means that the events in between have been
+	filtered out. At the extreme, the table may even be empty, which means that
+	there are no matching events at all.
+      </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch08s03.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch08.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch08s05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Sequence Chart </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Filter Dialog</td></tr></table></div></body></html>

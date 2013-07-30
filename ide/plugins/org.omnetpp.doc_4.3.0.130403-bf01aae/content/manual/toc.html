@@ -1,0 +1,479 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta name="copyright" content="OpenSim Ltd.">
+  <meta NAME="Author" CONTENT="Andras Varga">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <link rel="STYLESHEET" href="../book.css"  type="text/css">
+  <title>OMNeT++ - Manual</title>
+</head>
+<body>
+
+<p><b><hr><a href="usman.html">[Chapters]</a><hr></b>
+</p><h1>Table of Contents</h1><p>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_1"/><a href="chap1.html#sec100" class="toc">1 Introduction</A></b></font><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_1.1"/><a href="chap1.html#sec101" class="toc">1.1 What Is OMNeT++?</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_1.2"/><a href="chap1.html#sec102" class="toc">1.2 Organization of This Manual</A></b><br>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_2"/><a href="chap2.html#sec103" class="toc">2 Overview</A></b></font><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_2.1"/><a href="chap2.html#sec104" class="toc">2.1 Modeling Concepts</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_2.1.1"/><a href="chap2.html#sec105" class="toc">2.1.1 Hierarchical Modules</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_2.1.2"/><a href="chap2.html#sec106" class="toc">2.1.2 Module Types</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_2.1.3"/><a href="chap2.html#sec107" class="toc">2.1.3 Messages, Gates, Links</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_2.1.4"/><a href="chap2.html#sec108" class="toc">2.1.4 Modeling of Packet Transmissions</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_2.1.5"/><a href="chap2.html#sec109" class="toc">2.1.5 Parameters</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_2.1.6"/><a href="chap2.html#sec110" class="toc">2.1.6 Topology Description Method</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_2.2"/><a href="chap2.html#sec111" class="toc">2.2 Programming the Algorithms</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_2.3"/><a href="chap2.html#sec112" class="toc">2.3 Using OMNeT++</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_2.3.1"/><a href="chap2.html#sec113" class="toc">2.3.1 Building and Running Simulations</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_2.3.2"/><a href="chap2.html#sec114" class="toc">2.3.2 What Is in the Distribution</A><br>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_3"/><a href="chap3.html#sec115" class="toc">3 The NED Language</A></b></font><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_3.1"/><a href="chap3.html#sec116" class="toc">3.1 NED Overview</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_3.2"/><a href="chap3.html#sec117" class="toc">3.2 NED Quickstart</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_3.2.1"/><a href="chap3.html#sec118" class="toc">3.2.1 The Network</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_3.2.2"/><a href="chap3.html#sec119" class="toc">3.2.2 Introducing a Channel</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_3.2.3"/><a href="chap3.html#sec120" class="toc">3.2.3 The App, Routing, and Queue Simple Modules</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_3.2.4"/><a href="chap3.html#sec121" class="toc">3.2.4 The Node Compound Module</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_3.2.5"/><a href="chap3.html#sec122" class="toc">3.2.5 Putting It Together</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_3.3"/><a href="chap3.html#sec123" class="toc">3.3 Simple Modules</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_3.4"/><a href="chap3.html#sec124" class="toc">3.4 Compound Modules</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_3.5"/><a href="chap3.html#sec125" class="toc">3.5 Channels</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_3.6"/><a href="chap3.html#sec126" class="toc">3.6 Parameters</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_3.7"/><a href="chap3.html#sec127" class="toc">3.7 Gates</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_3.8"/><a href="chap3.html#sec128" class="toc">3.8 Submodules</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_3.9"/><a href="chap3.html#sec129" class="toc">3.9 Connections</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_3.10"/><a href="chap3.html#sec130" class="toc">3.10 Multiple Connections</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_3.10.1"/><a href="chap3.html#sec131" class="toc">3.10.1 Connection Patterns</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_3.11"/><a href="chap3.html#sec132" class="toc">3.11 Parametric Submodule and Connection Types</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_3.11.1"/><a href="chap3.html#sec133" class="toc">3.11.1 Parametric Submodule Types</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_3.11.2"/><a href="chap3.html#sec134" class="toc">3.11.2 Parametric Connection Types</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_3.12"/><a href="chap3.html#sec135" class="toc">3.12 Metadata Annotations (Properties)</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_3.13"/><a href="chap3.html#sec136" class="toc">3.13 Inheritance</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_3.14"/><a href="chap3.html#sec137" class="toc">3.14 Packages</A></b><br>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_4"/><a href="chap4.html#sec138" class="toc">4 Simple Modules</A></b></font><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.1"/><a href="chap4.html#sec139" class="toc">4.1 Simulation Concepts</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.1.1"/><a href="chap4.html#sec140" class="toc">4.1.1 Discrete Event Simulation</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.1.2"/><a href="chap4.html#sec141" class="toc">4.1.2 The Event Loop</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.1.3"/><a href="chap4.html#sec142" class="toc">4.1.3 Events and Event Execution Order in OMNeT++</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.1.4"/><a href="chap4.html#sec143" class="toc">4.1.4 Simulation Time</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.1.5"/><a href="chap4.html#sec144" class="toc">4.1.5 FES Implementation</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.2"/><a href="chap4.html#sec145" class="toc">4.2 Components, Simple Modules, Channels</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.3"/><a href="chap4.html#sec146" class="toc">4.3 Defining Simple Module Types</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.3.1"/><a href="chap4.html#sec147" class="toc">4.3.1 Overview</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.3.2"/><a href="chap4.html#sec148" class="toc">4.3.2 Constructor</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.3.3"/><a href="chap4.html#sec149" class="toc">4.3.3 Initialization and Finalization</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.4"/><a href="chap4.html#sec150" class="toc">4.4 Adding Functionality to cSimpleModule</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.4.1"/><a href="chap4.html#sec151" class="toc">4.4.1 handleMessage()</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.4.2"/><a href="chap4.html#sec152" class="toc">4.4.2 activity()</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.4.3"/><a href="chap4.html#sec153" class="toc">4.4.3 How to Avoid Global Variables</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.4.4"/><a href="chap4.html#sec154" class="toc">4.4.4 Reusing Module Code via Subclassing</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.5"/><a href="chap4.html#sec155" class="toc">4.5 Accessing Module Parameters</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.5.1"/><a href="chap4.html#sec156" class="toc">4.5.1 Volatile and Non-Volatile Parameters</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.5.2"/><a href="chap4.html#sec157" class="toc">4.5.2 Changing a Parameter's Value</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.5.3"/><a href="chap4.html#sec158" class="toc">4.5.3 Further cPar Methods</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.5.4"/><a href="chap4.html#sec159" class="toc">4.5.4 Emulating Parameter Arrays</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.5.5"/><a href="chap4.html#sec160" class="toc">4.5.5 handleParameterChange()</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.6"/><a href="chap4.html#sec161" class="toc">4.6 Accessing Gates and Connections</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.6.1"/><a href="chap4.html#sec162" class="toc">4.6.1 Gate Objects</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.6.2"/><a href="chap4.html#sec163" class="toc">4.6.2 Connections</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.6.3"/><a href="chap4.html#sec164" class="toc">4.6.3 The Connection's Channel</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.7"/><a href="chap4.html#sec165" class="toc">4.7 Sending and Receiving Messages</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.7.1"/><a href="chap4.html#sec166" class="toc">4.7.1 Self-Messages</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.7.2"/><a href="chap4.html#sec167" class="toc">4.7.2 Sending Messages</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.7.3"/><a href="chap4.html#sec168" class="toc">4.7.3 Broadcasts and Retransmissions</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.7.4"/><a href="chap4.html#sec169" class="toc">4.7.4 Delayed Sending</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.7.5"/><a href="chap4.html#sec170" class="toc">4.7.5 Direct Message Sending</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.7.6"/><a href="chap4.html#sec171" class="toc">4.7.6 Packet Transmissions</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.7.7"/><a href="chap4.html#sec172" class="toc">4.7.7 Receiving Messages with activity()</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.8"/><a href="chap4.html#sec173" class="toc">4.8 Channels</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.8.1"/><a href="chap4.html#sec174" class="toc">4.8.1 Overview</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.8.2"/><a href="chap4.html#sec175" class="toc">4.8.2 The Channel API</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.8.3"/><a href="chap4.html#sec176" class="toc">4.8.3 Channel Examples</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.9"/><a href="chap4.html#sec177" class="toc">4.9 Stopping the Simulation</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.9.1"/><a href="chap4.html#sec178" class="toc">4.9.1 Normal Termination</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.9.2"/><a href="chap4.html#sec179" class="toc">4.9.2 Raising Errors</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.10"/><a href="chap4.html#sec180" class="toc">4.10 Finite State Machines</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.11"/><a href="chap4.html#sec181" class="toc">4.11 Navigating the Module Hierarchy</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.12"/><a href="chap4.html#sec182" class="toc">4.12 Direct Method Calls Between Modules</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.13"/><a href="chap4.html#sec183" class="toc">4.13 Dynamic Module Creation</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.13.1"/><a href="chap4.html#sec184" class="toc">4.13.1 When Do You Need Dynamic Module Creation</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.13.2"/><a href="chap4.html#sec185" class="toc">4.13.2 Overview</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.13.3"/><a href="chap4.html#sec186" class="toc">4.13.3 Creating Modules</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.13.4"/><a href="chap4.html#sec187" class="toc">4.13.4 Deleting Modules</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.13.5"/><a href="chap4.html#sec188" class="toc">4.13.5 Module Deletion and finish()</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.13.6"/><a href="chap4.html#sec189" class="toc">4.13.6 Creating Connections</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.13.7"/><a href="chap4.html#sec190" class="toc">4.13.7 Removing Connections</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.14"/><a href="chap4.html#sec191" class="toc">4.14 Signals</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.14.1"/><a href="chap4.html#sec192" class="toc">4.14.1 Design Considerations and Rationale</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.14.2"/><a href="chap4.html#sec193" class="toc">4.14.2 The Signals Mechanism</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.14.3"/><a href="chap4.html#sec194" class="toc">4.14.3 Listening to Model Changes</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.15"/><a href="chap4.html#sec195" class="toc">4.15 Signal-Based Statistics Recording</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.15.1"/><a href="chap4.html#sec196" class="toc">4.15.1 Motivation</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.15.2"/><a href="chap4.html#sec197" class="toc">4.15.2 Declaring Statistics</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.15.3"/><a href="chap4.html#sec198" class="toc">4.15.3 Emitting Signals</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_4.15.4"/><a href="chap4.html#sec199" class="toc">4.15.4 Writing Result Filters and Recorders</A><br>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_5"/><a href="chap5.html#sec200" class="toc">5 Messages and Packets</A></b></font><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_5.1"/><a href="chap5.html#sec201" class="toc">5.1 Overview</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_5.2"/><a href="chap5.html#sec202" class="toc">5.2 The cMessage Class</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_5.2.1"/><a href="chap5.html#sec203" class="toc">5.2.1 Basic Usage</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_5.2.2"/><a href="chap5.html#sec204" class="toc">5.2.2 Duplicating Messages</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_5.2.3"/><a href="chap5.html#sec205" class="toc">5.2.3 Message IDs</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_5.2.4"/><a href="chap5.html#sec206" class="toc">5.2.4 Control Info</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_5.2.5"/><a href="chap5.html#sec207" class="toc">5.2.5 Information About the Last Arrival</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_5.2.6"/><a href="chap5.html#sec208" class="toc">5.2.6 Display String</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_5.3"/><a href="chap5.html#sec209" class="toc">5.3 Self-Messages</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_5.3.1"/><a href="chap5.html#sec210" class="toc">5.3.1 Using a Message as Self-Message</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_5.3.2"/><a href="chap5.html#sec211" class="toc">5.3.2 Context Pointer</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_5.4"/><a href="chap5.html#sec212" class="toc">5.4 The cPacket Class</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_5.4.1"/><a href="chap5.html#sec213" class="toc">5.4.1 Basic Usage</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_5.4.2"/><a href="chap5.html#sec214" class="toc">5.4.2 Identifying the Protocol</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_5.4.3"/><a href="chap5.html#sec215" class="toc">5.4.3 Information About the Last Transmission</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_5.4.4"/><a href="chap5.html#sec216" class="toc">5.4.4 Encapsulating Packets</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_5.4.5"/><a href="chap5.html#sec217" class="toc">5.4.5 Reference Counting</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_5.4.6"/><a href="chap5.html#sec218" class="toc">5.4.6 Encapsulating Several Packets</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_5.5"/><a href="chap5.html#sec219" class="toc">5.5 Attaching Parameters and Objects</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_5.5.1"/><a href="chap5.html#sec220" class="toc">5.5.1 Attaching Objects</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_5.5.2"/><a href="chap5.html#sec221" class="toc">5.5.2 Attaching Parameters</A><br>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_6"/><a href="chap6.html#sec222" class="toc">6 Message Definitions</A></b></font><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.1"/><a href="chap6.html#sec223" class="toc">6.1 Introduction</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.1.1"/><a href="chap6.html#sec224" class="toc">6.1.1 The First Message Class</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.2"/><a href="chap6.html#sec225" class="toc">6.2 Messages and Packets</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.2.1"/><a href="chap6.html#sec226" class="toc">6.2.1 Defining Messages and Packets</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.2.2"/><a href="chap6.html#sec227" class="toc">6.2.2 Field Data Types</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.2.3"/><a href="chap6.html#sec228" class="toc">6.2.3 Initial Values</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.2.4"/><a href="chap6.html#sec229" class="toc">6.2.4 Enums</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.2.5"/><a href="chap6.html#sec230" class="toc">6.2.5 Fixed-Size Arrays</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.2.6"/><a href="chap6.html#sec231" class="toc">6.2.6 Variable-Size Arrays</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.2.7"/><a href="chap6.html#sec232" class="toc">6.2.7 Classes and Structs as Fields</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.2.8"/><a href="chap6.html#sec233" class="toc">6.2.8 Pointer Fields</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.2.9"/><a href="chap6.html#sec234" class="toc">6.2.9 Inheritance</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.2.10"/><a href="chap6.html#sec235" class="toc">6.2.10 Assignment of Inherited Fields</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.3"/><a href="chap6.html#sec236" class="toc">6.3 Classes</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.4"/><a href="chap6.html#sec237" class="toc">6.4 Structs</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.5"/><a href="chap6.html#sec238" class="toc">6.5 Literal C++ Blocks</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.6"/><a href="chap6.html#sec239" class="toc">6.6 Using C++ Types</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.6.1"/><a href="chap6.html#sec240" class="toc">6.6.1 Announcing Types to the Message Compiler</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.6.2"/><a href="chap6.html#sec241" class="toc">6.6.2 Making the C++ Declarations Available</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.6.3"/><a href="chap6.html#sec242" class="toc">6.6.3 Putting it Together</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.7"/><a href="chap6.html#sec243" class="toc">6.7 Customizing the Generated Class</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.7.1"/><a href="chap6.html#sec244" class="toc">6.7.1 Customizing Method Names</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.7.2"/><a href="chap6.html#sec245" class="toc">6.7.2 Customizing the Class via Inheritance</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.7.3"/><a href="chap6.html#sec246" class="toc">6.7.3 Abstract Fields</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.8"/><a href="chap6.html#sec247" class="toc">6.8 Using Standard Container Classes for Fields</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.8.1"/><a href="chap6.html#sec248" class="toc">6.8.1 Typedefs</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.8.2"/><a href="chap6.html#sec249" class="toc">6.8.2 Abstract Fields</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.9"/><a href="chap6.html#sec250" class="toc">6.9 Namespaces</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.9.1"/><a href="chap6.html#sec251" class="toc">6.9.1 Declaring a Namespace</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.9.2"/><a href="chap6.html#sec252" class="toc">6.9.2 C++ Blocks and Namespace</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.9.3"/><a href="chap6.html#sec253" class="toc">6.9.3 Type Announcements and Namespace</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.10"/><a href="chap6.html#sec254" class="toc">6.10 Descriptor Classes</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_6.11"/><a href="chap6.html#sec255" class="toc">6.11 Summary</A></b><br>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_7"/><a href="chap7.html#sec256" class="toc">7 The Simulation Library</A></b></font><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.1"/><a href="chap7.html#sec257" class="toc">7.1 Class Library Conventions</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.1.1"/><a href="chap7.html#sec258" class="toc">7.1.1 Base Class</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.1.2"/><a href="chap7.html#sec259" class="toc">7.1.2 Setting and Getting Attributes</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.1.3"/><a href="chap7.html#sec260" class="toc">7.1.3 getClassName()</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.1.4"/><a href="chap7.html#sec261" class="toc">7.1.4 Object Names</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.1.5"/><a href="chap7.html#sec262" class="toc">7.1.5 Object Full Name and Full Path</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.1.6"/><a href="chap7.html#sec263" class="toc">7.1.6 Copying and Duplicating Objects</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.1.7"/><a href="chap7.html#sec264" class="toc">7.1.7 Iterators</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.1.8"/><a href="chap7.html#sec265" class="toc">7.1.8 Error Handling</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.2"/><a href="chap7.html#sec266" class="toc">7.2 Logging from Modules</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.3"/><a href="chap7.html#sec267" class="toc">7.3 Simulation Time Conversion</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.4"/><a href="chap7.html#sec268" class="toc">7.4 Generating Random Numbers</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.4.1"/><a href="chap7.html#sec269" class="toc">7.4.1 Random Number Generators</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.4.2"/><a href="chap7.html#sec270" class="toc">7.4.2 Random Number Streams, RNG Mapping</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.4.3"/><a href="chap7.html#sec271" class="toc">7.4.3 Accessing The RNGs</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.4.4"/><a href="chap7.html#sec272" class="toc">7.4.4 Random Variates</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.4.5"/><a href="chap7.html#sec273" class="toc">7.4.5 Random Numbers from Histograms</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.5"/><a href="chap7.html#sec274" class="toc">7.5 Container Classes</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.5.1"/><a href="chap7.html#sec275" class="toc">7.5.1 Queue class: cQueue</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.5.2"/><a href="chap7.html#sec276" class="toc">7.5.2 Expandable Array: cArray</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.6"/><a href="chap7.html#sec277" class="toc">7.6 Routing Support: cTopology</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.6.1"/><a href="chap7.html#sec278" class="toc">7.6.1 Overview</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.6.2"/><a href="chap7.html#sec279" class="toc">7.6.2 Basic Usage</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.6.3"/><a href="chap7.html#sec280" class="toc">7.6.3 Shortest Paths</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.7"/><a href="chap7.html#sec281" class="toc">7.7 Pattern Matching</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.7.1"/><a href="chap7.html#sec282" class="toc">7.7.1 cPatternMatcher</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.7.2"/><a href="chap7.html#sec283" class="toc">7.7.2 cMatchExpression</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.8"/><a href="chap7.html#sec284" class="toc">7.8 Statistics and Distribution Estimation</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.8.1"/><a href="chap7.html#sec285" class="toc">7.8.1 cStatistic and Descendants</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.8.2"/><a href="chap7.html#sec286" class="toc">7.8.2 Distribution Estimation</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.8.3"/><a href="chap7.html#sec287" class="toc">7.8.3 The k-split Algorithm</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.8.4"/><a href="chap7.html#sec288" class="toc">7.8.4 Transient Detection and Result Accuracy</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.9"/><a href="chap7.html#sec289" class="toc">7.9 Recording Simulation Results</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.9.1"/><a href="chap7.html#sec290" class="toc">7.9.1 Output Vectors: cOutVector</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.9.2"/><a href="chap7.html#sec291" class="toc">7.9.2 Output Scalars</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.10"/><a href="chap7.html#sec292" class="toc">7.10 Watches and Snapshots</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.10.1"/><a href="chap7.html#sec293" class="toc">7.10.1 Basic Watches</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.10.2"/><a href="chap7.html#sec294" class="toc">7.10.2 Read-write Watches</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.10.3"/><a href="chap7.html#sec295" class="toc">7.10.3 Structured Watches</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.10.4"/><a href="chap7.html#sec296" class="toc">7.10.4 STL Watches</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.10.5"/><a href="chap7.html#sec297" class="toc">7.10.5 Snapshots</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.10.6"/><a href="chap7.html#sec298" class="toc">7.10.6 Getting Coroutine Stack Usage</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.11"/><a href="chap7.html#sec299" class="toc">7.11 Defining New NED Functions</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.11.1"/><a href="chap7.html#sec300" class="toc">7.11.1 Define_NED_Function()</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.11.2"/><a href="chap7.html#sec301" class="toc">7.11.2 Define_NED_Math_Function()</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.12"/><a href="chap7.html#sec302" class="toc">7.12 Deriving New Classes</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.12.1"/><a href="chap7.html#sec303" class="toc">7.12.1 cOwnedObject or Not?</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.12.2"/><a href="chap7.html#sec304" class="toc">7.12.2 cOwnedObject Virtual Methods</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.12.3"/><a href="chap7.html#sec305" class="toc">7.12.3 Class Registration</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.12.4"/><a href="chap7.html#sec306" class="toc">7.12.4 Details</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.13"/><a href="chap7.html#sec307" class="toc">7.13 Object Ownership Management</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.13.1"/><a href="chap7.html#sec308" class="toc">7.13.1 The Ownership Tree</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_7.13.2"/><a href="chap7.html#sec309" class="toc">7.13.2 Managing Ownership</A><br>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_8"/><a href="chap8.html#sec310" class="toc">8 Building Simulation Programs</A></b></font><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_8.1"/><a href="chap8.html#sec311" class="toc">8.1 Overview</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_8.2"/><a href="chap8.html#sec312" class="toc">8.2 Using gcc</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_8.2.1"/><a href="chap8.html#sec313" class="toc">8.2.1 The opp_makemake Tool</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_8.2.2"/><a href="chap8.html#sec314" class="toc">8.2.2 Basic Use</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_8.2.3"/><a href="chap8.html#sec315" class="toc">8.2.3 Debug and Release Builds</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_8.2.4"/><a href="chap8.html#sec316" class="toc">8.2.4 Debugging the Makefile</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_8.2.5"/><a href="chap8.html#sec317" class="toc">8.2.5 Using External C/C++ Libraries</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_8.2.6"/><a href="chap8.html#sec318" class="toc">8.2.6 Building Directory Trees</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_8.2.7"/><a href="chap8.html#sec319" class="toc">8.2.7 Automatic Include Dirs</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_8.2.8"/><a href="chap8.html#sec320" class="toc">8.2.8 Dependency Handling</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_8.2.9"/><a href="chap8.html#sec321" class="toc">8.2.9 Out-of-Directory Build</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_8.2.10"/><a href="chap8.html#sec322" class="toc">8.2.10 Building Shared and Static Libraries</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_8.2.11"/><a href="chap8.html#sec323" class="toc">8.2.11 Recursive Builds</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_8.2.12"/><a href="chap8.html#sec324" class="toc">8.2.12 Customizing the Makefile</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_8.2.13"/><a href="chap8.html#sec325" class="toc">8.2.13 Projects with Multiple Source Trees</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_8.2.14"/><a href="chap8.html#sec326" class="toc">8.2.14 A Multi-Directory Example</A><br>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_9"/><a href="chap9.html#sec327" class="toc">9 Configuring Simulations</A></b></font><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_9.1"/><a href="chap9.html#sec328" class="toc">9.1 The Configuration File</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_9.1.1"/><a href="chap9.html#sec329" class="toc">9.1.1 An Example</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_9.1.2"/><a href="chap9.html#sec330" class="toc">9.1.2 File Syntax</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_9.1.3"/><a href="chap9.html#sec331" class="toc">9.1.3 File Inclusion</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_9.2"/><a href="chap9.html#sec332" class="toc">9.2 Sections</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_9.2.1"/><a href="chap9.html#sec333" class="toc">9.2.1 The [General] Section</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_9.2.2"/><a href="chap9.html#sec334" class="toc">9.2.2 Named Configurations</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_9.2.3"/><a href="chap9.html#sec335" class="toc">9.2.3 Section Inheritance</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_9.3"/><a href="chap9.html#sec336" class="toc">9.3 Assigning Module Parameters</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_9.3.1"/><a href="chap9.html#sec337" class="toc">9.3.1 Using Wildcard Patterns</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_9.3.2"/><a href="chap9.html#sec338" class="toc">9.3.2 Using the Default Values</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_9.4"/><a href="chap9.html#sec339" class="toc">9.4 Parameter Studies</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_9.4.1"/><a href="chap9.html#sec340" class="toc">9.4.1 Iterations</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_9.4.2"/><a href="chap9.html#sec341" class="toc">9.4.2 Named Iteration Variables</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_9.4.3"/><a href="chap9.html#sec342" class="toc">9.4.3 Parallel Iteration</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_9.4.4"/><a href="chap9.html#sec343" class="toc">9.4.4 Predefined Variables, Run ID</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_9.4.5"/><a href="chap9.html#sec344" class="toc">9.4.5 Constraint Expression</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_9.4.6"/><a href="chap9.html#sec345" class="toc">9.4.6 Repeating Runs with Different Seeds</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_9.4.7"/><a href="chap9.html#sec346" class="toc">9.4.7 Experiment-Measurement-Replication</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_9.5"/><a href="chap9.html#sec347" class="toc">9.5 Configuring the Random Number Generators</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_9.5.1"/><a href="chap9.html#sec348" class="toc">9.5.1 Number of RNGs</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_9.5.2"/><a href="chap9.html#sec349" class="toc">9.5.2 RNG Choice</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_9.5.3"/><a href="chap9.html#sec350" class="toc">9.5.3 RNG Mapping</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_9.5.4"/><a href="chap9.html#sec351" class="toc">9.5.4 Automatic Seed Selection</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_9.5.5"/><a href="chap9.html#sec352" class="toc">9.5.5 Manual Seed Configuration</A><br>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_10"/><a href="chap10.html#sec353" class="toc">10 Running Simulations</A></b></font><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_10.1"/><a href="chap10.html#sec354" class="toc">10.1 Introduction</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_10.1.1"/><a href="chap10.html#sec355" class="toc">10.1.1 Running a Simulation Executable</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_10.1.2"/><a href="chap10.html#sec356" class="toc">10.1.2 Running a Shared Library</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_10.1.3"/><a href="chap10.html#sec357" class="toc">10.1.3 Controlling the Run</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_10.2"/><a href="chap10.html#sec358" class="toc">10.2 Cmdenv: the Command-Line Interface</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_10.2.1"/><a href="chap10.html#sec359" class="toc">10.2.1 Example Run</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_10.2.2"/><a href="chap10.html#sec360" class="toc">10.2.2 Command-Line Options</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_10.2.3"/><a href="chap10.html#sec361" class="toc">10.2.3 Cmdenv Ini File Options</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_10.2.4"/><a href="chap10.html#sec362" class="toc">10.2.4 Interpreting Cmdenv Output</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_10.3"/><a href="chap10.html#sec363" class="toc">10.3 Tkenv: the Graphical User Interface</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_10.3.1"/><a href="chap10.html#sec364" class="toc">10.3.1 Command-Line and Configuration Options</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_10.4"/><a href="chap10.html#sec365" class="toc">10.4 Batch Execution</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_10.4.1"/><a href="chap10.html#sec366" class="toc">10.4.1 Using Cmdenv</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_10.4.2"/><a href="chap10.html#sec367" class="toc">10.4.2 Using Shell Scripts</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_10.4.3"/><a href="chap10.html#sec368" class="toc">10.4.3 Using opp_runall</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_10.5"/><a href="chap10.html#sec369" class="toc">10.5 Akaroa Support: Multiple Replications in Parallel</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_10.5.1"/><a href="chap10.html#sec370" class="toc">10.5.1 Introduction</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_10.5.2"/><a href="chap10.html#sec371" class="toc">10.5.2 What Is Akaroa</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_10.5.3"/><a href="chap10.html#sec372" class="toc">10.5.3 Using Akaroa with OMNeT++</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_10.6"/><a href="chap10.html#sec373" class="toc">10.6 Troubleshooting</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_10.6.1"/><a href="chap10.html#sec374" class="toc">10.6.1 Unrecognized Configuration Option</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_10.6.2"/><a href="chap10.html#sec375" class="toc">10.6.2 Stack Problems</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_10.6.3"/><a href="chap10.html#sec376" class="toc">10.6.3 Memory Leaks and Crashes</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_10.6.4"/><a href="chap10.html#sec377" class="toc">10.6.4 Simulation Executes Slowly</A><br>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_11"/><a href="chap11.html#sec378" class="toc">11 Network Graphics And Animation</A></b></font><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_11.1"/><a href="chap11.html#sec379" class="toc">11.1 Display Strings</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_11.1.1"/><a href="chap11.html#sec380" class="toc">11.1.1 Display String Syntax</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_11.1.2"/><a href="chap11.html#sec381" class="toc">11.1.2 Display String Placement</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_11.1.3"/><a href="chap11.html#sec382" class="toc">11.1.3 Display String Inheritance</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_11.1.4"/><a href="chap11.html#sec383" class="toc">11.1.4 Display String Tags Used in Submodule Context</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_11.1.5"/><a href="chap11.html#sec384" class="toc">11.1.5 Display String Tags Used in Module Background Context</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_11.1.6"/><a href="chap11.html#sec385" class="toc">11.1.6 Connection Display Strings</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_11.1.7"/><a href="chap11.html#sec386" class="toc">11.1.7 Message Display Strings</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_11.2"/><a href="chap11.html#sec387" class="toc">11.2 Parameter Substitution</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_11.3"/><a href="chap11.html#sec388" class="toc">11.3 Colors</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_11.3.1"/><a href="chap11.html#sec389" class="toc">11.3.1 Color Names</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_11.3.2"/><a href="chap11.html#sec390" class="toc">11.3.2 Icon Colorization</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_11.4"/><a href="chap11.html#sec391" class="toc">11.4 Icons</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_11.4.1"/><a href="chap11.html#sec392" class="toc">11.4.1 The Image Path</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_11.4.2"/><a href="chap11.html#sec393" class="toc">11.4.2 Categorized Icons</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_11.4.3"/><a href="chap11.html#sec394" class="toc">11.4.3 Icon Size</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_11.5"/><a href="chap11.html#sec395" class="toc">11.5 Layouting</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_11.6"/><a href="chap11.html#sec396" class="toc">11.6 Enhancing Animation</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_11.6.1"/><a href="chap11.html#sec397" class="toc">11.6.1 Changing Display Strings at Runtime</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_11.6.2"/><a href="chap11.html#sec398" class="toc">11.6.2 Bubbles</A><br>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_12"/><a href="chap12.html#sec399" class="toc">12 Result Recording and Analysis</A></b></font><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.1"/><a href="chap12.html#sec400" class="toc">12.1 Result Recording</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.1.1"/><a href="chap12.html#sec401" class="toc">12.1.1 Using Signals and Declared Statistics</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.1.2"/><a href="chap12.html#sec402" class="toc">12.1.2 Direct Result Recording</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.2"/><a href="chap12.html#sec403" class="toc">12.2 Configuring Result Collection</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.2.1"/><a href="chap12.html#sec404" class="toc">12.2.1 Configuring Signal-Based Statistics Recording</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.2.2"/><a href="chap12.html#sec405" class="toc">12.2.2 Warm-up Period</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.2.3"/><a href="chap12.html#sec406" class="toc">12.2.3 Result File Names</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.2.4"/><a href="chap12.html#sec407" class="toc">12.2.4 Configuring Scalar Results</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.2.5"/><a href="chap12.html#sec408" class="toc">12.2.5 Configuring Output Vectors</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.2.6"/><a href="chap12.html#sec409" class="toc">12.2.6 Saving Parameters as Scalars</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.2.7"/><a href="chap12.html#sec410" class="toc">12.2.7 Recording Precision</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.3"/><a href="chap12.html#sec411" class="toc">12.3 Overview of the Result File Formats</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.3.1"/><a href="chap12.html#sec412" class="toc">12.3.1 Output Vector Files</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.3.2"/><a href="chap12.html#sec413" class="toc">12.3.2 Scalar Result Files</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.4"/><a href="chap12.html#sec414" class="toc">12.4 The Analysis Tool in the Simulation IDE</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.5"/><a href="chap12.html#sec415" class="toc">12.5 Scave Tool</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.5.1"/><a href="chap12.html#sec416" class="toc">12.5.1 The <i>filter</i> Command</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.5.2"/><a href="chap12.html#sec417" class="toc">12.5.2 The <i>index</i> Command</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.5.3"/><a href="chap12.html#sec418" class="toc">12.5.3 The <i>summary</i> Command</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.6"/><a href="chap12.html#sec419" class="toc">12.6 Alternative Statistical Analysis and Plotting Tools</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.6.1"/><a href="chap12.html#sec420" class="toc">12.6.1 GNU R</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.6.2"/><a href="chap12.html#sec421" class="toc">12.6.2 NumPy, SciPy and MatPlotLib</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.6.3"/><a href="chap12.html#sec422" class="toc">12.6.3 MATLAB or Octave</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.6.4"/><a href="chap12.html#sec423" class="toc">12.6.4 Gnuplot</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.6.5"/><a href="chap12.html#sec424" class="toc">12.6.5 ROOT</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.6.6"/><a href="chap12.html#sec425" class="toc">12.6.6 Grace</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_12.6.7"/><a href="chap12.html#sec426" class="toc">12.6.7 Spreadsheet Programs</A><br>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_13"/><a href="chap13.html#sec427" class="toc">13 Eventlog</A></b></font><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_13.1"/><a href="chap13.html#sec428" class="toc">13.1 Introduction</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_13.2"/><a href="chap13.html#sec429" class="toc">13.2 Configuration</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_13.2.1"/><a href="chap13.html#sec430" class="toc">13.2.1 File Name</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_13.2.2"/><a href="chap13.html#sec431" class="toc">13.2.2 Recording Intervals</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_13.2.3"/><a href="chap13.html#sec432" class="toc">13.2.3 Recording Modules</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_13.2.4"/><a href="chap13.html#sec433" class="toc">13.2.4 Recording Message Data</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_13.3"/><a href="chap13.html#sec434" class="toc">13.3 Eventlog Tool</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_13.3.1"/><a href="chap13.html#sec435" class="toc">13.3.1 Filter</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_13.3.2"/><a href="chap13.html#sec436" class="toc">13.3.2 Echo</A><br>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_14"/><a href="chap14.html#sec437" class="toc">14 Documenting NED and Messages</A></b></font><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_14.1"/><a href="chap14.html#sec438" class="toc">14.1 Overview</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_14.2"/><a href="chap14.html#sec439" class="toc">14.2 Documentation Comments</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_14.2.1"/><a href="chap14.html#sec440" class="toc">14.2.1 Private Comments</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_14.2.2"/><a href="chap14.html#sec441" class="toc">14.2.2 More on Comment Placement</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_14.3"/><a href="chap14.html#sec442" class="toc">14.3 Referring to Other NED and Message Types</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_14.3.1"/><a href="chap14.html#sec443" class="toc">14.3.1 Automatic Linking</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_14.3.2"/><a href="chap14.html#sec444" class="toc">14.3.2 Tilde Linking</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_14.4"/><a href="chap14.html#sec445" class="toc">14.4 Text Layout and Formatting</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_14.4.1"/><a href="chap14.html#sec446" class="toc">14.4.1 Paragraphs and Lists</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_14.4.2"/><a href="chap14.html#sec447" class="toc">14.4.2 Special Tags</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_14.4.3"/><a href="chap14.html#sec448" class="toc">14.4.3 Text Formatting Using HTML</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_14.4.4"/><a href="chap14.html#sec449" class="toc">14.4.4 Escaping HTML Tags</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_14.5"/><a href="chap14.html#sec450" class="toc">14.5 Customizing and Adding Pages</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_14.5.1"/><a href="chap14.html#sec451" class="toc">14.5.1 Adding a Custom Title Page</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_14.5.2"/><a href="chap14.html#sec452" class="toc">14.5.2 Adding Extra Pages</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_14.5.3"/><a href="chap14.html#sec453" class="toc">14.5.3 Incorporating Externally Created Pages</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_14.6"/><a href="chap14.html#sec454" class="toc">14.6 File inclusion</A></b><br>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_15"/><a href="chap15.html#sec455" class="toc">15 Parallel Distributed Simulation</A></b></font><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_15.1"/><a href="chap15.html#sec456" class="toc">15.1 Introduction to Parallel Discrete Event Simulation</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_15.2"/><a href="chap15.html#sec457" class="toc">15.2 Assessing Available Parallelism in a Simulation Model</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_15.3"/><a href="chap15.html#sec458" class="toc">15.3 Parallel Distributed Simulation Support in OMNeT++</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_15.3.1"/><a href="chap15.html#sec459" class="toc">15.3.1 Overview</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_15.3.2"/><a href="chap15.html#sec460" class="toc">15.3.2 Parallel Simulation Example</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_15.3.3"/><a href="chap15.html#sec461" class="toc">15.3.3 Placeholder Modules, Proxy Gates</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_15.3.4"/><a href="chap15.html#sec462" class="toc">15.3.4 Configuration</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_15.3.5"/><a href="chap15.html#sec463" class="toc">15.3.5 Design of PDES Support in OMNeT++</A><br>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_16"/><a href="chap16.html#sec464" class="toc">16 Plug-in Extensions</A></b></font><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_16.1"/><a href="chap16.html#sec465" class="toc">16.1 Overview</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_16.2"/><a href="chap16.html#sec466" class="toc">16.2 Plug-in Descriptions</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_16.2.1"/><a href="chap16.html#sec467" class="toc">16.2.1 Defining a New Random Number Generator</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_16.2.2"/><a href="chap16.html#sec468" class="toc">16.2.2 Defining a New Scheduler</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_16.2.3"/><a href="chap16.html#sec469" class="toc">16.2.3 Defining a New Configuration Provider</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_16.2.4"/><a href="chap16.html#sec470" class="toc">16.2.4 Defining a New Output Scalar Manager</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_16.2.5"/><a href="chap16.html#sec471" class="toc">16.2.5 Defining a New Output Vector Manager</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_16.2.6"/><a href="chap16.html#sec472" class="toc">16.2.6 Defining a New Snapshot Manager</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_16.3"/><a href="chap16.html#sec473" class="toc">16.3 Accessing the Configuration</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_16.3.1"/><a href="chap16.html#sec474" class="toc">16.3.1 Defining New Configuration Options</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_16.3.2"/><a href="chap16.html#sec475" class="toc">16.3.2 Reading Values from the Configuration</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_16.4"/><a href="chap16.html#sec476" class="toc">16.4 Implementing a New User Interface</A></b><br>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_17"/><a href="chap17.html#sec477" class="toc">17 Embedding the Simulation Kernel</A></b></font><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_17.1"/><a href="chap17.html#sec478" class="toc">17.1 Architecture</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_17.2"/><a href="chap17.html#sec479" class="toc">17.2 Embedding the OMNeT++ Simulation Kernel</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_17.2.1"/><a href="chap17.html#sec480" class="toc">17.2.1 The main() Function</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_17.2.2"/><a href="chap17.html#sec481" class="toc">17.2.2 The simulate() Function</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_17.2.3"/><a href="chap17.html#sec482" class="toc">17.2.3 Providing an Environment Object</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_17.2.4"/><a href="chap17.html#sec483" class="toc">17.2.4 Providing a Configuration Object</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_17.2.5"/><a href="chap17.html#sec484" class="toc">17.2.5 Loading NED Files</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_17.2.6"/><a href="chap17.html#sec485" class="toc">17.2.6 How to Eliminate NED Files</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_17.2.7"/><a href="chap17.html#sec486" class="toc">17.2.7 Assigning Module Parameters</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_17.2.8"/><a href="chap17.html#sec487" class="toc">17.2.8 Extracting Statistics from the Model</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_17.2.9"/><a href="chap17.html#sec488" class="toc">17.2.9 The Simulation Loop</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_17.2.10"/><a href="chap17.html#sec489" class="toc">17.2.10 Multiple, Coexisting Simulations</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_17.2.11"/><a href="chap17.html#sec490" class="toc">17.2.11 Installing a Custom Scheduler</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_17.2.12"/><a href="chap17.html#sec491" class="toc">17.2.12 Multi-Threaded Programs</A><br>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_18"/><a href="chap18.html#sec492" class="toc">18 Appendix&#58; NED Reference</A></b></font><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.1"/><a href="chap18.html#sec493" class="toc">18.1 Syntax</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.1.1"/><a href="chap18.html#sec494" class="toc">18.1.1 NED File Name Extension</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.1.2"/><a href="chap18.html#sec495" class="toc">18.1.2 NED File Encoding</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.1.3"/><a href="chap18.html#sec496" class="toc">18.1.3 Reserved Words</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.1.4"/><a href="chap18.html#sec497" class="toc">18.1.4 Identifiers</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.1.5"/><a href="chap18.html#sec498" class="toc">18.1.5 Case Sensitivity</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.1.6"/><a href="chap18.html#sec499" class="toc">18.1.6 Literals</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.1.7"/><a href="chap18.html#sec500" class="toc">18.1.7 Comments</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.1.8"/><a href="chap18.html#sec501" class="toc">18.1.8 Grammar</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.2"/><a href="chap18.html#sec502" class="toc">18.2 Built-in Definitions</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.3"/><a href="chap18.html#sec503" class="toc">18.3 Packages</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.3.1"/><a href="chap18.html#sec504" class="toc">18.3.1 Package Declaration</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.3.2"/><a href="chap18.html#sec505" class="toc">18.3.2 Directory Structure, package.ned</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.4"/><a href="chap18.html#sec506" class="toc">18.4 Components</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.4.1"/><a href="chap18.html#sec507" class="toc">18.4.1 Simple Modules</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.4.2"/><a href="chap18.html#sec508" class="toc">18.4.2 Compound Modules</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.4.3"/><a href="chap18.html#sec509" class="toc">18.4.3 Networks</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.4.4"/><a href="chap18.html#sec510" class="toc">18.4.4 Channels</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.4.5"/><a href="chap18.html#sec511" class="toc">18.4.5 Module Interfaces</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.4.6"/><a href="chap18.html#sec512" class="toc">18.4.6 Channel Interfaces</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.4.7"/><a href="chap18.html#sec513" class="toc">18.4.7 Resolving the C++ Implementation Class</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.4.8"/><a href="chap18.html#sec514" class="toc">18.4.8 Properties</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.4.9"/><a href="chap18.html#sec515" class="toc">18.4.9 Parameters</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.4.10"/><a href="chap18.html#sec516" class="toc">18.4.10 Pattern Assignments</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.4.11"/><a href="chap18.html#sec517" class="toc">18.4.11 Gates</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.4.12"/><a href="chap18.html#sec518" class="toc">18.4.12 Submodules</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.4.13"/><a href="chap18.html#sec519" class="toc">18.4.13 Connections</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.4.14"/><a href="chap18.html#sec520" class="toc">18.4.14 Conditional and Loop Connections, Connection Groups</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.4.15"/><a href="chap18.html#sec521" class="toc">18.4.15 Inner Types</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.4.16"/><a href="chap18.html#sec522" class="toc">18.4.16 Name Uniqueness</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.4.17"/><a href="chap18.html#sec523" class="toc">18.4.17 Parameter Assignment Order</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.4.18"/><a href="chap18.html#sec524" class="toc">18.4.18 Type Name Resolution</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.4.19"/><a href="chap18.html#sec525" class="toc">18.4.19 Resolution of Parametric Types</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.4.20"/><a href="chap18.html#sec526" class="toc">18.4.20 Implementing an Interface</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.4.21"/><a href="chap18.html#sec527" class="toc">18.4.21 Inheritance</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.4.22"/><a href="chap18.html#sec528" class="toc">18.4.22 Network Build Order</A><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.5"/><a href="chap18.html#sec529" class="toc">18.5 Expressions</A></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.5.1"/><a href="chap18.html#sec530" class="toc">18.5.1 Operators</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.5.2"/><a href="chap18.html#sec531" class="toc">18.5.2 Referencing Parameters and Loop Variables</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.5.3"/><a href="chap18.html#sec532" class="toc">18.5.3 The <b><tt>index</tt></b> Operator</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.5.4"/><a href="chap18.html#sec533" class="toc">18.5.4 The <b><tt>sizeof()</tt></b> Operator</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.5.5"/><a href="chap18.html#sec534" class="toc">18.5.5 Functions</A><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_18.5.6"/><a href="chap18.html#sec535" class="toc">18.5.6 Units of Measurement</A><br>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_19"/><a href="chap19.html#sec536" class="toc">19 Appendix&#58; NED Language Grammar</A></b></font><br>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_20"/><a href="chap20.html#sec537" class="toc">20 Appendix&#58; NED XML Binding</A></b></font><br>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_21"/><a href="chap21.html#sec538" class="toc">21 Appendix&#58; NED Functions</A></b></font><br>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_22"/><a href="chap22.html#sec539" class="toc">22 Appendix&#58; Message Definitions Grammar</A></b></font><br>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_23"/><a href="chap23.html#sec540" class="toc">23 Appendix&#58; Display String Tags</A></b></font><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_23.1"/><a href="chap23.html#sec541" class="toc">23.1 Module and Connection Display String Tags</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_23.2"/><a href="chap23.html#sec542" class="toc">23.2 Message Display String Tags</A></b><br>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_24"/><a href="chap24.html#sec543" class="toc">24 Appendix&#58; Configuration Options</A></b></font><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_24.1"/><a href="chap24.html#sec544" class="toc">24.1 Configuration Options</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_24.2"/><a href="chap24.html#sec545" class="toc">24.2 Predefined Configuration Variables</A></b><br>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_25"/><a href="chap25.html#sec546" class="toc">25 Appendix&#58; Result File Formats</A></b></font><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_25.1"/><a href="chap25.html#sec547" class="toc">25.1 Version</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_25.2"/><a href="chap25.html#sec548" class="toc">25.2 Run Declaration</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_25.3"/><a href="chap25.html#sec549" class="toc">25.3 Attributes</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_25.4"/><a href="chap25.html#sec550" class="toc">25.4 Module Parameters</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_25.5"/><a href="chap25.html#sec551" class="toc">25.5 Scalar Data</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_25.6"/><a href="chap25.html#sec552" class="toc">25.6 Vector Declaration</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_25.7"/><a href="chap25.html#sec553" class="toc">25.7 Vector Data</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_25.8"/><a href="chap25.html#sec554" class="toc">25.8 Index Header</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_25.9"/><a href="chap25.html#sec555" class="toc">25.9 Index Data</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_25.10"/><a href="chap25.html#sec556" class="toc">25.10 Statistics Object</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_25.11"/><a href="chap25.html#sec557" class="toc">25.11 Field</A></b><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_25.12"/><a href="chap25.html#sec558" class="toc">25.12 Histogram Bin</A></b><br>
+<br><font size=+1><b>&nbsp;&nbsp;<a name="toc_26"/><a href="chap26.html#sec559" class="toc">26 Appendix&#58; Eventlog File Format</A></b></font><br>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;<a name="toc_26.1"/><a href="chap26.html#sec560" class="toc">26.1 Supported Entry Types and Their Attributes</A></b><br>
+</p>
+
+</body>
+</html>

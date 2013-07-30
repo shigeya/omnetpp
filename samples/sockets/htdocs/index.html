@@ -1,0 +1,59 @@
+<html>
+<style type="text/css">
+h1,h2,h3,h4,p,table,ul,ol {font-family: Geneva, Arial, Helvetica, sans-serif;}
+pre { margin-left:8pt; background:#fffff4; padding:5pt; border:1px solid; border-color:#a0a0a0 }
+</style>
+
+<body>
+<h3>The Sockets Demo</h3>
+
+<p>
+This is an example how one can implement hardware-in-the-loop simulation
+with OMNeT++/OMNEST. Hardware-in-the-loop means that some external device
+is taking part in the simulation, or in other scenarios, the simulation
+program emulates a device which is part of the real system. In this example
+simulation, it will be an external process (a web browser or
+a telnet client) that participates in the simulation.
+
+<p>
+This example contains two simulation models:
+
+<ul>
+  <li>The <a href="httpmodel.html">HTTP</a> model (the one you're currently
+      running)
+  <li>The <a href="telnetmodel.html">Telnet</a> model
+</ul>
+
+<p>
+Both simulations are executed in <a href="realtime.html">real-time</a>,
+that is, simulation time is synchronized to real (wall clock) time.
+Also, you can connect into the simulation with the web browser or
+the telnet program, and generate traffic on the simulated network.
+Read more about the principle <a href="hwintheloop.html">here</a>.
+
+<p>
+It is recommended that you set animation speed to near maximum (using the
+slider at the top of the graphics window) for the simulation to be able
+to keep up with real time. Then you can check on the performance gauge bar:
+the simsec/sec gauge should stay around 1.0.
+
+<p>
+This example simulation is just a toy, but it's not difficult to see
+how one could change it into something useful. For example, if one
+changes the TCP socket interface to grabbing and sending raw Ethernet
+frames, a simulation can be made to receive and generate traffic
+on the local network. It is essential though that the computer running
+the simulation has enough processing power to keep up with real time,
+and communication latencies at the external interface be small enough
+and properly accounted for in the model.
+
+<p>
+At the heart of this simulation is the <tt>cSocketRTScheduler</tt> class,
+which OMNeT++/OMNEST was <a href="config.html">configured</a> to use
+as scheduler. The "external client" simple modules (<tt>ExtHTTPClient</tt>,
+<tt>ExtTelnetClient</tt>) then rely on <tt>cSocketRTScheduler</tt>
+for keeping in touch with the external process (browser or telnet).
+Read about the <a href="implementation.html">implementation</a>.
+
+</body>
+</html>

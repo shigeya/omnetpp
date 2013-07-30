@@ -1,0 +1,1529 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta name="copyright" content="OpenSim Ltd.">
+  <meta NAME="Author" CONTENT="Andras Varga">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <link rel="STYLESHEET" href="../book.css"  type="text/css">
+  <title>OMNeT++ - Manual</title>
+</head>
+<body>
+
+<p><hr><b><a href="chap5.html">[Prev]</A>&nbsp;<a href="chap7.html">[Next]</A>&nbsp;<a href="toc.html#toc_6.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p><h1><a name="sec222"/>6 Message Definitions</h1>
+<a name="cha:message-definitions"></a>
+
+<p><h2><a name="sec223"/>6.1 Introduction</h2>
+<a name="sec:ch-msg-defs:intro"></a>
+
+<p>In practice, you will need to add various fields to <tt><a href="../api/classcMessage.html">cMessage</a></tt> or
+<tt><a href="../api/classcPacket.html">cPacket</a></tt> to make them useful. For example, if you are modelling
+packets in communication networks, you need to have a way to store protocol
+header fields in packets. Since the simulation library is written in C++,
+the natural way of extending <tt><a href="../api/classcMessage.html">cMessage</a></tt>/<tt><a href="../api/classcPacket.html">cPacket</a></tt> is via
+subclassing them. However, because for each field you need to write at
+least three things (a private data member, a getter and a setter method),
+and the resulting class has to integrate with the simulation framework,
+writing the necessary C++ code can be a tedious and time-consuming task.
+
+<p>OMNeT++ offers a more convenient way called <i>message definitions</i>.
+Message definitions offer you a compact syntax to describe message
+contents, and the corresponding C++ code is automatically generated from
+the definitions. A common complaint about code generators in general is
+lack of flexibility: if you have a different idea how the generated code
+should look, there is little you can do about it. OMNeT++, however, allows
+you to extensively customize the generated class. Even if you need to
+heavily customize the generated class, message definitions still save you a
+great deal of manual work.
+
+<p>
+<h3><a name="sec224"/>6.1.1 The First Message Class</h3>
+<a name="sec:ch-msg-defs:first-msg-class"></a>
+
+<p>Let us begin with a simple example. Suppose that you need a packet class that
+carries source and destination addresses as well as a hop count. You may then
+write a <tt>MyPacket.msg</tt> file with the following contents:
+
+<pre class="msg">
+packet MyPacket
+{
+     int srcAddress;
+     int destAddress;
+     int remainingHops = 32;
+};
+</pre>
+<p>
+It is the task of the <i>message compiler</i> is to generate C++ classes
+you can use from your models. The message compiler is normally invoked
+automatically for your <tt>.msg</tt> files during build.
+
+<p>When the message compiler processes <tt>MyPacket.msg</tt>, it creates the
+following files: <tt>MyPacket_m.h</tt> and <tt>MyPacket_m.cc</tt>. The
+generated <tt>MyPacket_m.h</tt> will contain the following class declaration:
+
+<pre class="cpp">
+class MyPacket : public <a href="../api/classcPacket.html">cPacket</a> {
+    ...
+    virtual int getSrcAddress() const;
+    virtual void setSrcAddress(int srcAddress);
+    ...
+};
+</pre>
+<p>
+In your C++ files, you can use the <tt>MyPacket</tt> class by including the
+generated header file:
+
+<pre class="cpp">
+#include "MyPacket_m.h"
+
+...
+MyPacket *pkt = new MyPacket("pkt");
+pkt-&gt;setSrcAddress(localAddr);
+...
+</pre>
+<p>
+The <tt>MyPacket_m.cc</tt> file will contain implementation of the generated <tt>MyPacket</tt>
+class as well as &#8220;reflection&#8221; code that allows you to inspect these data
+structures in the Tkenv GUI. The <tt>MyPacket_m.cc</tt> file should be compiled and
+linked into your simulation; this is normally taken care of automatically.
+
+<p>The following sections describe the message syntax and features in detail.
+
+<p>
+
+<p><h2><a name="sec225"/>6.2 Messages and Packets</h2>
+<a name="sec:ch-msg-defs:messages-and-packets"></a>
+
+<p><h3><a name="sec226"/>6.2.1 Defining Messages and Packets</h3>
+<a name="sec:ch-msg-defs:defining-messages-and-packets"></a>
+
+<p>Message and packet contents can be defined in a syntax resembling C structs.
+The keyword can be <b><tt>message</tt></b> or <b><tt>packet</tt></b>; they cause
+the generated C++ class to be derived from <tt><a href="../api/classcMessage.html">cMessage</a></tt> and
+<tt><a href="../api/classcPacket.html">cPacket</a></tt>, respectively. (Further keywords, <b><tt>class</tt></b> and
+<b><tt>struct</tt></b>, will be covered later.)
+
+<p>An example packet definition:
+
+<pre class="msg">
+packet FooPacket
+{
+    int sourceAddress;
+    int destAddress;
+    bool hasPayload;
+};
+</pre>
+<p>
+Saving the above code into a <tt>FooPacket.msg</tt> file and processing it
+with the message compiler, <tt>opp_msgc</tt>, will produce the files
+<tt>FooPacket_m.h</tt> and <tt>FooPacket_m.cc</tt>. The header file will
+contain the declaration of the generated C++ class.
+
+<p>The generated class will have a constructor that optionally accepts object
+name and message kind, and also a copy constructor. An assignment operator
+(<tt>operator=()</tt>) and cloning method (<tt>dup()</tt>) will also be
+generated.
+
+<pre class="cpp">
+class FooPacket : public <a href="../api/classcPacket.html">cPacket</a>
+{
+  public:
+    FooPacket(const char *name=NULL, int kind=0);
+    FooPacket(const FooPacket& other);
+    FooPacket& operator=(const FooPacket& other);
+    virtual FooPacket *dup() const;
+    ...
+</pre>
+<p>
+For each field in the above description, the generated class will have a
+protected data member, and a public getter and setter method. The names of
+the methods will begin with <tt>get</tt> and <tt>set</tt>, followed by the field
+name with its first letter converted to uppercase. Thus, <tt>FooPacket</tt>
+will contain the following methods:
+
+<pre class="cpp">
+    virtual int getSourceAddress() const;
+    virtual void setSourceAddress(int sourceAddress);
+    virtual int getDestAddress() const;
+    virtual void setDestAddress(int destAddress);
+    virtual bool getHasPayload() const;
+    virtual void setHasPayload(bool hasPayload);
+</pre>
+<p>
+Note that the methods are all declared <b><tt>virtual</tt></b> to give you the possibility
+of overriding them in subclasses.
+
+<p>String fields can also be declared:
+
+<pre class="msg">
+packet HttpRequestMessage
+{
+    string method; // "GET", "POST", etc.
+    string resource;
+};
+</pre>
+<p>
+The generated getter and setter methods will return and accept <tt>const char*</tt>
+pointers:
+
+<pre class="cpp">
+virtual const char *getMethod() const;
+virtual void setMethod(const char *method);
+virtual const char *getResource() const;
+virtual void setResource(const char *resource);
+</pre>
+<p>
+The generated object will have its own copy of the string, so it not only stores
+the <tt>const char*</tt> pointer.
+
+<p>
+<h3><a name="sec227"/>6.2.2 Field Data Types</h3>
+<a name="sec:ch-msg-defs:field-data-types"></a>
+
+<p>Data types for fields are not limited to <b><tt>int</tt></b> and
+<b><tt>bool</tt></b>. You can use several C/C++ and other data types:
+
+<p><ul>
+   <li> logical: <b><tt>bool</tt></b>
+   <li> integral types: <b><tt>char</tt></b>, <b><tt>short</tt></b>, <b><tt>int</tt></b>,
+      <b><tt>long</tt></b>; and their unsigned versions <b><tt>unsigned char</tt></b>,
+      <b><tt>unsigned short</tt></b>, <b><tt>unsigned int</tt></b>, <b><tt>unsigned long</tt></b>
+   <li> floating-point types: <b><tt>float</tt></b>, <b><tt>double</tt></b>
+   <li> C99-style fixed-size integral types: <b><tt>int8_t</tt></b>, <b><tt>int16_t</tt></b>,
+      <b><tt>int32_t</tt></b>, <b><tt>int64_t</tt></b>; and their unsigned versions
+      <b><tt>uint8_t</tt></b>, <b><tt>uint16_t</tt></b>, <b><tt>uint32_t</tt></b>, <b><tt>uint64_t</tt></b>;
+      <br><ul><font size=-1>[These type names are accepted without the <tt>_t</tt> suffix as well,
+      but you are responsible to ensure that the generated code compiles, i.e. the
+      shortened type names must be defined in a header file you include.]</font></ul>
+   <li> OMNeT++ simulation time: <b><tt>simtime_t</tt></b>
+   <li> <b><tt>string</tt></b>. Getters and setters use the <tt>const char*</tt> data type;
+      <tt>NULL</tt> is not allowed. The object will store a copy of the string,
+      not just the pointer.
+   <li> structs and classes, defined in message files or elsewhere (see
+      in later sections <a href="chap6.html#sec232">[6.2.7]</a>
+      and <a href="chap6.html#sec239">[6.6]</a>)
+   <li> typedef'd names declared in C++ and announced to the message compiler
+)
+</ul>
+
+<p>Numeric fields are initialized to zero, booleans to <tt>false</tt>, and string
+fields to empty string.
+
+<p>
+<h3><a name="sec228"/>6.2.3 Initial Values</h3>
+<a name="sec:ch-msg-defs:initial-values"></a>
+
+<p>You can specify initial values for fields. Examples:
+
+<pre class="msg">
+packet RequestPacket
+{
+    int version = HTTP_VERSION;
+    string method = "GET";
+    string resource = "/";
+    int maxBytes = 100*1024*1024; // 100MiB
+    bool keepAlive = true;
+};
+</pre>
+<p>
+As you can see, macros and expressions are also accepted as initalizer
+values. The message compiler does not check the syntax of the values, it
+only copies them into the generated C++ file; so if there is an error in
+them, it will be reported by the C++ compiler.
+
+<p>Field initialization statements will be placed into the constructor of the
+generated class.
+
+<p>
+<h3><a name="sec229"/>6.2.4 Enums</h3>
+<a name="sec:ch-msg-defs:enums"></a>
+
+<p>You can declare that an <b><tt>int</tt></b> (or other integral type) field
+takes values from an enum. The message compiler can then generate code
+that allows Tkenv display the symbolic value of the field.
+
+<p>Example:
+
+<pre class="msg">
+packet FooPacket
+{
+    int payloadType @enum(PayloadType);
+};
+</pre>
+<p>
+The enum itself has to be declared separately. An enum is declared with
+the <b><tt>enum</tt></b> keyword, using the following syntax:
+
+<pre class="msg">
+enum PayloadType
+{
+   NONE = 0;
+   UDP = 1;
+   TCP = 2;
+   SCTP = 3;
+};
+</pre>
+<p>
+Enum values need to be unique.
+
+<p>The message compiler translates an enum into a normal C++ enum, plus
+creates an object which stores text representations of the constants. The
+latter makes it possible to display symbolic names in Tkenv.
+
+<p>If the enum to be associated with a field comes from a different message file,
+then the enum must be announced and its generated header file be included.
+An example:
+
+<pre class="msg">
+cplusplus {{
+#include "PayloadType_m.h"
+}}
+
+enum PayloadType;
+
+packet FooPacket
+{
+    int payloadType @enum(PayloadType);
+};
+</pre>
+<p>
+
+<p>
+<h3><a name="sec230"/>6.2.5 Fixed-Size Arrays</h3>
+<a name="sec:ch-msg-defs:fixed-size-arrays"></a>
+
+<p>You can specify fixed size arrays:
+
+<pre class="msg">
+packet SourceRoutedPacket
+{
+    int route[4];
+};
+</pre>
+<p>
+The generated getter and setter methods will have an extra <tt>k</tt> argument,
+the array index:
+
+<pre class="cpp">
+virtual long getRoute(unsigned k) const;
+virtual void setRoute(unsigned k, long route);
+</pre>
+<p>
+If you call the methods with an index that is out of bounds, an exception
+will be thrown.
+
+<p>
+<h3><a name="sec231"/>6.2.6 Variable-Size Arrays</h3>
+<a name="sec:ch-msg-defs:variable-size-arrays"></a>
+
+<p>If the array size is not known in advance, you can declare the field
+to have a variable size:
+
+<pre class="msg">
+packet SourceRoutedPacket
+{
+    int route[];
+};
+</pre>
+<p>
+In this case, the generated class will have two extra methods in addition
+to the getter and setter methods: one for setting the array size, and another
+one for returning the current array size.
+
+<pre class="cpp">
+virtual long getRoute(unsigned k) const;
+virtual void setRoute(unsigned k, long route);
+virtual unsigned getRouteArraySize() const;
+virtual void setRouteArraySize(unsigned n);
+</pre>
+<p>
+The <tt>set...ArraySize()</tt> method internally allocates a new array. Existing
+values in the array will be preserved (copied over to the new array.)
+
+<p>The default array size is zero. This means that you need to call
+<tt>set...ArraySize()</tt> with a nonzero argument before you can
+start filling array elements.
+
+<p>
+<h3><a name="sec232"/>6.2.7 Classes and Structs as Fields</h3>
+<a name="sec:ch-msg-defs:other-types-as-fields"></a>
+
+<p>In addition to primitive types, you can also use other types (classes,
+structs, typedefs, etc.) as fields. For example, if you have a C++ type
+called <tt>IPAddress</tt>, you can write the following:
+
+<pre class="msg">
+packet IPPacket
+{
+    int version = 4;
+    IPAddress src;
+    IPAddress dest;
+};
+</pre>
+<p>
+The <tt>IPAddress</tt> type must be known to the message compiler, and
+also at compile time to the C++ compiler; section
+<a href="chap6.html#sec239">[6.6]</a> will describe how to achieve that.
+
+<p>The generated class will contain <tt>IPAddress</tt> data members
+(that is, not pointers to <tt>IPAddress</tt> objects), and
+the following getter and setter methods will be generated for them:
+
+<pre class="cpp">
+virtual IPAddress& getSrc();
+virtual const IPAddress& getSrc() const;
+virtual void setSrc(const IPAddress& src);
+
+virtual IPAddress& getDest();
+virtual const IPAddress& getDest() const;
+virtual void setDest(const IPAddress& dest);
+</pre>
+<p>
+
+<p><h3><a name="sec233"/>6.2.8 Pointer Fields</h3>
+<a name="sec:ch-msg-defs:pointers-fields"></a>
+
+<p>Pointer fields where the setters and the destructor would delete the
+previous value are not supported yet. However, there are workarounds, as
+described below.
+
+<p>You can create a typedef for the pointer and use the typedef name as field
+type. Then you'll get a plain pointer field where neither the setter nor
+the destructor deletes the old value (which is a likely memory leak).
+
+<p>Example (section <a href="chap6.html#sec239">[6.6]</a> will explain the
+details):
+
+<pre class="msg">
+cplusplus {{ typedef Foo *FooPtr; }} // C++ typedef
+class noncobject FooPtr; // announcement for the message compiler
+
+packet Bar
+{
+    FooPtr fooPtr;  // leaky pointer field
+};
+</pre>
+<p>
+Then you can customize the class via C++ inheritance and reimplement
+the setter methods in C++, inserting the missing <tt>delete</tt> statements.
+Customization via C++ inheritance will be described in section
+<a href="chap6.html#sec245">[6.7.2]</a>.
+
+<p>
+<h3><a name="sec234"/>6.2.9 Inheritance</h3>
+<a name="sec:ch-msg-defs:inheritance"></a>
+
+<p>By default, messages are subclassed from <tt><a href="../api/classcMessage.html">cMessage</a></tt> or
+<tt><a href="../api/classcPacket.html">cPacket</a></tt>. However, you can explicitly specify the base class using
+the <b><tt>extends</tt></b> keyword (only single inheritance is supported):
+
+<pre class="msg">
+packet Ieee80211DataFrame extends Ieee80211Frame
+{
+    ...
+};
+</pre>
+<p>
+For the example above, the generated C++ code will look like this:
+
+<pre class="cpp">
+// generated C++
+class Ieee80211DataFrame : public Ieee80211Frame {
+    ...
+};
+</pre>
+<p>
+
+<p><h3><a name="sec235"/>6.2.10 Assignment of Inherited Fields</h3>
+<a name="sec:ch-msg-defs:assignment-of-inherited-fields"></a>
+
+<p>Message definitions allow you to change the initial value of a field
+defined in an ancestor type. The syntax is similar to that of a field
+definition with initial value, only the data type is missing.
+
+<p>An example:
+
+<pre class="msg">
+packet Ieee80211Frame
+{
+    int frameType;
+    ...
+};
+
+packet Ieee80211DataFrame extends Ieee80211Frame
+{
+    frameType = DATA_FRAME;  // assignment of inherited field
+    ...
+};
+</pre>
+<p>
+It may seem like the message compiler would need the definition of the base
+class to check the definition of the field being assigned. However, it is
+not the case. The message compiler trusts that such field exists; or
+rather, it leaves the check to the C++ compiler.
+
+<p>What the message compiler actually does is derives a setter method name
+from the field name, and generates a call to it into the constructor.
+Thus, the generated constructor for the above packet type would be
+something like this:
+
+<pre class="cpp">
+Ieee80211DataFrame::Ieee80211DataFrame(const char *name, int kind) :
+    Ieee80211Frame(name, kind)
+{
+    this-&gt;setFrameType(DATA_FRAME);
+    ...
+}
+</pre>
+<p>
+This implementation also lets you initialize <tt><a href="../api/classcMessage.html">cMessage</a></tt> /
+<tt><a href="../api/classcPacket.html">cPacket</a></tt> fields such as message kind or packet length:
+
+<pre class="msg">
+packet UDPPacket
+{
+    byteLength = 16;  // results in 'setByteLength(16);' being placed into ctor
+};
+</pre>
+<p>
+
+<p>
+<h2><a name="sec236"/>6.3 Classes</h2>
+<a name="sec:ch-msg-defs:defining-classes"></a>
+
+<p>Until now we have only seen message and packet descriptions, which generate
+classes derived from <tt><a href="../api/classcMessage.html">cMessage</a></tt> or <tt><a href="../api/classcPacket.html">cPacket</a></tt>. However, it is
+also useful to be able to generate classes and structs, for building blocks
+for messages, as control info objects (see <tt><a href="../api/classcMessage.html">cMessage</a></tt>'s
+<tt>setControlInfo()</tt> and for other purposes. This section covers
+classes; structs will be described in the next section.
+
+<p>The syntax for defining classes is almost the same as defining messages,
+only the <b><tt>class</tt></b> keyword is used instead of <b><tt>message</tt></b> /
+<b><tt>packet</tt></b>. The base class can be specified with the <b><tt>extends</tt></b>
+keyword, and defaults to <tt><a href="../api/classcObject.html">cObject</a></tt>.
+
+<p><ul class="note"><b>NOTE</b><br>
+<tt><a href="../api/classcObject.html">cObject</a></tt> has no data members. It only defines virtual methods, so
+the only overhead would be the <i>vptr</i>; however, the generated class already has
+a vptr because the generated methods are also virtual. In other words,
+<tt><a href="../api/classcObject.html">cObject</a></tt> adds zero overhead to the generated class, and there is no
+reason not to always use it as base class.
+</ul>
+
+<p>Examples:
+
+<pre class="msg">
+class TCPCommand  // same as "extends <a href="../api/classcObject.html">cObject</a>"
+{
+    ...
+};
+
+class TCPOpenCommand extends TCPCommand
+{
+    ...
+};
+</pre>
+<p>
+The generated code:
+
+<pre class="cpp">
+// generated C++
+class TCPCommand : public <a href="../api/classcObject.html">cObject</a>
+{
+    ...
+};
+
+class TCPOpenCommand : public TCPCommand
+{
+    ...
+};
+</pre>
+<p>
+
+<p><h2><a name="sec237"/>6.4 Structs</h2>
+<a name="sec:ch-msg-defs:defining-structs"></a>
+
+<p>You can define C-style structs to be used as fields in message classes,
+&#8220;C-style&#8221; meaning &#8220;containing only data and no methods&#8221; (in contrast to
+C++ where a struct is just a class with a different default member
+visibility.)
+
+<p>The syntax is similar to that of defining messages:
+
+<pre class="msg">
+struct Place
+{
+    int type;
+    string description;
+    double coords[3];
+};
+</pre>
+<p>
+However, the generated code is different. The generated struct has
+no getter or setter methods, instead the fields are represented
+by public data members. The following code is generated from
+the above definition:
+
+<pre class="cpp">
+// generated C++
+struct Place
+{
+    int type;
+    <a href="../api/classopp__string.html">opp_string</a> description; // minimal string class that wraps a const char*
+    double coords[3];
+};
+</pre>
+<p>
+Note that <b><tt>string</tt></b> fields are generated with the <tt><a href="../api/classopp__string.html">opp_string</a></tt>
+C++ type, which is a minimalistic string class that wraps <tt>const char*</tt>
+and takes care of allocation/deallocation. It was chosen instead of
+<tt>std::string</tt> because of its significantly smaller memory footprint
+(the sizeof of <tt><a href="../api/classopp__string.html">opp_string</a></tt> is the same as that of a <tt>const char*</tt>
+pointer).
+
+<p>Inheritance is supported for structs:
+
+<pre class="msg">
+struct Base
+{
+    ...
+};
+
+struct Extended extends Base
+{
+    ...
+};
+</pre>
+<p>
+However, because a struct has no member functions, there are limitations:
+
+<p><ul>
+   <li> variable-size arrays are not supported;
+   <li> customization via inheritance and <b><tt>abstract</tt></b> fields
+      (see later in <a href="chap6.html#sec245">[6.7.2]</a>)
+      cannot be used;
+   <li> cannot have classes subclassed from <tt><a href="../api/classcOwnedObject.html">cOwnedObject</a></tt> as fields,
+      because structs cannot be owners.
+</ul>
+
+<p>
+
+<p><h2><a name="sec238"/>6.5 Literal C++ Blocks</h2>
+<a name="sec:ch-msg-defs:cplusplus-blocks"></a>
+
+<p>It is possible to have C++ code placed directly into the generated code,
+more precisely, into the generated header file. This is done with the
+<b><tt>cplusplus</tt></b> keyword and a double curly braces. As we'll see in
+later sections, <b><tt>cplusplus</tt></b> blocks are customarily used to insert
+<tt>#include</tt> directives, typedefs, <tt>#define</tt> macros and other
+elements into the generated header.
+
+<p>Example:
+
+<pre class="msg">
+cplusplus {{
+#include &lt;vector&gt;
+#include "foo.h"
+#define FOO_VERSION 4
+typedef std::vector&lt;int&gt; IntVector;
+}}
+</pre>
+<p>
+The message compiler does not try to make sense of the text in the body of
+the <tt>cplusplus</tt> block, it just simply copies it into the generated
+header file.
+
+<p>
+<h2><a name="sec239"/>6.6 Using C++ Types</h2>
+<a name="sec:ch-msg-defs:using-cpp-types"></a>
+
+<p>The message compile only knows about the types defined within the same msg
+file, and the built-in types. To be able to use other types, for example
+for fields or as base class, you need to do two things:
+
+<p><ol>
+   <li> Let the message compiler know about the type by announcing it; and
+   <li> Make sure its C++ declaration will be available at compile time
+</ol>
+
+<p>The next two sections describe how to do each.
+
+<p>
+<h3><a name="sec240"/>6.6.1 Announcing Types to the Message Compiler</h3>
+<a name="sec:ch-msg-defs:announcing-types"></a>
+
+<p>If you want to use a C++ type (a class, struct or typedef) not
+declared with the message syntax in the same file, you have to
+announce those types to the message compiler.
+
+<p>Type annoucements have a similar syntax to those in C++:
+
+<pre class="msg">
+struct Point;
+class PrioQueue;  // implies it is derived from <a href="../api/classcOwnedObject.html">cOwnedObject</a>! see below
+message TimeoutMessage;
+packet TCPSegment;
+</pre>
+<p>
+However, with the <b><tt>class</tt></b> keyword, the message compiler needs to
+know the whether the class is derived (directly or indirectly) from
+<tt><a href="../api/classcOwnedObject.html">cOwnedObject</a></tt>, <tt><a href="../api/classcNamedObject.html">cNamedObject</a></tt>, <tt><a href="../api/classcObject.html">cObject</a></tt> or none of
+the above, because it affects code generation. The ancestor class can be
+declared with the <b><tt>extends</tt></b> keyword, like this:
+
+<pre class="msg">
+class IPAddress extends void;  // does not extend any "interesting" class
+class ModulePtr extends void;  // ditto
+class IntVector extends void;  // ditto
+class IPCtlInfo extends <a href="../api/classcObject.html">cObject</a>;
+class FooOption extends <a href="../api/classcNamedObject.html">cNamedObject</a>;
+class PrioQueue extends <a href="../api/classcOwnedObject.html">cOwnedObject</a>;
+class IPAddrExt extends IPAddress;  // also OK: IPAddress has been announced
+</pre>
+<p>
+An alternative to <tt>extends void</tt> is the <b><tt>noncobject</tt></b> modifier:
+
+<pre class="msg">
+class noncobject IPAddress; // same as "extends void"
+</pre>
+<p>
+By default, that is, when <b><tt>extends</tt></b> is missing, it is assumed
+that the class is derived from <tt><a href="../api/classcOwnedObject.html">cOwnedObject</a></tt>. Thus, the following
+two announcements are equivalent:
+
+<pre class="msg">
+class PrioQueue;
+class PrioQueue extends <a href="../api/classcOwnedObject.html">cOwnedObject</a>;
+</pre>
+<p>
+<ul class="note"><b>NOTE</b><br>
+Notice that this default is inconsistent with the default base class for
+generating classes, which is <tt><a href="../api/classcObject.html">cObject</a></tt> (see
+<a href="chap6.html#sec236">[6.3]</a>). The reason why type announcements
+assume <tt><a href="../api/classcOwnedObject.html">cOwnedObject</a></tt> is that it is safer: a mistake will surface in
+the form of a compile error and will not remain hidden until it causes some
+obscure runtime error.
+</ul>
+
+<p>
+<h3><a name="sec241"/>6.6.2 Making the C++ Declarations Available</h3>
+
+<p>In addition to announcing types to the message compiler, you also have to make
+sure their C++ declarations will be available at compile time so that the
+generated code will actually compile. This can be achieved with
+<b><tt>cplusplus</tt></b> blocks that let you inject includes, typedefs,
+class/struct declarations, etc. into the generated header file:
+
+<pre class="msg">
+cplusplus {{
+#include "IPAddress.h"
+typedef std::vector&lt;int&gt; IntVector;
+}}
+</pre>
+<p>
+You need a <b><tt>cplusplus</tt></b> block even if the desired types are defined
+in a (different) message file, to include the generated header file.
+It is currently not supported to import types from other message files directly.
+Example:
+
+<pre class="msg">
+cplusplus {{
+#include "TCPSegment_m.h"  // make types defined in TCPSegment.msg available
+                           // for the C++ compiler
+}}
+</pre>
+<p>
+
+<p><h3><a name="sec242"/>6.6.3 Putting it Together</h3>
+
+<p>Suppose you have header files and message files that define various types:
+
+<pre class="cpp">
+// IPAddress.h
+class IPAddress {
+   ...
+};
+</pre>
+<p>
+<pre class="cpp">
+// Location.h
+struct Location {
+    double lon;
+    double lat;
+};
+</pre>
+
+<pre class="msg">
+// AppPacket.msg
+packet AppPacket {
+   ...
+}
+</pre>
+<p>
+To be able to use the above types in a message definition (and two more,
+an <tt>IntVector</tt> and a module pointer), the message file should contain
+the following lines:
+
+<pre class="msg">
+cplusplus {{
+#include &lt;vector&gt;
+#include "IPAddress.h"
+#include "Location.h"
+#include "AppPacket_m.h"
+typedef std::vector&lt;int&gt; IntVector;
+typedef <a href="../api/classcModule.html">cModule</a> *ModulePtr;
+}};
+
+class noncobject IPAddress;
+struct Location;
+packet AppPacket;
+class noncobject IntVector;
+class noncobject ModulePtr;
+
+packet AppPacketExt extends AppPacket {
+    IPAddress destAddress;
+    Location senderLocation;
+    IntVector data;
+    ModulePtr originatingModule;
+}
+</pre>
+<p>
+
+<p><h2><a name="sec243"/>6.7 Customizing the Generated Class</h2>
+<a name="sec:ch-msg-defs:customizing-generated-class"></a>
+
+<p>
+<h3><a name="sec244"/>6.7.1 Customizing Method Names</h3>
+<a name="sec:ch-msg-defs:customizing-method-names"></a>
+
+<p>The names and some other properties of generated methods can be influenced
+with metadata annotations (properties).
+
+<p>The names of the getter and setter methods can be changed with the
+<b><tt>@getter</tt></b> and <b><tt>@setter</tt></b> properties. For variable-size array
+fields, the names of array size getter and setter methods can be changed
+with <b><tt>@sizeGetter</tt></b> and <b><tt>@sizeSetter</tt></b>.
+
+<p>In addition, the data type for the array size (by default <tt>unsigned
+int</tt>) can be changed with <b><tt>@sizetype</tt></b> property.
+
+<p>Consider the following example:
+
+<pre class="msg">
+packet IPPacket {
+    int ttl @getter(getTTL) @setter(setTTL);
+    Option options[] @sizeGetter(getNumOptions)
+                     @sizeSetter(setNumOptions)
+                     @sizetype(short);
+}
+</pre>
+<p>
+The generated class would have the following methods (note the differences
+from the default names <tt>getTtl()</tt>, <tt>setTtl()</tt>, <tt>getOptions()</tt>,
+<tt>setOptions()</tt>, <tt>getOptionsArraySize()</tt>, <tt>getOptionsArraySize()</tt>;
+also note that indices and array sizes are now <tt>short</tt>):
+
+<pre class="cpp">
+virtual int getTTL() const;
+virtual void setTTL(int ttl);
+virtual const Option& getOption(short k) const;
+virtual void setOption(short k, const Option& option);
+virtual short getNumOptions() const;
+virtual void setNumOptions(short n);
+</pre>
+<p>
+In some older simulation models you may also see the use of the
+<b><tt>@omitGetVerb</tt></b> class property. This property tells the message
+compiler to generate getter methods without the &#8220;get&#8221; prefix, e.g. for a
+<tt>sourceAddress</tt> field it would generate a <tt>sourceAddress()</tt> method
+instead of the default <tt>getSourceAddress()</tt>. It is not recommended to
+use <tt>@omitGetVerb</tt> in new models, because it is inconsistent with the
+accepted naming convention.
+
+<p>
+
+<p><h3><a name="sec245"/>6.7.2 Customizing the Class via Inheritance</h3>
+<a name="sec:ch-msg-defs:customizing-via-inheritance"></a>
+
+<p>Sometimes you need the generated code to do something
+more or do something differently than the version generated
+by the message compiler.
+For example, when setting an integer field named <tt>payloadLength</tt>,
+you might also need to adjust the packet length. That is,
+the following default (generated) version of the
+<tt>setPayloadLength()</tt> method is not suitable:
+
+<pre class="cpp">
+void FooPacket::setPayloadLength(int payloadLength)
+{
+    this-&gt;payloadLength = payloadLength;
+}
+</pre>
+<p>
+Instead, it should look something like this:
+
+<pre class="cpp">
+void FooPacket::setPayloadLength(int payloadLength)
+{
+    addByteLength(payloadLength - this-&gt;payloadLength);
+    this-&gt;payloadLength = payloadLength;
+}
+</pre>
+<p>
+According to common belief, the largest drawback of generated code
+is that it is difficult or impossible to fulfill such wishes.
+Hand-editing of the generated files is worthless, because
+they will be overwritten and changes will be lost
+in the code generation cycle.
+
+<p>However, object oriented programming offers a solution.
+A generated class can simply be customized by subclassing
+from it and redefining whichever methods need to be
+different from their generated versions. This practice
+is known as the <i>Generation Gap</i> design pattern.
+It is enabled with the <b><tt>@customize</tt></b> property set on the
+message:
+
+<pre class="msg">
+packet FooPacket
+{
+   @customize(true);
+   int payloadLength;
+};
+</pre>
+<p>
+If you process the above code with the message compiler,
+the generated code will contain a <tt>FooPacket_Base</tt> class
+instead of <tt>FooPacket</tt>. Then you would subclass
+<tt>FooPacket_Base</tt> to produce <tt>FooPacket</tt>,
+while doing your customizations by redefining the necessary methods.
+
+<pre class="cpp">
+class FooPacket_Base : public <a href="../api/classcPacket.html">cPacket</a>
+{
+  protected:
+    int src;
+    // make constructors protected to avoid instantiation
+    FooPacket_Base(const char *name=NULL);
+    FooPacket_Base(const FooPacket_Base& other);
+  public:
+    ...
+    virtual int getSrc() const;
+    virtual void setSrc(int src);
+};
+</pre>
+<p>
+There is a minimum amount of code you have to write
+for <tt>FooPacket</tt>, because not everything can be
+pre-generated as part of <tt>FooPacket_Base</tt>, e.g.
+constructors cannot be inherited. This minimum
+code is the following (you will find it the generated C++ header
+too, as a comment):
+
+<pre class="cpp">
+class FooPacket : public FooPacket_Base
+{
+  public:
+    FooPacket(const char *name=NULL) : FooPacket_Base(name) {}
+    FooPacket(const FooPacket& other) : FooPacket_Base(other) {}
+    FooPacket& operator=(const FooPacket& other)
+        {FooPacket_Base::operator=(other); return *this;}
+    virtual FooPacket *dup() const {return new FooPacket(*this);}
+};
+
+Register_Class(FooPacket);
+</pre>
+<p>
+Note that it is important that you redefine <tt>dup()</tt> and
+provide an assignment operator (<tt>operator=()</tt>).
+
+<p>So, returning to our original example about payload length
+affecting packet length, the code you'd write is the following:
+
+<pre class="cpp">
+class FooPacket : public FooPacket_Base
+{
+    // here come the mandatory methods: constructor,
+    // copy constructor, operator=(), dup()
+    // ...
+
+    virtual void setPayloadLength(int newlength);
+}
+
+void FooPacket::setPayloadLength(int newlength)
+{
+    // adjust message length
+    addByteLength(newlength - getPayloadLength());
+
+    // set the new length
+    FooPacket_Base::setPayloadLength(newlength);
+}
+</pre>
+<p>
+
+<p>
+<h3><a name="sec246"/>6.7.3 Abstract Fields</h3>
+<a name="sec:ch-msg-defs:abstract-fields"></a>
+
+<p>The purpose of abstract fields is to let you to override
+the way the value is stored inside the class,
+and still benefit from inspectability in Tkenv.
+
+<p>For example, this is the situation when you want to store a bitfield
+in a single <b><tt>int</tt></b> or <b><tt>short</tt></b>, and yet you want
+to present bits as individual packet fields.
+It is also useful for implementing computed fields.
+
+<p>You can declare any field to be abstract with the following syntax:
+
+<pre class="msg">
+packet FooPacket
+{
+   @customize(true);
+   abstract bool urgentBit;
+};
+</pre>
+<p>
+For an <b><tt>abstract</tt></b> field, the message compiler generates
+no data member, and generated getter/setter methods will be pure
+virtual:
+
+<pre class="cpp">
+virtual bool getUrgentBit() const = 0;
+virtual void setUrgentBit(bool urgentBit) = 0;
+</pre>
+<p>
+
+<p>Usually you'll want to use abstract fields together with
+the Generation Gap pattern, so that you can immediately
+redefine the abstract (pure virtual) methods and
+supply your implementation.
+
+<p>
+
+<p><h2><a name="sec247"/>6.8 Using Standard Container Classes for Fields</h2>
+<a name="sec:ch-msg-defs:using-stl"></a>
+
+<p>One often wants to use standard container classes (STL) as fields, such as
+<tt>std::vector</tt>, <tt>std::stack</tt> or <tt>std::map</tt>. The following sections
+describe two ways this can be done:
+
+<p><ol>
+  <li> via a typedef;
+  <li> by defining the field as abstract, and customizing the generated class.
+</ol>
+
+<p><h3><a name="sec248"/>6.8.1 Typedefs</h3>
+
+<p>The basic idea is that if we create a typedef for the desired type,
+we can use it for fields just as any other type. Example:
+
+<pre class="msg">
+cplusplus {{
+#include &lt;vector&gt;
+typedef std::vector&lt;int&gt; IntVector;
+}}
+
+class noncobject IntVector;
+
+packet FooPacket {
+    IntVector addresses;
+};
+</pre>
+<p>
+The generated class will have the following methods:
+
+<pre class="cpp">
+virtual IntVector& getAddresses();
+virtual const IntVector& getAddresses() const;
+virtual void setAddresses(const IntVector& addresses);
+</pre>
+<p>
+Thus, the underlying <tt>std::vector&lt;int&gt;</tt> is exposed and you can directly
+manipulate it from C++ code, for example like this:
+
+<pre class="cpp">
+FooPacket *pk = new FooPacket();
+pk-&gt;getAddresses().push_back(1);
+pk-&gt;getAddresses().push_back(5);
+pk-&gt;getAddresses().push_back(9);
+// or:
+IntVector& v = pk-&gt;getAddresses();
+v.push_back(1);
+v.push_back(5);
+v.push_back(9);
+</pre>
+<p>
+It is easy. However, there are also some drawbacks:
+
+<p><ol>
+  <li> The message compiler won't know that your field is actually
+      a data structure, so the generated reflection code won't be able
+      to look into it;
+  <li> The fact that STL classes are directly exposed may be a mixed
+      blessing; on one hand this makes it easier to manipulate its
+      contents, but on the other hand it violates the encapsulation
+      principle. Container classes work best when they are used as
+      &#8220;nuts and bolts&#8221; for your C++ program, but they shouldn't really
+      be used as public API.
+</ol>
+
+<p><h3><a name="sec249"/>6.8.2 Abstract Fields</h3>
+
+<p>This approach uses abstract fields. We exploit the fact that
+<tt>std::vector</tt> and <tt>std::stack</tt> are representations of
+<i>sequence</i>, which is the same abstraction as fields' variable-size
+array. That is, if you declare the field to be <tt>abstract fieldname[]</tt>,
+the message compiler will only generate pure virtual functions and you can
+implement the underlying data storage using standard container classes. You
+can also write additional C++ methods that delegate to the container
+object's <tt>push_back()</tt>, <tt>push()</tt>, <tt>pop()</tt>, etc. methods.
+
+<p>Consider the following message declaration:
+
+<pre class="msg">
+packet FooPacket
+{
+    @customize(true);
+    abstract int foo[]; // will use std::vector&lt;int&gt;
+    abstract int bar[]; // will use std::stack&lt;int&gt;
+}
+</pre>
+<p>
+If you compile the above code, in the generated C++ code you will only find
+abstract methods for <tt>foo</tt> and <tt>bar</tt>, but no underlying data
+members or method implementations. You can implement everything as you
+like. You can write the following C++ file then to implement <tt>foo</tt> and
+<tt>bar</tt> with <tt>std::vector</tt> and <tt>std::stack</tt> (some details omitted
+for brevity):
+
+<pre class="cpp">
+#include &lt;vector&gt;
+#include &lt;stack&gt;
+#include "FooPacket_m.h"
+
+class FooPacket : public FooPacket_Base
+{
+  protected:
+    std::vector&lt;int&gt; foo;
+    std::stack&lt;int&gt; bar;
+
+    // helper method
+    void unsupported() {throw cRuntimeException("unsupported method called");}
+
+  public:
+    ...
+    // foo methods
+    virtual int getFoo(unsigned int k) {return foo[k];}
+    virtual void setFoo(unsigned int k, int x) {foo[k]=x;}
+    virtual void addFoo(int x) {foo.push_back(x);}
+    virtual void setFooArraySize(unsigned int size) {foo.resize(size);}
+    virtual unsigned int getFooArraySize() const {return foo.size();}
+
+    // bar methods
+    virtual int getBar(unsigned int k) {...}
+    virtual void setBar(unsigned int k, int x) {unsupported();}
+    virtual void barPush(int x) {bar.push(x);}
+    virtual void barPop() {bar.pop();}
+    virtual int barTop() {return bar.top();}
+    virtual void setBarArraySize(unsigned int size) {unsupported();}
+    virtual unsigned int getBarArraySize() const {return bar.size();}
+};
+
+Register_Class(FooPacket);
+</pre>
+<p>
+Some additional boilerplate code is needed so that the class conforms
+to conventions, and duplication and copying works properly:
+
+<pre class="cpp">
+    FooPacket(const char *name=NULL, int kind=0) : FooPacket_Base(name,kind) {
+    }
+    FooPacket(const FooPacket& other) : FooPacket_Base(other.getName()) {
+        operator=(other);
+    }
+    FooPacket& operator=(const FooPacket& other) {
+        if (&other==this) return *this;
+        FooPacket_Base::operator=(other);
+        foo = other.foo;
+        bar = other.bar;
+        return *this;
+    }
+    virtual FooPacket *dup() {
+        return new FooPacket(*this);
+    }
+</pre>
+<p>
+Some additional notes:
+
+<p><ol>
+  <li><tt>setFooArraySize()</tt>, <tt>setBarArraySize()</tt> are redundant.
+  <li><tt>getBar(int k)</tt> cannot be implemented in a straightforward way
+     (<tt>std::stack</tt> does not support accessing elements by index).
+     It could still be implemented in a less efficient way using STL iterators,
+     and efficiency does not seem to be major problem because only Tkenv
+     is going to invoke this function.
+  <li><tt>setBar(int k, int x)</tt> could not be implemented, but this
+     is not particularly a problem. The exception will materialize in a
+     Tkenv error dialog when you try to change the field value.
+</ol>
+
+<p>
+
+<p><h2><a name="sec250"/>6.9 Namespaces</h2>
+<a name="sec:ch-msg-defs:namespaces"></a>
+
+<p>It is possible to place the generated classes into a C++ namespace,
+and also to use types from other namespaces.
+
+<p><h3><a name="sec251"/>6.9.1 Declaring a Namespace</h3>
+<a name="sec:ch-msg-defs:declaring-a-namespace"></a>
+
+<p>To place the generated types into a namespace, add a namespace declaration
+near the top of the message file:
+
+<pre class="msg">
+namespace inet;
+</pre>
+<p>
+If you are fond of hierarchical (nested) namespaces, you can declare one
+with a straightforward syntax, using double colons in the namespace
+declaration. There is no need for multiple nested <tt>namespace</tt>
+declarations as in C++:
+
+<pre class="msg">
+namespace org::omnetpp::inet::ieee80211;
+</pre>
+<p>
+The above code will be translated into nested namespaces in the C++ code:
+
+<pre class="cpp">
+namespace org { namespace omnetpp { namespace inet { namespace ieee80211 {
+...
+}}}}
+</pre>
+<p>
+Conceptually, the namespace extends from the place of the namespace
+declaration to the end of the message file. (A message file may contain
+only one namespace declaration.) In other words, it <i>does</i> matter
+whether you put something above the namespace declaration line or below it:
+
+<p><ol>
+<li> The contents of <b><tt>cplusplus</tt></b> blocks above the namespace
+      declaration will be placed outside (i.e. above) the namespace block
+      in the generated C++ header; blocks below the namespace declaration
+      will placed inside the C++ namespace block.
+<li> Type announcements are interpreted differently depending on whether
+      they occur above or below the namespace declaration (this will be
+      detailed later).
+<li> Types defined with the message syntax are placed into the namespace
+      of the message file; thus, definitions must always be <i>after</i>
+      the namespace declaration. Type definitions above the namespace line
+      will be rejected with an error message.
+</ol>
+
+<p><h3><a name="sec252"/>6.9.2 C++ Blocks and Namespace</h3>
+
+<p>As described above, the contents of a <b><tt>cplusplus</tt></b> block will be
+copied above or into the C++ namespace block in the generated header
+depending on whether it occurs above or below the namespace declaration in
+the message file.
+
+<p>The placement of <b><tt>cplusplus</tt></b> blocks relative to the namespace
+declaration is important because you don't want <tt>#include</tt> directives
+to be placed inside the C++ namespace block. That would cause the
+declarations in the header file to be interpreted as being part of the
+namespace, which they are not. Includes should always be put into
+<tt>cplusplus</tt> blocks <i>above</i> the namespace declaration. This is so
+important that I repeat it:
+
+<p><ul class="important"><b>IMPORTANT</b><br>
+Includes should always be placed into a <b><tt>cplusplus</tt></b> block <b>above</b>
+the namespace declaration.
+</ul>
+
+<p>As for typedefs and other C++ code, you need to place them above or below
+the namespace declaration based on whether you want them to be in the C++
+namespace or not.
+
+<p><h3><a name="sec253"/>6.9.3 Type Announcements and Namespace</h3>
+
+<p>The type announcement syntax allows one to specify the namespace of the type
+as well, so the following lines are syntactically correct:
+
+<pre class="msg">
+packet foo::FooPacket;
+packet nes::ted::name::space::BarPacket;
+packet ::BazPacket;
+</pre>
+<p>
+Announced type names are interpreted in the following way:
+
+<p><ol>
+<li> If the type name contains a double colon (<tt>::</tt>), it is interpreted
+      as being fully qualified with an absolute namespace.
+<li> If the name is just an identifier (no double colon), the interpretation
+      depends on whether it is above or below the namespace declaration.
+      If it is above, the name is interpreted as a global type; otherwise
+      it is interpreted as part of the package file's namespace.
+</ol>
+
+<p>This also means that if you want to announce a global type, you either
+have to put the announcement above the namespace declaration, or prefix
+the type with &#8220;<tt>::</tt>&#8221; to declare that it is not part of a namespace.
+
+<p>When the announced types are used later (as field type, base class, etc.),
+they can be referred to just with their simple names (without namespace);
+or alternatively with their fully qualified names. When a message compiler
+encounters type name as field type or base class, it interprets the type
+name in the following way:
+
+<p><ol>
+<li> If the type name contains a double colon (<tt>::</tt>), it is interpreted
+      as being fully qualified with an absolute namespace.
+<li> If the name is just an identifier (no double colon), and the message
+      file's namespace contains that name, it is chosen; otherwise:
+<li> It is looked up among all announced types in all namespaces (including
+      the global namespace), and there must be exactly one match. That is,
+      if the same name exists in multiple namespaces, it may only be
+      referenced with fully qualified name.
+</ol>
+
+<p>The following code illustrates the above rules:
+
+<pre class="msg">
+cplusplus {{
+// includes go above the namespace line
+#include &lt;vector&gt;
+#include "IPAddress.h"
+}}
+
+// the IPAddress type is in the global namespace
+class noncobject IPAddress;
+
+namespace foo;  // namespace begins with this line
+
+// we could also have announced IPAddress here as "::IPAddress":
+//class noncobject ::IPAddress;
+
+cplusplus {{
+// we want IPAddressVector to be part of the namespace
+typedef std::vector&lt;IPAddress&gt; IPAddressVector;
+}}
+
+// type will be understood as foo::IPAddressVector
+class noncobject IPAddressVector;
+
+packet FooPacket {
+    IPAddress source;
+    IPAddressVector neighbors;
+};
+</pre>
+<p>
+Another example that uses a <tt>PacketData</tt> class and a <tt>NetworkPacket</tt> type
+from a <tt>net</tt> namespace:
+
+<pre class="msg">
+// NetworkPacket.msg
+namespace net;
+class PacketData { }
+packet NetworkPacket { }
+</pre>
+<p>
+<pre class="msg">
+// FooPacket.msg
+cplusplus {{
+#include "NetworkPacket_m.h"
+}}
+class net::PacketData;
+packet net::NetworkPacket;
+
+namespace foo;
+
+packet FooPacket extends NetworkPacket
+{
+    PacketData data;
+}
+</pre>
+
+<p>
+
+<p><h2><a name="sec254"/>6.10 Descriptor Classes</h2>
+<a name="sec:ch-msg-defs:descriptor-classes"></a>
+
+<p>For each generated class and struct, the message compiler generates an
+associated descriptor class. The descriptor class carries &#8220;reflection&#8221;
+information about the new class, and makes it possible to inspect message
+contents in Tkenv.
+
+<p>The descriptor class encapsulates virtually all information that the
+original message definition contains, and exposes it via member functions.
+It has methods for enumerating fields (<tt>getFieldCount()</tt>,
+<tt>getFieldName()</tt>, <tt>getFieldTypeString()</tt>, etc.), for getting
+and setting a field's value in an instance of the class
+(<tt>getFieldAsString()</tt>, <tt>setFieldAsString()</tt>), for exploring the
+class hierarchy (<tt>getBaseClassDescriptor()</tt>, etc.), for accessing
+class and field properties, and for similar tasks. When you inspect a
+message or packet in the simulation, Tkenv can uses the associated
+descriptor class to extract and display the field values.
+
+<p>The <b><tt>@descriptor</tt></b> class property can be used to control the generation
+of the descriptor class. <tt>@descriptor(readonly)</tt> instructs the message
+compiler not to generate field setters for the descriptor, and
+<tt>@descriptor(false)</tt> instructs it not to generate a description class
+for the class at all.
+
+<p>It is also possible to use (or abuse) the message compiler for generating a
+descriptor class for an existing class. (This can be useful for making your
+class inspectable in Tkenv.) To do that, write a message definition for
+your existing class (for example, if it has <tt>int getFoo()</tt> and
+<tt>setFoo(int)</tt> methods, add an <tt>int foo</tt> field to the message
+definition), and mark it with <tt>@existingClass(true)</tt>. This will tell the
+message compiler that it should not generate an actual class (as it already
+exists), only a descriptor class.
+
+<p>
+
+<p><h2><a name="sec255"/>6.11 Summary</h2>
+<a name="sec:ch-msg-defs:summary"></a>
+
+<p>This section summarizes the possibilities offered by message definitions.
+
+<p>Base functionality:
+
+<p><ul>
+  <li>  generation of classes and plain C structs from concise descriptions
+  <li>  default base classes:
+    <tt><a href="../api/classcPacket.html">cPacket</a></tt> (with the <b><tt>packet</tt></b> keyword),
+    <tt><a href="../api/classcMessage.html">cMessage</a></tt> (with the <b><tt>message</tt></b> keyword), or
+    <tt><a href="../api/classcObject.html">cObject</a></tt> (with the <b><tt>class</tt></b> keyword)
+</ul>
+
+<p>The following data types are supported for fields:
+
+<p><ul>
+  <li>  primitive types:
+    <tt>bool</tt>, <tt>char</tt>, <tt>short</tt>, <tt>int</tt>, <tt>long</tt>;
+    <tt>unsigned char</tt>, <tt>unsigned short</tt>, <tt>unsigned int</tt>, <tt>unsigned long</tt>;
+    <tt>int8_t</tt>, <tt>int16_t</tt>, <tt>int32_t</tt>, <tt>int64_t</tt>;
+    <tt>uint8_t</tt>, <tt>uint16_t</tt>, <tt>uint32_t</tt>, <tt>uint64_t</tt>;
+    <tt>float</tt>, <tt>double</tt>; <tt>simtime_t</tt>
+  <li>  <tt>string</tt>, a dynamically allocated string, presented as <tt>const char *</tt>
+  <li>  structs and classes, declared with the message syntax or in C++ code
+  <li>  typedef'd names declared in C++ and announced to the message compiler
+  <li>  fixed-size arrays of the above types
+  <li>  variable-size arrays of the above types (stored as a dynamically
+    allocated array plus an integer for the array size)
+</ul>
+
+<p>Further features:
+
+<p><ul>
+  <li>  fields initialize to zero (except for struct/class fields)
+  <li>  field initializers can be specified (except for struct/class fields)
+  <li>  associating fields of integral types with enums
+  <li>  inheritance
+  <li>  namespaces
+  <li>  customization of generated method names
+  <li>  customization of the generated class via subclassing (<i>Generation Gap</i> pattern)
+  <li>  abstract fields (for nonstandard storage and calculated fields)
+  <li>  generation of descriptor objects that encapsulate reflection information
+</ul>
+
+<p>Generated code (all generated methods are <tt>virtual</tt>, although
+this is not written out in the following table):
+
+<p><table border>
+<TR> <TD align=left>
+
+<p>
+<b>Field declaration</b>
+    </TD> <TD align=left>
+<b>Generated code</b>
+</TD></TR>
+<TR> <TD align=left> 
+primitive types
+<pre class="verbatim">
+double field;
+</pre>
+     </TD> <TD align=left>
+<pre class="verbatim">
+double getField();
+void setField(double d);
+</pre>
+</TD></TR>
+<TR> <TD align=left> 
+string type
+<pre class="verbatim">
+string field;
+</pre>
+     </TD> <TD align=left>
+<pre class="verbatim">
+const char *getField();
+void setField(const char *);
+</pre>
+</TD></TR>
+<TR> <TD align=left> 
+fixed-size arrays
+<pre class="verbatim">
+double field[4];
+</pre>
+     </TD> <TD align=left>
+<pre class="verbatim">
+double getField(unsigned k);
+void setField(unsigned k, double d);
+unsigned getFieldArraySize();
+</pre>
+
+<p></TD></TR>
+<TR> <TD align=left> 
+variable-size arrays
+<pre class="verbatim">
+double field[];
+</pre>
+     </TD> <TD align=left>
+<pre class="verbatim">
+void setFieldArraySize(unsigned n);
+unsigned getFieldArraySize();
+double getField(unsigned k);
+void setField(unsigned k, double d);
+</pre>
+</TD></TR>
+<TR> <TD align=left> 
+customized class
+<pre class="verbatim">
+class Foo {
+  @customize(true);
+</pre>
+     </TD> <TD align=left>
+<pre class="verbatim">
+class Foo_Base { ... };
+</pre>
+and you have to write:
+<pre class="verbatim">
+class Foo : public Foo_Base {
+   ...
+};
+</pre>
+</TD></TR>
+<TR> <TD align=left> 
+abstract fields
+<pre class="verbatim">
+abstract double field;
+</pre>
+     </TD> <TD align=left>
+<pre class="verbatim">
+double getField() = 0;
+void setField(double d) = 0;
+</pre>
+</TD></TR>
+<TR> <TD align=left> 
+</table>
+
+<p>
+
+<hr class='pgbr'><p><hr><b><a href="chap5.html">[Prev]</A>&nbsp;<a href="chap7.html">[Next]</A>&nbsp;<a href="toc.html#toc_6.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p>
+
+</body>
+</html>

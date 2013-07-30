@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="de.unikassel.imageexport"
+      label="Image Export"
+      version="0.11.0"
+      provider-name="University of Kassel"
+      plugin="de.unikassel.imageexport">
+
+   <description>
+      This plug in provides an Eclipse wizard to export GEF diagrams to several
+formats (PNG, BMP, JPEG, etc.). Custom editors may easily contribute to make their
+diagrams exportable. Export file formats are pluggable as well.
+   </description>
+
+   <copyright>
+      Image Export Plug In
+  Copyright (C) 2005, 2006, 2007, 2008 Thomas Maier et. al., University of Kassel, see credits file.
+
+Third Party Content
+  log4j 1.2.12 is licensed under the Apache License 2.0
+   </copyright>
+
+   <license url="doc/GPL">
+      This plug in is free software; you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software Foundation.
+This plug in is licensed using version 2 of the License and not any later version.
+
+This plug in is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this
+program; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite
+330, Boston, MA 02111-1307 USA
+   </license>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.draw2d"/>
+      <import plugin="org.eclipse.gef"/>
+      <import plugin="org.eclipse.ui.ide"/>
+   </requires>
+
+   <plugin
+         id="de.unikassel.imageexport"
+         download-size="0"
+         install-size="0"
+         version="0.11.0"
+         unpack="false"/>
+
+</feature>

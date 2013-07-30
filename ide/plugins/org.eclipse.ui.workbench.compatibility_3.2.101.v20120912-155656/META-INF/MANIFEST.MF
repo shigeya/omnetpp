@@ -1,0 +1,32 @@
+Manifest-Version: 1.0
+Bundle-Localization: fragment-compatibility
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Fragment-Host: org.eclipse.ui.workbench;bundle-version="[3.0.0,4.0.0)"
+Bundle-SymbolicName: org.eclipse.ui.workbench.compatibility
+Eclipse-SourceReferences: scm:git:git://git.eclipse.org/gitroot/platfo
+ rm/eclipse.platform.ui.git;path="bundles/org.eclipse.ui.workbench.com
+ patibility";tag=v20120912-155656
+Require-Bundle: org.eclipse.core.resources;bundle-version="[3.2.0,4.0.
+ 0)"
+Bundle-Version: 3.2.101.v20120912-155656
+Bundle-ClassPath: compatibility.jar
+Bundle-Vendor: %providerName
+Bundle-Name: %fragmentName
+Eclipse-BundleShape: dir
+Bundle-ManifestVersion: 2
+
+Name: META-INF/eclipse.inf
+SHA1-Digest: KyT9FF7C7t86NoBoa2kZT3ZJBfw=
+
+Name: .api_description
+SHA1-Digest: Y2iUvznYWRBAEwFNoAFElsRXZ10=
+
+Name: about.html
+SHA1-Digest: ejOZra0kypGLQQ2bJtGTX+LI8tU=
+
+Name: compatibility.jar
+SHA1-Digest: 62msECd7Xiaca1K1CwBtUx0PAJE=
+
+Name: fragment-compatibility.properties
+SHA1-Digest: wilLEKJfyEOB8uBAxiTdMhtNQqk=
+

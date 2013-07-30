@@ -1,0 +1,166 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>A QUICK OVERVIEW OF THE OMNeT&#8288;+&#8288;+ IDE</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="article" lang="en"><div class="titlepage"><div><div><h2 class="title"><a name="id257475"></a>A QUICK OVERVIEW OF THE OMNeT&#8288;+&#8288;+ IDE</h2></div></div><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id257921"></a>Introduction</h2></div></div></div><p>The OMNeT&#8288;+&#8288;+ 4.x Integrated Development Environment is based on the Eclipse platform, and extends
+      it with new editors, views, wizards, and additional functionality. OMNeT&#8288;+&#8288;+ adds functionality for creating and
+      configuring models (NED and ini files), performing batch executions, and analyzing simulation
+      results, while Eclipse provides C++ editing, SVN/GIT integration, and other optional features (UML
+      modeling, bugtracker integration, database access, etc.) via various open-source and commercial plug-ins.
+    </p><p>The following screenshots introduce the main components of the OMNeT&#8288;+&#8288;+ IDE.</p><div class="figure"><a name="pictures/img1.png"></a><p class="title"><b>The OMNeT&#8288;+&#8288;+ 4.x IDE, editing a NED file</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/img1.png" align="middle" alt="The OMNeT&#8288;+&#8288;+ 4.x IDE, editing a NED file"></div></div></div></div><br class="figure-break"></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id287682"></a>The NED Editor</h2></div></div></div><p>The NED Editor can edit NED files both graphically or in text mode, and the user can switch
+      between the two modes at any time, using the tabs at the bottom of the editor window.</p><div class="figure"><a name="pictures/img2.png"></a><p class="title"><b> The NED Editor in graphical editing mode</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/img2.png" align="middle" alt="The NED Editor in graphical editing mode"></div></div></div></div><br class="figure-break"><p>In graphical mode, one can create compound modules, channels, and other component types.
+      Submodules can be created using the palette of available module types. Visual and non-visual properties
+      can be modified in the Properties View, or by dialogs invoked from the context menu. The editor offers
+      many features such as unlimited undo/redo, object cloning, constrained move and resize, alignment of objects, and zooming.</p><p>Submodules can be pinned (having a fixed position), or unpinned (auto-layout). Graphical
+      features that can be edited are background image, background grid, default icons (via display string
+      inheritance), icon sizing and coloring, transmission range, and many others.</p><div class="figure"><a name="pictures/img3.png"></a><p class="title"><b>Properties view</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/img3.png" align="middle" alt="Properties view"></div></div></div></div><br class="figure-break"><p>The Properties View lets the user edit graphical and non-graphical properties of objects. Special
+      cell editors facilitate selecting colors, icons, etc. Undo and redo is supported for property changes
+      too. The Properties View is also used with other editors like the Result Analysis editor, where it allows the user to
+      customize charts and other objects.</p><div class="figure"><a name="pictures/img4.png"></a><p class="title"><b>The NED Editor in source editing mode</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/img4.png" align="middle" alt="The NED Editor in source editing mode"></div></div></div></div><br class="figure-break"><p>Text mode lets the user work with the NED source directly. When hitting Ctrl+Space, the editor
+      offers context-aware completion of keywords and module type, parameter, gate, and submodule names.
+      Template proposals to insert full compound module skeletons, submodules, various connection structures,
+      etc. are also available. Documentation of referenced module types can be viewed by hovering over the NED
+      type name. The NED source is continually parsed and validated as the user is typing, and errors are
+      displayed in real time on the left margin. Syntax highlighting, automatic indentation, and automatic
+      conversion from the OMNeT&#8288;+&#8288;+ 3.x NED syntax are also provided.</p><div class="figure"><a name="pictures/img5.png"></a><p class="title"><b>Outline View</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/img5.png" align="middle" alt="Outline View"></div></div></div></div><br class="figure-break"><p>The Outline View shows the structure of NED files in both graphical and text editing mode, and
+      allows navigation, as well.</p><p>
+      <span class="emphasis"><em>Other Views.</em></span>
+      The Module Hierarchy View and the NED Parameters View can also be used with the NED Editor (they will
+      display the submodule hierarchy and the parameters of the selected module or submodule) &#8211; these views
+      will be described with the Ini File Editor. Further related views are the Problems View (which displays
+      errors and warnings in NED files and other files), and Tasks View (which shows a list of all FIXME and
+      TODO comments found in NED files and other source files.)
+    </p></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id280855"></a>The Ini File Editor</h2></div></div></div><p>The Ini File Editor lets the user configure simulation models for execution. It features both
+      form-based and source editing.</p><div class="figure"><a name="pictures/img6.png"></a><p class="title"><b>Form-based ini file editing</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/img6.png" align="middle" alt="Form-based ini file editing"></div></div></div></div><br class="figure-break"><p>The Ini File editor considers all supported configuration options and offers them in several
+      forms, organized by topics. Descriptions and default values are displayed in tooltips, which can be made
+      persistent for easier reading. The structure of the ini file (sections and their inheritance tree) is also
+      visualized and editable via drag&amp;drop and dialogs. Validation and content assist
+        (Ctrl+Space) are also provided where needed. The editor supports unlimited undo/redo and
+         automatic conversion from OMNeT&#8288;+&#8288;+ 3.x ini files.</p><div class="figure"><a name="pictures/img7.png"></a><p class="title"><b>The ini file source editor</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/img7.png" align="middle" alt="The ini file source editor"></div></div></div></div><br class="figure-break"><p>The text editor lets the user work with the ini file directly, which is more efficient for
+      advanced users than forms. Unlimited undo/redo, syntax coloring, and completion of configuration keys, values,
+      and module parameter patterns (on Ctrl+Space) are provided. As the user types, the file is continually
+      analyzed and errors/warnings are displayed in real time.</p><p>
+      The editor considers all NED declarations (simple modules, compound modules, channels, etc.) and can
+      fully exploit this information to provide diagnostics and assistance to the user. Looking at the 
+      <span class="emphasis"><em>network=</em></span>
+      configuration key, it knows the top-level compound module NED type, and internally builds a static picture
+      of the network by recursively enumerating the top-level module's submodules, sub-submodules,
+      sub-sub-submodules, etc., and continually relates this information to the ini file contents. Thus, the
+      editor always knows which ini file keys match which module parameters, which are the ini file keys that
+      are unused (will not match anything), and which module parameters are still open (i.e. have no value assigned
+      yet). It displays this information in tooltips, as warnings, and in various views.
+    </p><div class="figure"><a name="pictures/img8.png"></a><p class="title"><b>The Add Missing Keys dialog</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/img8.png" align="middle" alt="The Add Missing Keys dialog"></div></div></div></div><br class="figure-break"><p>
+      To speed up the process of creating ini files from scratch, the editor offers an
+      <span class="emphasis"><em>Add Missing Keys</em></span>
+      dialog. After clicking OK, the editor will insert ini file keys for all open NED parameters. The user
+      will only need to supply the values.
+    </p><div class="figure"><a name="pictures/img9.png"></a><p class="title"><b>Module Hierarchy View</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/img9.png" align="middle" alt="Module Hierarchy View"></div></div></div></div><br class="figure-break"><p>
+      The Module Hierarchy View displays the submodule hierarchy of the current configuration's network,
+      together with the module's parameters. It shows how module parameters obtain their values (from NED, by
+      applying a NED default value, or from the ini file). It is able to resolve simple cases where a submodule
+      type comes from a string parameter (NED's
+      <span class="emphasis"><em>like</em></span>
+      keyword). By using the context menu, the user can go to the NED declaration of a module, submodule,
+      parameter, gate, or to the place where a parameter gets its value (in NED or in the ini file).
+    </p><p>The View can be pinned to a particular editor to prevent its contents from changing when the user
+      switches across NED and ini file editors.</p><div class="figure"><a name="pictures/img10.png"></a><p class="title"><b>The NED Parameters View</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/img10.png" align="middle" alt="The NED Parameters View"></div></div></div></div><br class="figure-break"><p>By default, the NED Parameters View displays the table of all unassigned NED parameters in the
+      current configuration's network and it can be switched over to show all parameters, assigned or
+      unassigned. For assigned parameters, it shows how they obtain their values (from NED, by applying a NED
+      default value, or from the ini file). The user can open the relevant places in the NED files or the
+      ini file. This View can also be pinned.</p><div class="figure"><a name="pictures/img11.png"></a><p class="title"><b>The Problems View</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/img11.png" align="middle" alt="The Problems View"></div></div></div></div><br class="figure-break"><p>The Problems View presents errors, warnings, and info messages in NED files, ini files, and other
+      source files in a unified manner. Double-clicking on an item opens the corresponding file and goes to the
+      error's location. The view's contents can be filtered in various ways (current file, current project, all
+      projects, by severity, etc).</p><p>
+      <span class="emphasis"><em>Other Views.</em></span>
+      The Outline View displays the list of sections in the current ini file and can be used for navigation as
+      well.
+    </p></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id257574"></a>Simulation Launcher</h2></div></div></div><p>The OMNeT&#8288;+&#8288;+ IDE makes it possible to run simulations directly from the integrated environment. It
+      is possible to run a simulation as a normal C/C++ application and perform C++ source-level debugging on
+      it. The user can also run it as a standalone application (under Tkenv or Cmdenv) or  run batches of simulations
+      where runs differ in module parameter settings or random number seeds (NOTE: an Eclipse-based runtime
+      environment [&#8220;IDEEnv&#8221;] does not exist yet; it is planned for future releases).</p><div class="figure"><a name="pictures/img12.png"></a><p class="title"><b>The Run dialog showing a simulation launch
+      configuration</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/img12.png" align="middle" alt="The Run dialog showing a simulation launch configuration"></div></div></div></div><br class="figure-break"><p>
+      In the Eclipse IDE, the various ways of launching a program under development is described by launch
+      configurations. There are various launch configuration types (C/C++ Application, Java Application, etc.).
+      To launch a program for the first time, the user creates an instance of a launch configuration, fills in
+      a form (program name, command-line arguments, etc.), and hits the Run button. OMNeT&#8288;+&#8288;+ provides launch
+      configuration types for simulations: one extends the normal &#8220;C/C++ Local Application&#8221; launch type with a
+      <span class="emphasis"><em>Simulation</em></span>
+      tab (for convenient editing of simulation-related command-line options), and a standalone launch type
+      for launching a simulation or running simulation batches. The former can be used for C++ debugging, as
+      well.
+    </p><p>The dialog shows a standalone launch type for the QueueNet example simulation model. Batch
+      simulations can be launched by specifying more than one run number in the dialog. Ini files 
+       allow the user to define various scenarios iterating over a list of values for certain
+      NED parameters, and/or do multiple runs with different seeds. The launch dialog helps the user select
+      the desired run numbers by showing which runs correspond to which parameters and seed settings.</p><p>Multi-processor or multi-core computers can be exploited by specifying that more than
+      one process may be launched (i.e. may be running) at a time.</p><div class="figure"><a name="pictures/img13.png"></a><p class="title"><b>Progress View</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/img13.png" align="middle" alt="Progress View"></div></div></div></div><br class="figure-break"><p>The Progress View reports the status of simulation execution when you have a long-running
+      simulation, or you are executing several runs in a batch. It is possible to cancel the whole batch
+      operation with a single click, if necessary. Simulations run in separate processes
+      that do not block the IDE, so users can keep working while their simulations run in the
+      background. In the above screenshot, the number of processes to run in parallel was set to 2; run #1 has
+      already terminated (and is no longer shown), run #3 has already launched, and run #2 is still
+      running.</p><div class="figure"><a name="pictures/img14.png"></a><p class="title"><b>Console View</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/img14.png" align="middle" alt="Console View"></div></div></div></div><br class="figure-break"><p>Each running process sends its output to a separate console buffer within the Console View, so
+      the user can review the output after a simulation has finished. One can switch between console
+      buffers using the Console View's menu or toolbar, or by double-clicking on a process in the Debug View.
+    </p><div class="figure"><a name="pictures/img15.png"></a><p class="title"><b>The Debug View showing three runs in a
+      simulation batch</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/img15.png" align="middle" alt="The Debug View showing three runs in a simulation batch"></div></div></div></div><br class="figure-break"><p>The Debug View is another one of Eclipse's standard Views, but it is not only useful for
+      debugging. While the Progress View only shows currently executing processes, the Debug View displays the
+      ones already terminated, as well, together with their exit codes. Processes are marked with run
+      numbers and launch times for easier identification. Double-clicking an item reveals the process output in
+      the Console View.</p></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id257720"></a>Sequence Chart</h2></div></div></div><p>The OMNeT&#8288;+&#8288;+ simulation kernel is capable of logging various events during simulation:
+      scheduling and canceling self-messages, sending messages, display changes, module and connection
+      creation and deletion, user log messages, etc. The result is an event log file which contains detailed
+      information of the simulation, and later can be used for various purposes, such as visualizing message
+      exchanges among modules on a sequence chart. The file format is line-based text to facilitate processing
+      by third party tools.</p><div class="figure"><a name="pictures/img16.png"></a><p class="title"><b>A Sequence Chart showing ARP on a wireless network
+    </b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/img16.png" align="middle" alt="A Sequence Chart showing ARP on a wireless network"></div></div></div></div><br class="figure-break"><p>An event log can be visualized with the Sequence Chart in the IDE. On the Sequence Chart, events
+      are represented as nodes, and message send/schedule/reuse operations as arrows. The chart can be
+      filtered according to modules, message types, and various other criteria. The chart can also be filtered according to the
+      causes/consequences of a particular event (this works by following message arrows backward and forward
+      in simulation time). The chart timeline can be displayed in various modes, such as linear (simulation
+      time), compact (non-linear), and event number-based. Other features include sorting of module axes, displaying state vector
+      data on axes (using output vector files), zooming, and special navigation options (bookmarks, zoom to
+      message send, follow message send), and exporting the chart in SVG format.</p><p>Both the Event Log Table and the Sequence Chart are capable of efficiently displaying event log
+      files of several gigabytes without requiring large amounts of memory.</p><div class="figure"><a name="pictures/img17.png"></a><p class="title"><b>The Event Log View</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/img17.png" align="middle" alt="The Event Log View"></div></div></div></div><br class="figure-break"><p>The Event Log Table displays the content of an event log file recorded during a simulation. It
+      supports raw and descriptive notations, line-based filtering for event log entry types and various
+      parameters, search for free text, bookmarks, and special navigation options such as "go to simulation time"
+      or message arrival. The Event Log Table supports the same filtering as the Sequence Chart.</p></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id302974"></a>Scave (Result Analysis)</h2></div></div></div><p>Scave is the result analysis tool of OMNeT&#8288;+&#8288;+ and its task is to help the user process and
+      visualize simulation results saved into vector and scalar files. Scave is designed so that the user can
+      work equally well on the output of a single simulation run (one or two files) and the result of
+      simulation batches (which may be several hundred files, possibly in multiple directories). Ad-hoc
+      browsing of the data is supported in addition to systematic and repeatable processing. With the latter, 
+      all processing and charts are stored as &#8220;recipes&#8221;. For example, if simulations need to be re-run
+      due to a model bug or misconfiguration, existing charts do not need to be drawn all over again. Simply
+      replacing the old result files with the new ones will result in the charts being automatically displayed
+      with the new data.</p><p>Scave is implemented as a multi-page editor. What the editor edits is the &#8220;recipe,&#8221; which includes what
+      files to take as inputs, what data to select from them, what (optional) processing to apply, and what
+      kind of charts to create from them. The pages (tabs) of the editor roughly correspond to these steps.
+      You will see that Scave is much more than just a union of the OMNeT&#8288;+&#8288;+ 3.x Scalars and Plove tools.
+    </p><div class="figure"><a name="pictures/img18.png"></a><p class="title"><b>Specifying input files for data analysis
+    </b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/img18.png" align="middle" alt="Specifying input files for data analysis"></div></div></div></div><br class="figure-break"><p>The first page displays the result files that serve as input for the analysis. The upper half
+      specifies what files to select, by explicit filenames or by wildcards. The lower half shows what files
+      actually matched the input specification and what runs they contain. Note that OMNeT&#8288;+&#8288;+ result files
+      contain a unique run ID and several metadata annotations in addition to the actual recorded data.  The
+      third tree organizes simulation runs according to their experiment&#8212;measurement&#8212;replication labels.
+    </p><p>The underlying assumption is that users will organize their simulation-based research into
+      various &#8220;experiments&#8221;. An experiment will consist of several &#8220;measurements&#8221;, which are typically (but
+      not necessarily) simulations done with the same model but with different parameter settings; that is,
+      the user will explore the parameter space with several simulation runs. To gain statistical
+      confidence in the results, each measurement will be possibly repeated several times with different
+      random number seeds. It is easy to set up such scenarios with the improved ini files of OMNeT&#8288;+&#8288;+ 4.x. 
+     Then, the experiment-measurement-replication labels will be assigned more-or-less automatically &#8211; please
+      refer to the Inifile document (&#8220;Configuring Simulations in OMNeT&#8288;+&#8288;+ 4.x&#8221;) for more discussion.</p><div class="figure"><a name="pictures/img19.png"></a><p class="title"><b>Browsing vector and scalar data generated
+      by the simulation</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/img19.png" align="middle" alt="Browsing vector and scalar data generated by the simulation"></div></div></div></div><br class="figure-break"><p>
+      The second page displays results (vectors, scalars, and histograms) from all files in tables and lets
+      the user browse them. Results can be sorted and filtered. Simple filtering is possible with combo
+      boxes, or when that is not enough, the user can write arbitrarily complex filters using a generic pattern
+      matching expression language. Selected or filtered data can be immediately plotted, or remembered in
+      named datasets
+      <span class="emphasis"><em> for further processing</em></span>.
+    </p><div class="figure"><a name="pictures/img20.png"></a><p class="title"><b>Defining datasets to be analyzed</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/img20.png" align="middle" alt="Defining datasets to be analyzed"></div></div></div></div><br class="figure-break"><p>It is possible to define reusable datasets that are basically recipes
+    on how to select and process data received from the simulation. You can add selection
+    and data processing nodes to a dataset. Chart drawing is possible at any point in the
+    processing tree.</p><div class="figure"><a name="pictures/img21.png"></a><p class="title"><b>A Line Chart</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/img21.png" align="middle" alt="A Line Chart"></div></div></div></div><br class="figure-break"><p>Line charts are typically drawn from time-series data stored in vector files. Pre-processing
+    of the data is possible in the dataset. The line chart component can be configured freely to
+    display the vector data according to your needs.</p><div class="figure"><a name="pictures/img22.png"></a><p class="title"><b>A Bar Chart</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/img22.png" align="middle" alt="A Bar Chart"></div></div></div></div><br class="figure-break"><p>Bar charts are created from scalar results and histograms. Relevant data can be grouped and displayed
+    via the Bar chart component. Colors, chart type, and other display attributes can be set on the component.</p><div class="figure"><a name="pictures/img23.png"></a><p class="title"><b>Output Vector View</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/img23.png" align="middle" alt="Output Vector View"></div></div></div></div><br class="figure-break"><p>The Output Vector View can be used to inspect the raw numerical data when required.
+    It can show the original data read from the vector file, or the result of a computation. The user can select
+    a point on the line chart or a vector in the Dataset View and its content will be displayed.</p><div class="figure"><a name="pictures/img24.png"></a><p class="title"><b>Dataset View</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/img24.png" align="middle" alt="Dataset View"></div></div></div></div><br class="figure-break"><p>The Dataset View is used to show the result items contained in the dataset. The content of the
+    view corresponds to the state of the dataset after the selected processing is performed.</p></div></div></body></html>

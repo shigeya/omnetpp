@@ -1,0 +1,98 @@
+<html>
+<style type="text/css">
+h1,h2,h3,h4,p,table,ul {font-family: Geneva, Arial, Helvetica, sans-serif;}
+pre { margin-left:8pt; background:#fffff4; padding:5pt; border:1px solid; border-color:#a0a0a0 }
+</style>
+
+<body>
+<h3>The implementation</h3>
+
+<h4>Setup</h4>
+
+<p>
+The external interface used in this example simulation is a single TCP socket.
+All interesting functionality is in the <tt>cSocketRTScheduler</tt> class.
+Its source code is in csocketrtscheduler.h/cc.
+
+<p>
+<tt>cSocketRTScheduler</tt> combines synchronizing to real-time with
+socket communication. When the simulation starts, the <tt>cSocketRTScheduler</tt>
+object starts to listen on port 4242 (or the one that was
+<a href="config.html">configured</a>) for incoming TCP connections.
+All connections will be accepted, but only one at a time (the OS serializes
+connections on the same socket, and for simplicity we don't open a new socket
+or start a new thread whenever one connection gets established.)
+
+<h4>Synchronization and receiving</h4>
+
+<p>
+Then normal real-time simulation will begin, except that <tt>cSocketRTScheduler</tt>
+will use <tt>select()</tt> instead of <tt>usleep()</tt> to wait, so that it
+always learns immediately whenever some data arrives on the socket.
+
+<p>
+When data arrives on the socket, it will be received into a buffer
+(a byte array), the current time/date will be remembered, and a given
+<tt>cMessage</tt> object will be scheduled (put into the FES)
+with the simulation time that corresponds to the current time
+for the dedicated "interface module". The scheduler function
+then returns, and the new simulation event will be immediately executed
+in exactly the same way as any other event would.
+
+<p>
+At the beginning of the simulation, the <tt>extClient</tt> simple module
+(which is of class <tt>ExtHTTPClient</tt> or <tt>ExtTelnetClient</tt>)
+had registered itself with <tt>cSocketRTScheduler</tt> as the
+dedicated "interface module". So it's this module that will receive
+the event, just as a normal self-message.
+
+<p>
+From the self-message it knows that it has to look into the buffer
+for the bytes that were received, and it will convert them to a simulated
+packet (e.g. a <tt>HTTPMsg</tt> or <tt>TelnetPkt</tt> in this model).
+The packet then gets sent on the <tt>"out"</tt> gate into the simulated
+network, just as it would on any other OMNeT++/OMNEST simulation.
+
+<h4>Sending</h4>
+
+<p>
+When the <tt>extClient</tt> module receives a packet (e.g. HTTP reply)
+from the server on the simulated network, it has to relay it via the
+socket back to the external process. So it first converts the message
+to a byte array (e.g. gets the HTTP reply from the <tt>HTTPMsg</tt>
+object), and invokes a <tt>cSocketRTScheduler</tt> method to send it
+on the socket.
+
+<h4>Implementation</h4>
+
+<p>
+As you can see, the scheduler object has to work together closely with
+the interface module. At the beginning, the interface module
+has to find the scheduler object, cast it to the appropriate type,
+and register itself. In the registration call
+(<tt>rtScheduler->setInterfaceModule(...)</tt> below) it also passes
+the scheduler the address and length of the buffer (<tt>recvBuffer</tt>,
+<tt>4000</tt>) as well as the message it wants to get back as a
+self-message whenever data arrive from the socket. This is done by the
+following code, found in the <tt>initialize()</tt> functions of
+<tt>ExtHTTPClient</tt> and <tt>ExtTelnetClient</tt>:
+
+<pre>
+rtScheduler = check_and_cast&lt;cSocketRTScheduler *&gt;(simulation.scheduler());
+cMessage *rtEvent = new cMessage("rtEvent");
+rtScheduler-&gt;setInterfaceModule(this, rtEvent, recvBuffer, 4000, &amp;numRecvBytes);
+</pre>
+
+<p>
+<b>Notice that this registration function and even the notion of a dedicated
+interface module are specific to this particular
+example simulation. <tt>cSocketRTScheduler</tt> is just an example, and
+it was deliberately made as simple as possible to facilitate understanding.
+In real-life applications, you can (and will probably have to) create
+much more sophisticated hardware-in-the-loop scheduler classes.</b>
+
+<p>
+<a href="index.html">Home</a>
+
+</body>
+</html>

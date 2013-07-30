@@ -1,0 +1,1965 @@
+<?xml version='1.0' encoding='ISO-8859-1' standalone='yes' ?>
+<tagfile>
+  <compound kind="page">
+    <name>main</name>
+    <title>OMNeT++ Parallel simulation support</title>
+    <filename>main</filename>
+  </compound>
+  <compound kind="group">
+    <name>Parsim</name>
+    <title>Parallel simulation support</title>
+    <filename>group__Parsim.html</filename>
+    <class kind="class">cAdvancedLinkDelayLookahead</class>
+    <class kind="class">cFileCommunications</class>
+    <class kind="class">cFileCommBuffer</class>
+    <class kind="class">cIdealSimulationProtocol</class>
+    <class kind="class">cISPEventLogger</class>
+    <class kind="class">cLinkDelayLookahead</class>
+    <class kind="class">cMemCommBuffer</class>
+    <class kind="class">cNamedPipeCommunications</class>
+    <class kind="class">cNMPLookahead</class>
+    <class kind="class">cNoSynchronization</class>
+    <class kind="class">cNullMessageProtocol</class>
+    <class kind="class">cParsimPartition</class>
+    <class kind="class">cParsimProtocolBase</class>
+    <class kind="class">cParsimSynchronizer</class>
+    <class kind="class">cPlaceholderModule</class>
+    <class kind="class">cProxyGate</class>
+    <class kind="class">cReceivedException</class>
+    <class kind="class">cReceivedTerminationException</class>
+  </compound>
+  <compound kind="class">
+    <name>cAdvancedLinkDelayLookahead</name>
+    <filename>classcAdvancedLinkDelayLookahead.html</filename>
+    <base>cNMPLookahead</base>
+    <member kind="function">
+      <type></type>
+      <name>cAdvancedLinkDelayLookahead</name>
+      <anchorfile>classcAdvancedLinkDelayLookahead.html</anchorfile>
+      <anchor>d4b1b0d64031dcc5c452d1b499f977d0</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~cAdvancedLinkDelayLookahead</name>
+      <anchorfile>classcAdvancedLinkDelayLookahead.html</anchorfile>
+      <anchor>9f1c2a1c9bfc14bc4a5158247bf3a029</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>startRun</name>
+      <anchorfile>classcAdvancedLinkDelayLookahead.html</anchorfile>
+      <anchor>ca52100a3946a184196ce9dbf9b54c1a</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>endRun</name>
+      <anchorfile>classcAdvancedLinkDelayLookahead.html</anchorfile>
+      <anchor>1eb4d24f15a4ac7e13ebad9eeeb9c30b</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual simtime_t</type>
+      <name>getCurrentLookahead</name>
+      <anchorfile>classcAdvancedLinkDelayLookahead.html</anchorfile>
+      <anchor>41a5858c7686027e59d54895f6cec0ea</anchor>
+      <arglist>(cMessage *msg, int procId, void *data)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual simtime_t</type>
+      <name>getCurrentLookahead</name>
+      <anchorfile>classcAdvancedLinkDelayLookahead.html</anchorfile>
+      <anchor>ee8e48641b3954401f18a0fd52f5bf04</anchor>
+      <arglist>(int procId)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>cCommBufferBase</name>
+    <filename>classcCommBufferBase.html</filename>
+    <base>cCommBuffer</base>
+    <member kind="function">
+      <type></type>
+      <name>cCommBufferBase</name>
+      <anchorfile>classcCommBufferBase.html</anchorfile>
+      <anchor>0b910949a012dd4ee7858f91830aa208</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~cCommBufferBase</name>
+      <anchorfile>classcCommBufferBase.html</anchorfile>
+      <anchor>d4e0936aa0ca706add3d5c140bd58157</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>char *</type>
+      <name>getBuffer</name>
+      <anchorfile>classcCommBufferBase.html</anchorfile>
+      <anchor>c873667f4f4598ac2d9508054ff29709</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>getBufferLength</name>
+      <anchorfile>classcCommBufferBase.html</anchorfile>
+      <anchor>1d926b67ab4f14c63abb9cffaf910402</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>allocateAtLeast</name>
+      <anchorfile>classcCommBufferBase.html</anchorfile>
+      <anchor>d0787e90e1f56176fefa2d1ebdd8145f</anchor>
+      <arglist>(int size)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setMessageSize</name>
+      <anchorfile>classcCommBufferBase.html</anchorfile>
+      <anchor>5aa916ecc0c6c074bfddd96166250def</anchor>
+      <arglist>(int size)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>getMessageSize</name>
+      <anchorfile>classcCommBufferBase.html</anchorfile>
+      <anchor>127383fe6046acf0ce347c580dd95838</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>reset</name>
+      <anchorfile>classcCommBufferBase.html</anchorfile>
+      <anchor>c25fc94d197956458eb868493eea6ac0</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>isBufferEmpty</name>
+      <anchorfile>classcCommBufferBase.html</anchorfile>
+      <anchor>de53def4d08847f47b1c5098f46d0833</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>assertBufferEmpty</name>
+      <anchorfile>classcCommBufferBase.html</anchorfile>
+      <anchor>5e223299e72c6c77cd33ebcd2b4aa23a</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>cFileCommBuffer</name>
+    <filename>classcFileCommBuffer.html</filename>
+    <base>cCommBufferBase</base>
+    <member kind="function">
+      <type></type>
+      <name>cFileCommBuffer</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>3694bf71f2974bf02a2ab202dbf45d1f</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~cFileCommBuffer</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>4bd2428fa21f502d043e71f03c5a0dbd</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setMessageSize</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>e666cbc40195fbc2a00a1fcfa8970911</anchor>
+      <arglist>(int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>4c70a264dfed5625a3cc4e1b72968377</anchor>
+      <arglist>(char d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>bf8cce1bad1890c2caceae06dd29333a</anchor>
+      <arglist>(unsigned char d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>5bdb418cb9f858a57ab998f072b10003</anchor>
+      <arglist>(bool d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>b47524570429a380901cd235fa23bdfe</anchor>
+      <arglist>(short d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>d8a979ce667e5c1506c3dbdca1780ae4</anchor>
+      <arglist>(unsigned short d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>d40f40a0bdf65a238d4571479fbcca87</anchor>
+      <arglist>(int d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>12807b9ebb15247f17e05d2a79f6cf32</anchor>
+      <arglist>(unsigned int d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>3af522e5250179b19c6dc629772dcf31</anchor>
+      <arglist>(long d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>3a37038d0b584becb0f7d89a1969e983</anchor>
+      <arglist>(unsigned long d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>658f4e1e0493cf6533b62afee2b3e620</anchor>
+      <arglist>(opp_long_long d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>46e7c11162372f2c76884e7cb3d262bd</anchor>
+      <arglist>(opp_unsigned_long_long d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>a912ef2806b6982ad7c2e363455ddf38</anchor>
+      <arglist>(float d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>25b6c6fd97bf803e9cac4a231fce526e</anchor>
+      <arglist>(double d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>07163d6d22ea03075f58bd91d0c4491f</anchor>
+      <arglist>(long double d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>b9d3d47177304637d73f3119e119a6ff</anchor>
+      <arglist>(const char *d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>1fa3cfadf5bd377bd989ebe79d6e4d20</anchor>
+      <arglist>(const opp_string &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>6438e681dda7fa1b95aabe662ddc743b</anchor>
+      <arglist>(SimTime d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>76ed3152828934f72d56f7f8a256ec61</anchor>
+      <arglist>(const char *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>15a23d7638de686977257810abdac12b</anchor>
+      <arglist>(const unsigned char *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>c838674f0bdf71e26a9f797fe329a397</anchor>
+      <arglist>(const bool *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>f2f951865920402593d1115fdff99433</anchor>
+      <arglist>(const short *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>7868163c1d7f977b26f15001e40fadff</anchor>
+      <arglist>(const unsigned short *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>41ba255fe55c6e152a067a54cba3643c</anchor>
+      <arglist>(const int *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>76ea64a5450544e7a46d57e45046a23c</anchor>
+      <arglist>(const unsigned int *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>5c4e86a7965ba58e0223837df561b7ca</anchor>
+      <arglist>(const long *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>ab0b90c65aebde49a2b75a1393dacf02</anchor>
+      <arglist>(const unsigned long *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>d1da9b1281e4aba83aed241a98cf7050</anchor>
+      <arglist>(const opp_long_long *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>9a8c11055f496b9cdcad254a49c001ab</anchor>
+      <arglist>(const opp_unsigned_long_long *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>90b490cbbfd18aeab64f611e13bf5293</anchor>
+      <arglist>(const float *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>b5d565a67bdc933a631c7027dd95d700</anchor>
+      <arglist>(const double *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>fc941f9f4fcc42ac2a5388975f20833a</anchor>
+      <arglist>(const long double *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>787c6141148eb3c5f41d44de6094599c</anchor>
+      <arglist>(const char **d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>8fa4135280d631ee168d25901403b221</anchor>
+      <arglist>(const opp_string *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>e9b126a08cb154ae66fb0cc8e91bee1a</anchor>
+      <arglist>(const SimTime *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>35b68d9a23a7415a53d47d74f1595abf</anchor>
+      <arglist>(char &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>966a7e8550b984abc568c48ac8a4c135</anchor>
+      <arglist>(unsigned char &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>3f8fcd206d2bd64e1ad9f5a74c7d0f3b</anchor>
+      <arglist>(bool &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>503d60cc9568abb7b01bb6fb08abcc9f</anchor>
+      <arglist>(short &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>3977cd2bcde62952f8fbef49a28105d6</anchor>
+      <arglist>(unsigned short &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>b55b48a8a54dcad087153bccffc829a7</anchor>
+      <arglist>(int &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>f610d558f3a1580200f0b11ccd2d06e0</anchor>
+      <arglist>(unsigned int &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>661b952fd734adc43bf8b4229f5cca93</anchor>
+      <arglist>(long &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>5e597ad8222cf1ac64828ab3243dafcd</anchor>
+      <arglist>(unsigned long &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>2944f3cd9d8f55ca8505973612033342</anchor>
+      <arglist>(opp_long_long &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>09994cd3738aacac40fda54667b2fd60</anchor>
+      <arglist>(opp_unsigned_long_long &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>070a705490091530ff4892f5a92f2e74</anchor>
+      <arglist>(float &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>93ba56d326b205a4da1c8f219c5d29a1</anchor>
+      <arglist>(double &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>bab37e4b4f99981744fdd5f48758744b</anchor>
+      <arglist>(long double &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>2342d2378936b539ed0fd192728d9026</anchor>
+      <arglist>(const char *&amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>adc842faf9c8fe3ffb01a1116c447f41</anchor>
+      <arglist>(opp_string &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>0aa833839af657471c1e1fa1cd2f921b</anchor>
+      <arglist>(SimTime &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>9cdbbafa3c7939a58b5c5aee65d4269c</anchor>
+      <arglist>(char *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>a802f68c3fced8c66337bd777ef9b4d1</anchor>
+      <arglist>(unsigned char *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>79605921596932a6f54f4c5b4f04940f</anchor>
+      <arglist>(bool *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>18294fa5dfa3e58946166a0b8b5a5f7d</anchor>
+      <arglist>(short *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>eb2e4855aa41b1e6d828df65ba3f11dd</anchor>
+      <arglist>(unsigned short *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>7e421c44ec1748026b27416d21aaae8e</anchor>
+      <arglist>(int *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>b9a5fe8af5c859d76d691a70b10fd038</anchor>
+      <arglist>(unsigned int *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>23afd5ae17142510309cb30d143c23a4</anchor>
+      <arglist>(long *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>02b87295d90e9696e782a90f797d714f</anchor>
+      <arglist>(unsigned long *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>3878e805d9081bc88af0a8c1cd67dae1</anchor>
+      <arglist>(opp_long_long *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>85024cb89e043d4434a4d1a0cb7ba700</anchor>
+      <arglist>(opp_unsigned_long_long *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>6e14388ab42e44152df911a215bb1c3c</anchor>
+      <arglist>(float *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>92d1d47ccea53a54c0c84fcae44ef179</anchor>
+      <arglist>(double *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>1d6c17411d6d6d5a9f308436b9149c1e</anchor>
+      <arglist>(long double *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>059bbab3d8f5a77f20fbc57769efcbbd</anchor>
+      <arglist>(const char **d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>386db31dcad2fe1ee2227716822e6104</anchor>
+      <arglist>(opp_string *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcFileCommBuffer.html</anchorfile>
+      <anchor>c0bed1d481301b85187f2dc76f09de34</anchor>
+      <arglist>(SimTime *d, int size)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>cFileCommunications</name>
+    <filename>classcFileCommunications.html</filename>
+    <base>cParsimCommunications</base>
+    <member kind="function">
+      <type></type>
+      <name>cFileCommunications</name>
+      <anchorfile>classcFileCommunications.html</anchorfile>
+      <anchor>24ae75dd9dad28db15061a9ebef2569d</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~cFileCommunications</name>
+      <anchorfile>classcFileCommunications.html</anchorfile>
+      <anchor>05dd84e5bdedf911e5187e68c71c1e29</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>init</name>
+      <anchorfile>classcFileCommunications.html</anchorfile>
+      <anchor>fb860148073e9a3251ad6c2f627f971c</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>shutdown</name>
+      <anchorfile>classcFileCommunications.html</anchorfile>
+      <anchor>679069130bbc8fa2660eb56b13fd8e7b</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual int</type>
+      <name>getNumPartitions</name>
+      <anchorfile>classcFileCommunications.html</anchorfile>
+      <anchor>21391737e0f6d23765f99c1f39fe00d0</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual int</type>
+      <name>getProcId</name>
+      <anchorfile>classcFileCommunications.html</anchorfile>
+      <anchor>e16c670eb1be89f05302ac0864b96433</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual cCommBuffer *</type>
+      <name>createCommBuffer</name>
+      <anchorfile>classcFileCommunications.html</anchorfile>
+      <anchor>d6b9b1b3bd1b7698b555f589d6624fad</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>recycleCommBuffer</name>
+      <anchorfile>classcFileCommunications.html</anchorfile>
+      <anchor>e730f68975734701ff9df5c95c20f078</anchor>
+      <arglist>(cCommBuffer *buffer)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>send</name>
+      <anchorfile>classcFileCommunications.html</anchorfile>
+      <anchor>f2c52f8ee8a05911d9978dffc22d0705</anchor>
+      <arglist>(cCommBuffer *buffer, int tag, int destination)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>receiveBlocking</name>
+      <anchorfile>classcFileCommunications.html</anchorfile>
+      <anchor>1294fa9fc0c57cfd815fe40309f37375</anchor>
+      <arglist>(int filtTag, cCommBuffer *buffer, int &amp;receivedTag, int &amp;sourceProcId)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>receiveNonblocking</name>
+      <anchorfile>classcFileCommunications.html</anchorfile>
+      <anchor>278de4a9809e306a17e4c13c234446e8</anchor>
+      <arglist>(int filtTag, cCommBuffer *buffer, int &amp;receivedTag, int &amp;sourceProcId)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>cIdealSimulationProtocol</name>
+    <filename>classcIdealSimulationProtocol.html</filename>
+    <base>cParsimProtocolBase</base>
+    <member kind="function">
+      <type></type>
+      <name>cIdealSimulationProtocol</name>
+      <anchorfile>classcIdealSimulationProtocol.html</anchorfile>
+      <anchor>78b55cc84e22e9a60969e0d799897bd3</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~cIdealSimulationProtocol</name>
+      <anchorfile>classcIdealSimulationProtocol.html</anchorfile>
+      <anchor>245fed90fa809798a5fdf468866c11d0</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>startRun</name>
+      <anchorfile>classcIdealSimulationProtocol.html</anchorfile>
+      <anchor>f040f232d80796feab9d006d68152d26</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>endRun</name>
+      <anchorfile>classcIdealSimulationProtocol.html</anchorfile>
+      <anchor>81a3be4e7ae014f48d91c687d5515a31</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual cMessage *</type>
+      <name>getNextEvent</name>
+      <anchorfile>classcIdealSimulationProtocol.html</anchorfile>
+      <anchor>db141c3747e28a6c37d80f2267e76a01</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>cISPEventLogger</name>
+    <filename>classcISPEventLogger.html</filename>
+    <base>cNullMessageProtocol</base>
+    <member kind="function">
+      <type></type>
+      <name>cISPEventLogger</name>
+      <anchorfile>classcISPEventLogger.html</anchorfile>
+      <anchor>1068d01d41a4c12f2b2d2355f005614b</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~cISPEventLogger</name>
+      <anchorfile>classcISPEventLogger.html</anchorfile>
+      <anchor>a1e0d7ab20067f8f6a4eba7e780b5b00</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>startRun</name>
+      <anchorfile>classcISPEventLogger.html</anchorfile>
+      <anchor>f13470203efeabbe85fe9b8e44ab67cc</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>endRun</name>
+      <anchorfile>classcISPEventLogger.html</anchorfile>
+      <anchor>cf49917b18ca3a98f50ddb1d98c3d97a</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>processOutgoingMessage</name>
+      <anchorfile>classcISPEventLogger.html</anchorfile>
+      <anchor>4ed377ee577edff6565fcf67f89f1c60</anchor>
+      <arglist>(cMessage *msg, int procId, int moduleId, int gateId, void *data)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual cMessage *</type>
+      <name>getNextEvent</name>
+      <anchorfile>classcISPEventLogger.html</anchorfile>
+      <anchor>8090860c6b4ee21a71131abd12c56732</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>cLinkDelayLookahead</name>
+    <filename>classcLinkDelayLookahead.html</filename>
+    <base>cNMPLookahead</base>
+    <member kind="function">
+      <type></type>
+      <name>cLinkDelayLookahead</name>
+      <anchorfile>classcLinkDelayLookahead.html</anchorfile>
+      <anchor>d08a0425d14f2fa54fe559af0eaed18b</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~cLinkDelayLookahead</name>
+      <anchorfile>classcLinkDelayLookahead.html</anchorfile>
+      <anchor>c6035d718c5e7f8f3b3f58cfe10cdcdf</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>startRun</name>
+      <anchorfile>classcLinkDelayLookahead.html</anchorfile>
+      <anchor>d3715d9e903a5ff505351165e1db2c50</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>endRun</name>
+      <anchorfile>classcLinkDelayLookahead.html</anchorfile>
+      <anchor>b90b7147b17f70d215e88e3be2c7cf1e</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual simtime_t</type>
+      <name>getCurrentLookahead</name>
+      <anchorfile>classcLinkDelayLookahead.html</anchorfile>
+      <anchor>f91029df574c922d6f405d528d87b88d</anchor>
+      <arglist>(cMessage *msg, int procId, void *data)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual simtime_t</type>
+      <name>getCurrentLookahead</name>
+      <anchorfile>classcLinkDelayLookahead.html</anchorfile>
+      <anchor>1fd84913965fc5a738f504301f579ca2</anchor>
+      <arglist>(int procId)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>cMemCommBuffer</name>
+    <filename>classcMemCommBuffer.html</filename>
+    <base>cCommBufferBase</base>
+    <member kind="function">
+      <type></type>
+      <name>cMemCommBuffer</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>bc172394d4b5bf07f4e42e737cb829da</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~cMemCommBuffer</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>7429cfd00c9285e596c5101dbbf10bb3</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>d4aa6bb4ccfa9f476d656e437092ca76</anchor>
+      <arglist>(char d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>b85afe33f8c79b97ede1f946ba116651</anchor>
+      <arglist>(unsigned char d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>ae92d85bfca72280ba54efb73c681a72</anchor>
+      <arglist>(bool d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>62c1402ff833cee4c41a569ca4a5059c</anchor>
+      <arglist>(short d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>b1cbe61b88ee859da2f214906a135ef0</anchor>
+      <arglist>(unsigned short d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>34bd1ac39bcfb677d91deacdc326756a</anchor>
+      <arglist>(int d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>36ebafbea9edb0fa86c7254b35411e53</anchor>
+      <arglist>(unsigned int d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>98348d8bf327026c7d5f530c2da06dae</anchor>
+      <arglist>(long d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>ad9d917a044e4fd89ec4492919d1afea</anchor>
+      <arglist>(unsigned long d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>5d85750ab358088669e54f871baaa0a5</anchor>
+      <arglist>(opp_long_long d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>58f37ec68c70e2a42f549b3e1fc671b0</anchor>
+      <arglist>(opp_unsigned_long_long d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>5fdc27a4d93ac7dbf97994f7372023cb</anchor>
+      <arglist>(float d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>c0aa84cf08473c41dd378f5cbf18d5f2</anchor>
+      <arglist>(double d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>997138e468d43b48ca4462097ec441b5</anchor>
+      <arglist>(long double d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>f59d3dd6f9c289133fad6e2ecebd0a9f</anchor>
+      <arglist>(const char *d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>1aa4132015b089f6c5f0a8fb53fc2ce0</anchor>
+      <arglist>(const opp_string &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>58fcf5bd56ae635fb6c2ca9a75e2e5ff</anchor>
+      <arglist>(SimTime d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>205453656105f70ed1f1b9eb315553a2</anchor>
+      <arglist>(const char *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>4c86a75275a52e074da6dd2e65233560</anchor>
+      <arglist>(const unsigned char *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>e5b9f126178e5bfe76d52a6f978fc453</anchor>
+      <arglist>(const bool *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>b24b7b6b232cd92fc066e9cdae60383e</anchor>
+      <arglist>(const short *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>36424fa4206891dda781a5ff6029892f</anchor>
+      <arglist>(const unsigned short *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>05dc7132942ef5c779fbd1dd39ee6b2a</anchor>
+      <arglist>(const int *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>af77edd9d3867dd876c3099d31e6ce49</anchor>
+      <arglist>(const unsigned int *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>986d0954e6c80c7918f8a7ceaa0e7fd0</anchor>
+      <arglist>(const long *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>ccfc688883388330a3b20fa74bdb88bb</anchor>
+      <arglist>(const unsigned long *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>25c16f45bdaae37607d9119497e3837d</anchor>
+      <arglist>(const opp_long_long *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>389619c755b2f9fdf2ef399ab48ee661</anchor>
+      <arglist>(const opp_unsigned_long_long *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>f37274b068f220dbde6907344690ea08</anchor>
+      <arglist>(const float *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>8ccae0fc2b1f764fa6962f1d67c5bb93</anchor>
+      <arglist>(const double *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>df313f9966c6ebef644806705d2fcd3a</anchor>
+      <arglist>(const long double *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>98347d9707f28b7f3991990d9f16640e</anchor>
+      <arglist>(const char **d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>657fcd664e364f912eedb986f989ce62</anchor>
+      <arglist>(const opp_string *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>bf9b4e30cdd47bb0f181414b500d3614</anchor>
+      <arglist>(const SimTime *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>9425c3c90ddf73fbd19ed11a30d7e0cd</anchor>
+      <arglist>(char &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>57a2599f10edca87395ad7b7f2e08ce9</anchor>
+      <arglist>(unsigned char &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>51c47c270c58c6e30d90a3c6f1d4c762</anchor>
+      <arglist>(bool &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>3632d34dd71c2212d373635a0d1b48e9</anchor>
+      <arglist>(short &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>06b3855ecacd399b05e8f6a2b9fd3bc9</anchor>
+      <arglist>(unsigned short &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>19ded724bb39bb1e7ee94bffae1cb5e6</anchor>
+      <arglist>(int &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>45fec1e51f833310ec138306f07ea7a8</anchor>
+      <arglist>(unsigned int &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>0976fff24705608df11bd26630cc8c19</anchor>
+      <arglist>(long &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>24597d235f6bec536a0d7faadaa3da25</anchor>
+      <arglist>(unsigned long &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>d7cbcdad8733ed834af846d424df3bae</anchor>
+      <arglist>(opp_long_long &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>f1ece373df980e0a59d73c27facdf48a</anchor>
+      <arglist>(opp_unsigned_long_long &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>4103e50d8e075f3d71619f791ff28b23</anchor>
+      <arglist>(float &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>c70936b4964622d32aa42417dd00029f</anchor>
+      <arglist>(double &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>5e2fe36fa768eda2559f9635abed15d5</anchor>
+      <arglist>(long double &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>93194bccdedbf36197b0d56143597690</anchor>
+      <arglist>(const char *&amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>5ac7db4b6b34c9347e1811a33349c97b</anchor>
+      <arglist>(opp_string &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>8309d85487950a5c74bb6ba6c318c5fa</anchor>
+      <arglist>(SimTime &amp;d)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>23fdceb4836ccdceb19491bcea944b56</anchor>
+      <arglist>(char *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>61febed42f21f326506de4c66c9bcd94</anchor>
+      <arglist>(unsigned char *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>b7ab1fa4058cc172765fdcfeed0cd70a</anchor>
+      <arglist>(bool *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>29b43f9cf694b076515d5752785c5cef</anchor>
+      <arglist>(short *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>a3698689d1509d98558ecc972d969550</anchor>
+      <arglist>(unsigned short *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>34e707069c6080e0a3ecd4643943bb8f</anchor>
+      <arglist>(int *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>9708d95b80702e935dbdfcdff9e9267f</anchor>
+      <arglist>(unsigned int *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>8fb2a9ee0fe4bea498a90160b8653489</anchor>
+      <arglist>(long *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>ff6e0c79f83cfa3c2811d9379e5ce124</anchor>
+      <arglist>(unsigned long *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>c6b55aae3594c99bc0d1aac7621adb20</anchor>
+      <arglist>(opp_long_long *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>d4b45854a12911043bfa9a46741a23fb</anchor>
+      <arglist>(opp_unsigned_long_long *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>eaaa7245e3134d05e4b624d2d1ba6e74</anchor>
+      <arglist>(float *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>a800ef1d9139c01be322ceeebd4218c6</anchor>
+      <arglist>(double *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>f516171547dd765ede6eed356660e797</anchor>
+      <arglist>(long double *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>10e02cc7dd35c2cee4d9bd37e5bcc171</anchor>
+      <arglist>(const char **d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>f549b25fdd2431494360cdbea670c82d</anchor>
+      <arglist>(opp_string *d, int size)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>unpack</name>
+      <anchorfile>classcMemCommBuffer.html</anchorfile>
+      <anchor>0c4749aeb9a9cf24242f0c479251ff08</anchor>
+      <arglist>(SimTime *d, int size)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>cNamedPipeCommunications</name>
+    <filename>classcNamedPipeCommunications.html</filename>
+    <base>cParsimCommunications</base>
+    <member kind="function">
+      <type></type>
+      <name>cNamedPipeCommunications</name>
+      <anchorfile>classcNamedPipeCommunications.html</anchorfile>
+      <anchor>e9732bd04e3cae14e3acce4194afe847</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~cNamedPipeCommunications</name>
+      <anchorfile>classcNamedPipeCommunications.html</anchorfile>
+      <anchor>dc3cfb4361c72a85acf3033fe078ffba</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>init</name>
+      <anchorfile>classcNamedPipeCommunications.html</anchorfile>
+      <anchor>2fa56f19ab58baea5c11a79d80decd87</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>shutdown</name>
+      <anchorfile>classcNamedPipeCommunications.html</anchorfile>
+      <anchor>ecfe91b058e0fd96b6a9b03ba7204acc</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual int</type>
+      <name>getNumPartitions</name>
+      <anchorfile>classcNamedPipeCommunications.html</anchorfile>
+      <anchor>87e4aff5462838f1d438838502515308</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual int</type>
+      <name>getProcId</name>
+      <anchorfile>classcNamedPipeCommunications.html</anchorfile>
+      <anchor>55ff7f174df328f7c5da70226cb28adb</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual cCommBuffer *</type>
+      <name>createCommBuffer</name>
+      <anchorfile>classcNamedPipeCommunications.html</anchorfile>
+      <anchor>cded1568f2caa6d8dafe1981fe7cddfd</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>recycleCommBuffer</name>
+      <anchorfile>classcNamedPipeCommunications.html</anchorfile>
+      <anchor>96f0c11c545c6bdde09ac4323c0e8f83</anchor>
+      <arglist>(cCommBuffer *buffer)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>send</name>
+      <anchorfile>classcNamedPipeCommunications.html</anchorfile>
+      <anchor>d6a71b082bb39b538d4bbcba02eb758a</anchor>
+      <arglist>(cCommBuffer *buffer, int tag, int destination)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>receiveBlocking</name>
+      <anchorfile>classcNamedPipeCommunications.html</anchorfile>
+      <anchor>54686818bf7c48ea2a954099c4332083</anchor>
+      <arglist>(int filtTag, cCommBuffer *buffer, int &amp;receivedTag, int &amp;sourceProcId)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>receiveNonblocking</name>
+      <anchorfile>classcNamedPipeCommunications.html</anchorfile>
+      <anchor>6b98bde1b19d944ea6810140575028f6</anchor>
+      <arglist>(int filtTag, cCommBuffer *buffer, int &amp;receivedTag, int &amp;sourceProcId)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>cNMPLookahead</name>
+    <filename>classcNMPLookahead.html</filename>
+    <base>cObject</base>
+    <member kind="function">
+      <type></type>
+      <name>cNMPLookahead</name>
+      <anchorfile>classcNMPLookahead.html</anchorfile>
+      <anchor>54d8e2783fb07483ebc8d35ff536911e</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~cNMPLookahead</name>
+      <anchorfile>classcNMPLookahead.html</anchorfile>
+      <anchor>40035133d5e53d23b87f012b7cc81fcf</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setContext</name>
+      <anchorfile>classcNMPLookahead.html</anchorfile>
+      <anchor>4275e050577ac8d4bf0c2f08417d5e10</anchor>
+      <arglist>(cSimulation *simul, cParsimPartition *seg, cParsimCommunications *co)</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual void</type>
+      <name>startRun</name>
+      <anchorfile>classcNMPLookahead.html</anchorfile>
+      <anchor>4a942288e70f3a056f16769ee4c91322</anchor>
+      <arglist>()=0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual void</type>
+      <name>endRun</name>
+      <anchorfile>classcNMPLookahead.html</anchorfile>
+      <anchor>7cf1510ea29b547d5a888a24f1dbee5a</anchor>
+      <arglist>()=0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual simtime_t</type>
+      <name>getCurrentLookahead</name>
+      <anchorfile>classcNMPLookahead.html</anchorfile>
+      <anchor>fd11ee6d2f11da2e8afe3c0556940180</anchor>
+      <arglist>(cMessage *msg, int procId, void *data)=0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual simtime_t</type>
+      <name>getCurrentLookahead</name>
+      <anchorfile>classcNMPLookahead.html</anchorfile>
+      <anchor>2da4c557118e2dd72cafcc4678cd67d4</anchor>
+      <arglist>(int procId)=0</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>cNoSynchronization</name>
+    <filename>classcNoSynchronization.html</filename>
+    <base>cParsimProtocolBase</base>
+    <member kind="function">
+      <type></type>
+      <name>cNoSynchronization</name>
+      <anchorfile>classcNoSynchronization.html</anchorfile>
+      <anchor>084348aff095868fc8eb0e1456b68e99</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~cNoSynchronization</name>
+      <anchorfile>classcNoSynchronization.html</anchorfile>
+      <anchor>4af0b5449bbb8102701c39f4fed03728</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>startRun</name>
+      <anchorfile>classcNoSynchronization.html</anchorfile>
+      <anchor>7623496e812e4b336e61a335d1a2de5e</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>endRun</name>
+      <anchorfile>classcNoSynchronization.html</anchorfile>
+      <anchor>8890eeaea6a5b22ade998c9385afbd92</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual cMessage *</type>
+      <name>getNextEvent</name>
+      <anchorfile>classcNoSynchronization.html</anchorfile>
+      <anchor>fee77b82ceac1faf75f80357fb554119</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>cNullMessageProtocol</name>
+    <filename>classcNullMessageProtocol.html</filename>
+    <base>cParsimProtocolBase</base>
+    <member kind="function">
+      <type></type>
+      <name>cNullMessageProtocol</name>
+      <anchorfile>classcNullMessageProtocol.html</anchorfile>
+      <anchor>413b54fee34dae895909d7bf9157ea3a</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~cNullMessageProtocol</name>
+      <anchorfile>classcNullMessageProtocol.html</anchorfile>
+      <anchor>2b2d61f688c437b032eeb2362cb4a78d</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>setContext</name>
+      <anchorfile>classcNullMessageProtocol.html</anchorfile>
+      <anchor>bdd2bb5996a52ac0267bc12bbc7895a4</anchor>
+      <arglist>(cSimulation *sim, cParsimPartition *seg, cParsimCommunications *co)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setLaziness</name>
+      <anchorfile>classcNullMessageProtocol.html</anchorfile>
+      <anchor>946c4242319badab6fa09df333e8f2d3</anchor>
+      <arglist>(double d)</arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>getLaziness</name>
+      <anchorfile>classcNullMessageProtocol.html</anchorfile>
+      <anchor>04a6db41e8bc5d091152a0b3d969a4c8</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>startRun</name>
+      <anchorfile>classcNullMessageProtocol.html</anchorfile>
+      <anchor>20867974378be82dbd3c63b142ca6f84</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>endRun</name>
+      <anchorfile>classcNullMessageProtocol.html</anchorfile>
+      <anchor>8267216290982d18b54bdba4ae47ffa9</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual cMessage *</type>
+      <name>getNextEvent</name>
+      <anchorfile>classcNullMessageProtocol.html</anchorfile>
+      <anchor>ebda0e31278fb2e91f7d974b14167dee</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>processOutgoingMessage</name>
+      <anchorfile>classcNullMessageProtocol.html</anchorfile>
+      <anchor>edb50f775889af416f5f0dc79b95ba8b</anchor>
+      <arglist>(cMessage *msg, int procId, int moduleId, int gateId, void *data)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>cParsimPartition</name>
+    <filename>classcParsimPartition.html</filename>
+    <base>cObject</base>
+    <member kind="function">
+      <type></type>
+      <name>cParsimPartition</name>
+      <anchorfile>classcParsimPartition.html</anchorfile>
+      <anchor>7ef8367fda567f3ebf440f63b3c7b0c2</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~cParsimPartition</name>
+      <anchorfile>classcParsimPartition.html</anchorfile>
+      <anchor>4b96d85d40be7b143c9b7eb2b2c867fe</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setContext</name>
+      <anchorfile>classcParsimPartition.html</anchorfile>
+      <anchor>6f4c35976a45590fc9f36818529bd5f5</anchor>
+      <arglist>(cSimulation *sim, cParsimCommunications *comm, cParsimSynchronizer *synch)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>startRun</name>
+      <anchorfile>classcParsimPartition.html</anchorfile>
+      <anchor>119314ed364dde4949be64f687f90526</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>endRun</name>
+      <anchorfile>classcParsimPartition.html</anchorfile>
+      <anchor>a5ad76488774911ebfeb17e8b72652f2</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>shutdown</name>
+      <anchorfile>classcParsimPartition.html</anchorfile>
+      <anchor>91ed3c4bef703f75bdfa1329b903ad6e</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>processOutgoingMessage</name>
+      <anchorfile>classcParsimPartition.html</anchorfile>
+      <anchor>be2edb6d774bd55c74559e40e88b43a8</anchor>
+      <arglist>(cMessage *msg, int procId, int moduleId, int gateId, void *data)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>processReceivedBuffer</name>
+      <anchorfile>classcParsimPartition.html</anchorfile>
+      <anchor>5a0ae0a2981856ac8d76db496f75ef49</anchor>
+      <arglist>(cCommBuffer *buffer, int tag, int sourceProcId)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>processReceivedMessage</name>
+      <anchorfile>classcParsimPartition.html</anchorfile>
+      <anchor>0fe063ee22ec1cceeab951e6afab01b7</anchor>
+      <arglist>(cMessage *msg, int destModuleId, int destGateId, int sourceProcId)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>broadcastTerminationException</name>
+      <anchorfile>classcParsimPartition.html</anchorfile>
+      <anchor>623a079672993e75dfe649c170fe1d5f</anchor>
+      <arglist>(cTerminationException &amp;e)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>broadcastException</name>
+      <anchorfile>classcParsimPartition.html</anchorfile>
+      <anchor>f430fde9c3cfb793676972c695feb46d</anchor>
+      <arglist>(std::exception &amp;e)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>cParsimProtocolBase</name>
+    <filename>classcParsimProtocolBase.html</filename>
+    <base>cParsimSynchronizer</base>
+    <member kind="function">
+      <type></type>
+      <name>cParsimProtocolBase</name>
+      <anchorfile>classcParsimProtocolBase.html</anchorfile>
+      <anchor>c46d4ff13e801292ea5e9bea0de0e005</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~cParsimProtocolBase</name>
+      <anchorfile>classcParsimProtocolBase.html</anchorfile>
+      <anchor>eb7840dce6cb316bc9477f03eca17b40</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>processOutgoingMessage</name>
+      <anchorfile>classcParsimProtocolBase.html</anchorfile>
+      <anchor>a9876e5755fcbd46f84f65902a06a3b5</anchor>
+      <arglist>(cMessage *msg, int procId, int moduleId, int gateId, void *data)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>cParsimSynchronizer</name>
+    <filename>classcParsimSynchronizer.html</filename>
+    <base>cScheduler</base>
+    <member kind="function">
+      <type></type>
+      <name>cParsimSynchronizer</name>
+      <anchorfile>classcParsimSynchronizer.html</anchorfile>
+      <anchor>50b96bf6fdd9845a2e86d77f72f558be</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~cParsimSynchronizer</name>
+      <anchorfile>classcParsimSynchronizer.html</anchorfile>
+      <anchor>43e54dfe3578dd762c00c7e7850b3ce2</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>setContext</name>
+      <anchorfile>classcParsimSynchronizer.html</anchorfile>
+      <anchor>1e15213ef69fa6b63bfcd2886b12fb6b</anchor>
+      <arglist>(cSimulation *sim, cParsimPartition *seg, cParsimCommunications *co)</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual void</type>
+      <name>startRun</name>
+      <anchorfile>classcParsimSynchronizer.html</anchorfile>
+      <anchor>e06fbf26e471450be87916a9dee81a8b</anchor>
+      <arglist>()=0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual void</type>
+      <name>endRun</name>
+      <anchorfile>classcParsimSynchronizer.html</anchorfile>
+      <anchor>28a2e814b5205a514ba029f10aa9968f</anchor>
+      <arglist>()=0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual cMessage *</type>
+      <name>getNextEvent</name>
+      <anchorfile>classcParsimSynchronizer.html</anchorfile>
+      <anchor>af816d634a5ae349fe9b1191baf944a1</anchor>
+      <arglist>()=0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual void</type>
+      <name>processOutgoingMessage</name>
+      <anchorfile>classcParsimSynchronizer.html</anchorfile>
+      <anchor>ccb6cd4fa5b9d3ae3b50adf2aa1e007d</anchor>
+      <arglist>(cMessage *msg, int procId, int moduleId, int gateId, void *data)=0</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>cPlaceholderModule</name>
+    <filename>classcPlaceholderModule.html</filename>
+    <base>cModule</base>
+    <member kind="function">
+      <type></type>
+      <name>cPlaceholderModule</name>
+      <anchorfile>classcPlaceholderModule.html</anchorfile>
+      <anchor>1efe171bc22cdb84a25343076e948dde</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~cPlaceholderModule</name>
+      <anchorfile>classcPlaceholderModule.html</anchorfile>
+      <anchor>b0e1cb285a63b196a3e5fb6b01b88af0</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual std::string</type>
+      <name>info</name>
+      <anchorfile>classcPlaceholderModule.html</anchorfile>
+      <anchor>e21f4d06ba300238969987afab77c1d0</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>isPlaceholder</name>
+      <anchorfile>classcPlaceholderModule.html</anchorfile>
+      <anchor>6613cd2f382c343a9a978a8c92adc422</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>arrived</name>
+      <anchorfile>classcPlaceholderModule.html</anchorfile>
+      <anchor>39ac8663ced4b579083cc70d92ad627e</anchor>
+      <arglist>(cMessage *msg, cGate *ongate, simtime_t t)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>scheduleStart</name>
+      <anchorfile>classcPlaceholderModule.html</anchorfile>
+      <anchor>10c1f2947d239efa90530c797ba16dca</anchor>
+      <arglist>(simtime_t t)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>cProxyGate</name>
+    <filename>classcProxyGate.html</filename>
+    <base>cGate</base>
+    <member kind="function" virtualness="virtual">
+      <type>virtual std::string</type>
+      <name>info</name>
+      <anchorfile>classcProxyGate.html</anchorfile>
+      <anchor>2410f535ee29a96eee4ad1a76f21f30a</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>deliver</name>
+      <anchorfile>classcProxyGate.html</anchorfile>
+      <anchor>759676e184721645a897036782338e17</anchor>
+      <arglist>(cMessage *msg, simtime_t at)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setRemoteGate</name>
+      <anchorfile>classcProxyGate.html</anchorfile>
+      <anchor>70f3d351db3848df7539c2d0f55c6b0d</anchor>
+      <arglist>(short procId, int moduleId, int gateId)</arglist>
+    </member>
+    <member kind="function">
+      <type>short</type>
+      <name>getRemoteProcId</name>
+      <anchorfile>classcProxyGate.html</anchorfile>
+      <anchor>88bd432b85ec43b54abd051fe53fa270</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>getRemoteModuleId</name>
+      <anchorfile>classcProxyGate.html</anchorfile>
+      <anchor>417b7a308cfde0b3444fd5dc1b907827</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>getRemoteGateId</name>
+      <anchorfile>classcProxyGate.html</anchorfile>
+      <anchor>cf664200594bafcb80cc8652121a5c18</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setPartition</name>
+      <anchorfile>classcProxyGate.html</anchorfile>
+      <anchor>2c596a7342ba25e02ca3cb97e331e2dc</anchor>
+      <arglist>(cParsimPartition *seg)</arglist>
+    </member>
+    <member kind="function">
+      <type>cParsimPartition *</type>
+      <name>getPartition</name>
+      <anchorfile>classcProxyGate.html</anchorfile>
+      <anchor>80dde575cda1d77a8d3cab453804be55</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setSynchData</name>
+      <anchorfile>classcProxyGate.html</anchorfile>
+      <anchor>936421ec0eb4e65937a531f55cc52486</anchor>
+      <arglist>(void *data)</arglist>
+    </member>
+    <member kind="function">
+      <type>void *</type>
+      <name>getSynchData</name>
+      <anchorfile>classcProxyGate.html</anchorfile>
+      <anchor>68603a73252defc15a3809547de79515</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="friend" protection="private">
+      <type>friend class</type>
+      <name>cPlaceholderModule</name>
+      <anchorfile>classcProxyGate.html</anchorfile>
+      <anchor>1ec8c23d522dde2ebdb7bd3048d69b5e</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>cReceivedException</name>
+    <filename>classcReceivedException.html</filename>
+    <base>cException</base>
+    <member kind="function">
+      <type></type>
+      <name>cReceivedException</name>
+      <anchorfile>classcReceivedException.html</anchorfile>
+      <anchor>cef35dcb7ccb90bee53171c8be7278a0</anchor>
+      <arglist>(int sourceProcId, const char *msg)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>cReceivedTerminationException</name>
+    <filename>classcReceivedTerminationException.html</filename>
+    <base>cTerminationException</base>
+    <member kind="function">
+      <type></type>
+      <name>cReceivedTerminationException</name>
+      <anchorfile>classcReceivedTerminationException.html</anchorfile>
+      <anchor>96a721f7be6276d4a9705c722ed823ee</anchor>
+      <arglist>(int sourceProcId, const char *msg)</arglist>
+    </member>
+  </compound>
+  <compound kind="dir">
+    <name>/home/default/omnetpp/src/sim/parsim/</name>
+    <path>/home/default/omnetpp/src/sim/parsim/</path>
+    <filename>dir_369bd66789a47112eb270aa695508953.html</filename>
+    <file>cadvlinkdelaylookahead.h</file>
+    <file>ccommbufferbase.h</file>
+    <file>cfilecomm.h</file>
+    <file>cfilecommbuffer.h</file>
+    <file>cidealsimulationprot.h</file>
+    <file>cispeventlogger.h</file>
+    <file>clinkdelaylookahead.h</file>
+    <file>cmemcommbuffer.h</file>
+    <file>cmpicomm.h</file>
+    <file>cmpicommbuffer.h</file>
+    <file>cnamedpipecomm.h</file>
+    <file>cnmplookahead.h</file>
+    <file>cnosynchronization.h</file>
+    <file>cnullmessageprot.h</file>
+    <file>cparsimpartition.h</file>
+    <file>cparsimprotocolbase.h</file>
+    <file>cparsimsynchr.h</file>
+    <file>cplaceholdermod.h</file>
+    <file>cproxygate.h</file>
+    <file>creceivedexception.h</file>
+    <file>messagetags.h</file>
+    <file>parsimindex.h</file>
+    <file>parsimutil.h</file>
+  </compound>
+  <compound kind="dir">
+    <name>/home/default/omnetpp/src/sim/</name>
+    <path>/home/default/omnetpp/src/sim/</path>
+    <filename>dir_d1efd56f733a98e64eaee33a996028cf.html</filename>
+    <dir>/home/default/omnetpp/src/sim/parsim/</dir>
+  </compound>
+  <compound kind="dir">
+    <name>/home/default/omnetpp/src/</name>
+    <path>/home/default/omnetpp/src/</path>
+    <filename>dir_3479df6010d17fb6a7e2825f4688bf91.html</filename>
+    <dir>/home/default/omnetpp/src/sim/</dir>
+  </compound>
+</tagfile>

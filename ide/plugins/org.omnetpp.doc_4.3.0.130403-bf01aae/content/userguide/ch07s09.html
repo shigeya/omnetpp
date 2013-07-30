@@ -1,0 +1,40 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Finding Objects</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="OMNeT&#8288;+&#8288;+ User Guide"><link rel="up" href="ch07.html" title="Chapter 7. The Tkenv Graphical Runtime Environment"><link rel="prev" href="ch07s08.html" title="Running and Controlling the Simulation"><link rel="next" href="ch07s10.html" title="Logging and Module Output"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Finding Objects</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch07s08.html">Prev</a> </td><th width="60%" align="center">Chapter 7. The Tkenv Graphical Runtime Environment</th><td width="20%" align="right"> <a accesskey="n" href="ch07s10.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id280165"></a>Finding Objects</h2></div></div></div><div class="figure"><a name="pictures/Tkenv-find.png"></a><p class="title"><b>Figure 7.8. Finding a specific object</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/Tkenv-find.png" align="middle" alt="Finding a specific object"></div></div></div></div><br class="figure-break"><p>There are times when you do not know the exact location of the object for which you are looking.
+      For example, you may want to know the locations for all your messages.
+      Invoke the <span class="emphasis"><em>Find/inspect objects</em></span> window and search for your object. The window allows you to set the
+      start of the search along with the type, class and name of the object. The results will be presented as a
+      clickable list.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+      The checkboxes can be used to select the object category that interests you. If you
+      select a category, all objects with that type (and any type derived from it) will be included in the search.
+      Alternatively, if you specify object class as a class filter expression, the search
+      dialog will try to match the object's class name with the given string. This means that only those types of objects
+      will be included in the search (derived types will not be included as they have different
+      non-matching classnames).
+    </div><p>You can provide a generic filter expression, which matches the object's full path by default.
+      Wildcards (<code class="literal">"?"</code>, <code class="literal">"*"</code>) are allowed. <code class="literal">"{a-exz}"</code> matches any character in the range <code class="literal">"a".."e"</code> plus <code class="literal">"x"</code> and
+      <code class="literal">"z"</code>. You can match numbers: <code class="literal">"*.job{128..191}"</code> will match objects named <code class="literal">"job128"</code>, <code class="literal">"job129"</code>, ...,
+      "job191". "job{128..}" and "job{..191}" are also understood. You can combine patterns with <code class="literal">AND</code>, <code class="literal">OR</code> and
+      <code class="literal">NOT</code> and parentheses (lowercase <code class="literal">and</code>, <code class="literal">or</code>, <code class="literal">not</code> are also accepted). You can match other object fields such
+      as queue length, message kind, etc., with the syntax <code class="literal">"fieldname(pattern)"</code>. Put quotation marks around a
+      pattern if it contains parentheses (HINT: You will want to start the pattern with <code class="literal">"*."</code> in most cases to
+      match objects anywhere in the network!).</p><div class="itemizedlist"><code class="literal">*.subnet2.*.destAddr</code><code class="literal">"destAddr"</code><code class="literal">"subnet2"</code><ul type="disc"><li><code class="literal">*.destAddr</code> : Matches all objects with the name <code class="literal">"destAddr"</code> (likely module parameters).
+      </li><li><code class="literal">*.node[8..10].*</code> : Matches anything inside module <code class="literal">node[8], node[9] </code>and <code class="literal">node[10] </code>.
+      </li><li><code class="literal">className(cQueue) and not length(0)</code> : Matches non-empty queue objects.
+      </li><li><code class="literal">className(cQueue) and length({10..})</code> : Matches queue objects with length&gt;=10.
+      </li><li><code class="literal">kind(3) or kind({7..9})</code> : Matches messages with message kind equal to 3, 7, 8 or 9 (only messages have
+        a <code class="literal">"kind"</code> attribute).
+      </li><li><code class="literal">className(IP*) and *.data-*</code> : Matches objects whose class name begins with <code class="literal">"IP"</code> and name begins with
+        <code class="literal">"data-."</code></li><li><code class="literal">not className(cMessage) and byteLength({1500..})</code> : Matches messages whose class is not cMessage and
+        byteLength is at least 1500 (only messages have a <code class="literal">"byteLength"</code> attribute).
+      </li><li><code class="literal">"*(*" or "*.msg(ACK)"</code> : Quotation marks needed when pattern is a reserved word or contains
+        parentheses (note: *.msg(ACK) without parentheses would be interpreted as some object having a "*.msg"
+        attribute with the value "ACK"!).
+      </li></ul></div><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+      Tkenv uses the <code class="literal">cObject::forEachChild</code> method to collect all objects from a tree recursively. If you
+      have your own objects derived from <code class="literal">cObject</code>, you should redefine the <code class="literal">cObject::forEachChild</code> to
+      function correctly with an object search.
+    </div><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+      If you are debugging the simulation with a source level debugger, you may also use
+      the <span class="emphasis"><em>Inspect by pointer</em></span> menu item. Let the debugger display the address of the object
+      to be inspected, and paste it into the dialog. Please note that entering an invalid pointer will
+      crash the simulation.
+    </div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch07s08.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch07.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch07s10.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Running and Controlling the Simulation </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Logging and Module Output</td></tr></table></div></body></html>

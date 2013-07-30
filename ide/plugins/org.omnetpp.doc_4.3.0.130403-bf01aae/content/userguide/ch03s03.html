@@ -1,0 +1,84 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Using the INI File Editor</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="OMNeT&#8288;+&#8288;+ User Guide"><link rel="up" href="ch03.html" title="Chapter 3. Editing INI Files"><link rel="prev" href="ch03s02.html" title="Creating INI Files"><link rel="next" href="ch03s04.html" title="Associated Views"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Using the INI File Editor</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch03s02.html">Prev</a> </td><th width="60%" align="center">Chapter 3. Editing INI Files</th><td width="20%" align="right"> <a accesskey="n" href="ch03s04.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id272405"></a>Using the INI File Editor</h2></div></div></div><p>
+      The INI File Editor has two modes. The <span class="emphasis"><em>Source</em></span> mode provides a text editor
+      with syntax highlighting and auto completion of names. In the <span class="emphasis"><em>Form</em></span> mode, you can
+      edit the configuration by entering the values in a form. You can switch between the modes
+      by selecting the tabs at the bottom of the editor.
+    </p><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id272424"></a>Editing in Form Mode</h3></div></div></div><p>
+        The INI file contains the configuration of simulation runs. The content of the INI file
+        is divided into sections. In the simplest case, all parameters are set in the General
+        section. If you want to create several configurations in the same INI file, you can
+        create named Configuration (Config) sections and refer to them with the <code class="option">-c</code> option when
+        starting the simulation.
+        
+        The Config sections inherit the settings from the General section or from other
+        Config sections. This way you can factor out the common settings into a "base" configuration.
+      </p><p>
+        On the first page of the form editor, you can edit the sections. The sections are displayed
+        as a tree; the nodes inherit settings from their parents. The icon before the section name
+        shows how many runs are configured in that section (see <a class="xref" href="ch03s03.html#section-icons-legend" title="Table 3.1. Legend of Icons Before Sections">Table 3.1, &#8220;Legend of Icons Before Sections&#8221;</a>).
+        You can use drag and drop to reorganize the sections. You can delete, edit, or add a new child
+        to the selected section.
+      </p><div class="figure"><a name="pictures/INI-FormEditor.png"></a><p class="title"><b>Figure 3.2. Editing INI file sections</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/INI-FormEditor.png" align="middle" alt="Editing INI file sections"></div></div></div></div><br class="figure-break"><div class="table"><a name="section-icons-legend"></a><p class="title"><b>Table 3.1. Legend of Icons Before Sections</b></p><div class="table-contents"><table summary="Legend of Icons Before Sections" border="1"><colgroup><col><col></colgroup><tbody><tr><td><span class="guibutton"><img src="icons/section_single.gif"></span></td><td>contains a single run</td></tr><tr><td><span class="guibutton"><img src="icons/section_repeat.gif"></span></td><td>contains multiple replications (specified by 'repeat=...')</td></tr><tr><td><span class="guibutton"><img src="icons/section_iter.gif"></span></td><td>contains iteration variables</td></tr><tr><td><span class="guibutton"><img src="icons/section_iterrep.gif"></span></td><td>contains multiple replications for each iteration</td></tr></tbody></table></div></div><br class="table-break"><p>
+        The Config sections have a name and an optional description. You can specify a fallback
+        section other than General. If the network name is not inherited, it can be specified, as well.
+      </p><div class="figure"><a name="pictures/INI-NewSection.png"></a><p class="title"><b>Figure 3.3. Creating a new INI file section</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/INI-NewSection.png" align="middle" alt="Creating a new INI file section"></div></div></div></div><br class="figure-break"><p>
+        On the <span class="emphasis"><em>Parameters</em></span> page of the form editor, you can set module parameters. First, you have to
+        select the section where the parameters are stored. After selecting the section from the list,
+        the form shows the name of the edited network and the fallback section.
+        The table below the list box shows current settings of the section and all other sections
+        from which it has inherited settings. You can move parameters by dragging them. If you click a table cell, you can
+        edit the parameter name (or pattern), its value and the comment attached to it.
+        <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Space</strong></span> brings up a content assist.
+        If you hover over a table row, the parameter is described in the tooltip that appears.
+      </p><div class="figure"><a name="pictures/INI-FormEditor3.png"></a><p class="title"><b>Figure 3.4. Editing module parameters</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/INI-FormEditor3.png" align="middle" alt="Editing module parameters"></div></div></div></div><br class="figure-break"><p>
+        New parameters can be added one by one by pressing the <span class="emphasis"><em>New</em></span> button and
+        filling the new table row. The selected parameters can be removed with the
+        <span class="emphasis"><em>Remove</em></span> button.
+        If you press the <span class="emphasis"><em>Add...</em></span> button, you
+        can add any missing parameters. 
+      </p><div class="figure"><a name="pictures/INI-AddParams.png"></a><p class="title"><b>Figure 3.5. Add missing module parameters dialog</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/INI-AddParams.png" align="middle" alt="Add missing module parameters dialog"></div></div></div></div><br class="figure-break"><p>
+        The rest of the settings do not belong to modules (e.g. configuration of
+        random number generators, output vectors, simulation time limit). These settings
+        can be edited from the forms listed under the Configuration node. If the field
+        has a default value and it is not set, the default value is displayed in gray.
+        If its value is set, you can reset the default value by pressing the <span class="emphasis"><em>Reset</em></span>
+        button. These fields are usually set in the General section. If you want to specify 
+        them in a Config section, press the <span class="guibutton"><img src="icons/expand.png"></span> button and add a section-specific
+        value to the opening table. If the table contains the Generic section only, then it can
+        be collapsed again by pressing the <span class="guibutton"><img src="icons/collapse.png"></span> button. Some fields can be
+        specified in the General section only, so they do not have a <span class="guibutton"><img src="icons/expand.png"></span> button
+        next to them.
+      </p><div class="figure"><a name="pictures/INI-FormEditor2.png"></a><p class="title"><b>Figure 3.6. Editing general configuration</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/INI-FormEditor2.png" align="middle" alt="Editing general configuration"></div></div></div></div><br class="figure-break"></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id274813"></a>Editing in Text Mode</h3></div></div></div><p>
+        If you want to edit the INI file as plain text, switch to the Source mode.
+        The editor provides several features in addition to the usual text editor functions
+        like copy/paste, undo/redo and text search.
+      </p><div class="figure"><a name="pictures/INI-TextEditor.png"></a><p class="title"><b>Figure 3.7. Editing the INI file in text mode</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/INI-TextEditor.png" align="middle" alt="Editing the INI file in text mode"></div></div></div></div><br class="figure-break"><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id274844"></a>Opening Old INI Files</h4></div></div></div><p>
+          When you open an INI file with the old format, the editor offers to convert
+          it to the new format. It creates Config sections from Run sections
+          and renames old parameters.
+        </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id274856"></a>Content Assist</h4></div></div></div><p>
+          If you press <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Space</strong></span>,
+          you will get a list of proposals valid at the insertion point. The list may
+          contain section names, general options, and parameter names and values
+          of the modules of the configured network.
+        </p><div class="figure"><a name="pictures/INI-TextEditor2.png"></a><p class="title"><b>Figure 3.8. Content assist in source mode</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/INI-TextEditor2.png" align="middle" alt="Content assist in source mode"></div></div></div></div><br class="figure-break"></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id274902"></a>Tooltip</h4></div></div></div><p>
+        If you hover over a section or parameter, a tooltip appears showing the properties
+        of the section or parameter. The tooltip for sections displays the inheritance chain, the network name,
+        number of errors and warnings and the yet unassigned parameters.
+        For parameters, the definition, description and the module name are displayed.
+        </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id274915"></a>Add Unassigned Parameters</h4></div></div></div><p>
+          You can add the names of unassigned module parameters to a Config section by choosing
+          <span class="emphasis"><em>Add Missing keys...</em></span> from the context menu or pressing <span class="keycap"><strong>Ctrl+Shift+O</strong></span>.
+        </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id274936"></a>Commenting</h4></div></div></div><p>
+          To comment out the selected lines, press <span class="keycap"><strong>Ctrl+/</strong></span>.
+          To remove the comment, press <span class="keycap"><strong>Ctrl+/</strong></span> again.
+        </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id274959"></a>Navigation</h4></div></div></div><p>
+          If you press the <span class="keycap"><strong>Ctrl</strong></span> key and click on a module parameter name,
+          then the declaration of the parameter will be shown in the NED editor. You can
+          navigate from a network name to its definition, too.
+        </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id274977"></a>Error Markers</h4></div></div></div><p>
+          Errors are marked on the left/right side of the editor. You can move to the
+          next/previous error by pressing <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>.</strong></span>
+          and <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>,</strong></span> respectively.
+          You can get the error message in a tooltip if you hover over the <span class="guibutton"><img src="icons/Error.png"></span> marker.
+        </p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch03s02.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch03.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch03s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Creating INI Files </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Associated Views</td></tr></table></div></body></html>

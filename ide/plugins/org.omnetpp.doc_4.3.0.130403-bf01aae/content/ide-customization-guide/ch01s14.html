@@ -1,0 +1,156 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Appendix C - Functions, Classes and Macros available from Templates</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="IDE Customization Guide"><link rel="up" href="ch01.html" title="Chapter 1. Writing Wizards"><link rel="prev" href="ch01s13.html" title="Appendix B - Predefined Template Variables"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Appendix C - Functions, Classes and Macros available from Templates</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch01s13.html">Prev</a> </td><th width="60%" align="center">Chapter 1. Writing Wizards</th><td width="20%" align="right"> </td></tr></table><hr></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_appendix_c_functions_classes_and_macros_available_from_templates"></a>Appendix C - Functions, Classes and Macros available from Templates</h2></div></div></div><p>In addition to the standard FreeMarker template constructs, there are
+several Java utility classes, template macros and functions
+that can be used in your wizard templates to ease the development of
+custom wizards. The following sections briefly describe these classes and
+methods.</p><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_custom_macros_and_functions"></a>Custom Macros and Functions</h3></div></div></div><pre class="literallayout">iif(condition, valueIfTrue, valueIfFalse)</pre><p>Inline if. The FreeMarker language does not have a conditional operator
+(like ?: of C/C&#8288;+&#8288;+ ), but the <code class="literal">iif()</code> function can save you from
+having to spell out <code class="literal">&lt;#if&gt;..&lt;#else&gt;..&lt;/#if&gt;</code>, when required.
+It is important to note that unlike in C/C&#8288;+&#8288;+, the evaluation is not lazy (i.e. both the "then" and
+the "else" expressions are always evaluated).</p><pre class="literallayout">&lt;@do expression !/&gt;</pre><p>FreeMarker does not have a construct for calling a function and then discarding
+the result. One could use <code class="literal">&lt;#assign dummy = expression&gt;</code>, but this will fail if the called (Java) function is void or returns null.
+We recommend our small <code class="literal">&lt;@do ..!/&gt;</code> macro which takes one argument and does nothing,
+and the exclamation mark (the FreeMarker default value operator) cures the
+void/null problem.</p><p>The following Java classes are available during template processing:</p><div class="variablelist"><dl><dt><span class="term">
+Math
+</span></dt><dd>
+java.lang.Math
+</dd><dt><span class="term">
+StringUtils
+</span></dt><dd>
+org.apache.commons.lang.StringUtils
+</dd><dt><span class="term">
+CollectionUtils
+</span></dt><dd>
+org.apache.commons.lang.CollectionUtils
+</dd><dt><span class="term">
+WordUtils
+</span></dt><dd>
+org.apache.commons.lang.CollectionUtils
+</dd><dt><span class="term">
+FileUtils
+</span></dt><dd>
+see below for documentation
+</dd><dt><span class="term">
+NedUtils
+</span></dt><dd>
+see below for documentation
+</dd><dt><span class="term">
+IDEUtils
+</span></dt><dd>
+see below for documentation
+</dd><dt><span class="term">
+ProcessUtils
+</span></dt><dd>
+see below for documentation
+</dd><dt><span class="term">
+LangUtils
+</span></dt><dd>
+see below for documentation
+</dd></dl></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_math"></a>Math</h3></div></div></div><p>Represents the Java Math class, which contains mathematical functions.
+See <span class="emphasis"><em>http://java.sun.com/j2se/1.5.0/docs/api/java/lang/Math.html</em></span> .</p><p>Math has the following methods:</p><pre class="literallayout">double cos(double x)</pre><pre class="literallayout">double sin(double x)</pre><pre class="literallayout">double pow(double x, double y)</pre><p>etc.</p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_stringutils"></a>StringUtils</h3></div></div></div><p>Represents the Apache Commons StringUtils class, which contains over a hundred
+utility functions for manipulating strings.
+See: <span class="emphasis"><em>http://commons.apache.org/lang/api/org/apache/commons/lang/StringUtils.html</em></span> .</p><p>StringUtils has the following methods:</p><pre class="literallayout">boolean isEmpty(String s)</pre><pre class="literallayout">boolean isBlank(String s)</pre><pre class="literallayout">String capitalize(String s)</pre><pre class="literallayout">String upperCase(String s)</pre><pre class="literallayout">String lowerCase(String s)</pre><pre class="literallayout">boolean startsWith(String s, String suffix)</pre><pre class="literallayout">boolean endsWith(String s, String prefix)</pre><pre class="literallayout">String[] split(String s)</pre><pre class="literallayout">String join(String[] strings)</pre><p>etc.</p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_wordutils"></a>WordUtils</h3></div></div></div><p>Represents the Apache Commons WordUtils class, which contains utility functions
+for manipulating strings as word sequences.
+See <span class="emphasis"><em>http://commons.apache.org/lang/api/org/apache/commons/lang/WordUtils.html</em></span> .</p><p>WordUtils has the following methods:</p><pre class="literallayout">String wrap(String str, int wrapLength)</pre><pre class="literallayout">String capitalize(String str)</pre><pre class="literallayout">String swapCase(String str)</pre><p>etc.</p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_collectionutils"></a>CollectionUtils</h3></div></div></div><p>Represents the Apache Commons CollectionUtils class, which contains some useful
+functions for manipulating collections (like lists). Functions include computing
+set union, intersection, and difference.
+See <span class="emphasis"><em>http://commons.apache.org/collections/apidocs/org/apache/commons/collections/CollectionUtils.html</em></span></p><p>CollectionUtils has the following methods:</p><pre class="literallayout">Collection union(Collection a, Collection b)</pre><pre class="literallayout">Collection intersection(Collection a, Collection b)</pre><pre class="literallayout">Collection subtract(Collection a, Collection b)</pre><p>etc.</p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_fileutils"></a>FileUtils</h3></div></div></div><p>Contains utility functions for reading files in the following formats: XML,
+JSON, CSV, property file, and functions to read and return a text file
+as a single string, as an array of lines, and as a an array of string arrays
+(where string arrays were created by splitting each by whitespace).</p><p>There are two sets of functions; one works on files in the Eclipse workspace
+and the other on "external" files (i.e. files in the file system).
+Files are interpreted in the Java platform&#8217;s default encoding (unless they are XML files,
+which specify their own encoding).</p><p>FileUtils has the following methods:</p><pre class="literallayout">org.w3c.dom.Document readXMLFile(String fileName)
+org.w3c.dom.Document readExternalXMLFile(String fileName)</pre><p>Parses an XML file, and return the Document object of the resulting
+DOM tree.</p><pre class="literallayout">Object readJSONFile(String fileName)
+Object readExternalJSONFile(String fileName)</pre><p>Parses a JSON file. The result is a Boolean, Integer, Double, String,
+List, Map, or any data structure composed of them. The JSON syntax is
+documented at <span class="emphasis"><em>http://json.org</em></span> ; if you want to check whether a particular
+text file corresponds to the JSON syntax, use <span class="emphasis"><em>http://jsonlint.com</em></span> .</p><pre class="literallayout">String[][] readCSVFile(String fileName, boolean ignoreFirstLine,
+                       boolean ignoreBlankLines,
+                       boolean ignoreCommentLines)
+String[][] readExternalCSVFile(String fileName, boolean ignoreFirstLine,
+                       boolean ignoreBlankLines,
+                       boolean ignoreCommentLines)</pre><p>Reads a CSV file. The result is an array of lines, where each line is
+a string array. Additional method parameters control whether to discard the
+first line of the file (which is usually a header line), whether to
+ignore blank lines, and whether to ignore comment lines (those starting
+with the # character). Comment lines are not part of the commonly accepted
+CSV format, but they are supported here nevertheless due to their
+usefulness.</p><pre class="literallayout">Properties readPropertyFile(String fileName)
+Properties readExternalPropertyFile(String fileName)</pre><p>Parses a Java property file (<span class="emphasis"><em>key=value</em></span> lines) in the workspace.
+The result is a Properties object, which is a hash of
+key-value pairs.</p><pre class="literallayout">String[][] readSpaceSeparatedTextFile(String fileName,
+                         boolean ignoreBlankLines,
+                         boolean ignoreCommentLines)
+String[][] readExternalSpaceSeparatedTextFile(String fileName,
+                         boolean ignoreBlankLines,
+                         boolean ignoreCommentLines)</pre><p>Reads a text file and return its contents, split by lines with each line
+split by whitespace. Additional method parameters control whether to ignore
+blank lines and/or comment lines (those starting with the # character).
+The result is an array of lines, where each line is a string array of the
+items on the line.</p><pre class="literallayout">String[] readLineOrientedTextFile(String fileName)
+String[] readExternalLineOrientedTextFile(String fileName)</pre><p>Reads a text file in the workspace and returns its lines. Comment lines
+(those starting with a hash mark, #) are discarded. The result is a
+string array.</p><pre class="literallayout">String readTextFile(String fileName)
+String readExternalTextFile(String fileName)</pre><p>Reads a text file, and return its contents unchanged as a single string.</p><pre class="literallayout">boolean isValidWorkspacePath(String path)</pre><p>Returns true if the given string is syntactically a valid workspace path.</p><pre class="literallayout">boolean isValidWorkspaceFilePath(String path)</pre><p>Returns true if the given string is syntactically a valid workspace file path.
+This function does not check whether the file exists, or whether the given path
+already points to a resource of a different type.</p><pre class="literallayout">IWorkspaceRoot getWorkspaceRoot()</pre><p>Returns the workspace root object. The workspace contains the user&#8217;s
+projects.</p><pre class="literallayout">IProject asProject(String path)</pre><p>Returns the handle for the workspace project with the given name.
+Throws exception if the path is not a valid workspace project path.
+This function does not test whether the project exists. To test that,
+call the exists() method on the returned handle.</p><pre class="literallayout">IContainer asContainer(String path)</pre><p>Returns the handle for the workspace container (i.e. project or folder) with the given name.
+Throws exception if the path is not a valid workspace container path.
+This function does not test whether the container exists. To test that,
+call the exists() method on the returned handle.</p><pre class="literallayout">IFile asFile(String path)</pre><p>Returns the handle for the workspace file with the given name.
+Throws exception if the path is not a valid workspace file path.
+This function does not test whether the file exists. To test that,
+call the exists() method on the returned handle.</p><pre class="literallayout">IResource asResource(String pathName)</pre><p>Returns the handle for the workspace project, folder or file with
+the given name. If the resource does not exist and the path contains
+more than one segment (i.e. it cannot be a project), it is returned as
+a file handle if it has a file extension, and as a folder if it
+does not.</p><pre class="literallayout">File asExternalFile(String path)</pre><p>Returns a java.io.File object for the given path. The object can be used to
+access operations provided by the File API, such as exists(), length(), etc.</p><pre class="literallayout">void copy(String path, String destPath, IProgressMonitor monitor)</pre><p>Copies a workspace resource (file, folder or project) specified with its path
+to the destination path. For projects and folders, it copies recursively
+(i.e. copies the whole folder tree). From the project root directory, it
+leaves out dot files, hidden files, and team private files.</p><pre class="literallayout">void copyURL(String url, String destFilePath,
+                      IProgressMonitor monitor)</pre><p>Copies the file at the given URL to the given destination workspace file.</p><pre class="literallayout">String createTempFile(String content)</pre><p>Writes the given string to a temporary file and returns the path of the
+temporary file in the file system. The file will be automatically deleted
+when the IDE exits, but it can be also deleted earlier via deleteExternalFile().</p><pre class="literallayout">void createFile(String fileName, String content)</pre><p>Creates a workspaces text file with the given contents in the platform&#8217;s default encoding.</p><pre class="literallayout">void createExternalFile(String fileName, String content)</pre><p>Creates a text file in the file system with the given contents in the platform&#8217;s default encoding.</p><pre class="literallayout">void deleteFile(String fileName)</pre><p>Deletes the given workspace file. It is acceptable to invoke it on a nonexistent file.</p><pre class="literallayout">void deleteExternalFile(String fileName)</pre><p>Deletes the given file from the file system. It is acceptable to invoke it on a nonexistent file.</p><pre class="literallayout">void createDirectory(String fileName)</pre><p>Creates a workspace folder. The parent must exist.</p><pre class="literallayout">void createExternalDirectory(String fileName)</pre><p>Creates a directory in the file system. The parent must exist.</p><pre class="literallayout">void removeDirectory(String fileName)</pre><p>Deletes a workspace folder. The folder must be empty. It is acceptable to invoke
+it on a nonexistent folder.</p><pre class="literallayout">void removeExternalDirectory(String fileName)</pre><p>Deletes a directory in the file system. The directory must be empty.
+It is acceptable to invoke it on a nonexistent directory.</p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_nedutils"></a>NedUtils</h3></div></div></div><p>Provides utility methods to work with NED types and check their existence.</p><p>NedUtils has the following methods:</p><pre class="literallayout">boolean isVisibleType(String typeName, String inFolder)</pre><p>Returns whether the given NED type is visible in the given folder.
+If the type is a fully qualified name, it is recognized if it is
+defined in the same project as the given folder, or in one of its
+referenced projects. If the type is a simple name (without package),
+it is recognized if it is in the NED package of the given folder.</p><pre class="literallayout">INEDTypeInfo getNedType(String typeName, String inFolder)</pre><p>Like isVisibleNedType(), but actually returns the given NED type
+if it was found; otherwise, it returns null. Useful if you implement
+a complex wizard page in Java.</p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_ideutils"></a>IDEUtils</h3></div></div></div><p>Provides entry points into various aspects of the IDE. This includes access to
+the Eclipse workspace (projects, folders, files) and the NED index. The former
+is documented in the Eclipse Platform help; documentation for the latter can
+be found in the sources (Javadoc).
+See <span class="emphasis"><em>http://help.eclipse.org/galileo/index.jsp?topic=/org.eclipse.platform.doc.isv/guide/resInt.htm</em></span>
+and <span class="emphasis"><em>http://help.eclipse.org/galileo/topic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/resources/IWorkspaceRoot.html</em></span></p><p>IDEUtils has the following methods:</p><pre class="literallayout">boolean openConfirm(String title, String message,
+                            String detailsMessage)
+boolean openQuestion(String title, String message,
+                             String detailsMessage)
+boolean openError(String title, String message,
+                          String detailsMessage)
+boolean openWarning(String title, String message,
+                            String detailsMessage)
+boolean openInformation(String title, String message,
+                            String detailsMessage)</pre><p>Opens a standard message dialog with a closable details message.</p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_langutils"></a>LangUtils</h3></div></div></div><p>Provides a collection of Java language related utility functions.</p><p>LangUtils has the following methods:</p><pre class="literallayout">boolean hasMethod(Object object, String methodName)</pre><p>Returns true if the object has a method with the given name.
+Method args and return type are not taken into account.
+Search is performed on the object&#8217;s class and all super classes.</p><pre class="literallayout">boolean hasField(Object object, String fieldName)</pre><p>Returns true if the object has a field with the given name.
+Field type is not taken into account. Search is performed on
+the object&#8217;s class and all super classes.</p><pre class="literallayout">boolean instanceOf(Object object, String classOrInterfaceName)</pre><p>Returns true if the given object is an instance of (subclasses from or
+implements) the given class or interface. To simplify usage, the class
+or interface name is accepted both with and without the package name.</p><pre class="literallayout">String toString(Object object)</pre><p>Produces a user-friendly representation of the object. In case of
+collections (lists, maps, etc.), the representation is JSON-like.</p><pre class="literallayout">List&lt;Object&gt; newList()</pre><p>Creates and returns a new mutable List object (currently ArrayList).</p><pre class="literallayout">Map&lt;Object, Object&gt; newMap()</pre><p>Creates and returns a new mutable Map object (currently HashMap).</p><pre class="literallayout">Set&lt;Object&gt; newSet()</pre><p>Creates and returns a new mutable Set object (currently HashSet).</p><pre class="literallayout">Class&lt;?&gt; getClass(Object object)</pre><p>Returns the class of the given object. Provided because BeanWrapper
+seems to have a problem with the getClass() method.</p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_processutils"></a>ProcessUtils</h3></div></div></div><p>Provides functionality to start external applications from the wizard.</p><p>ProcessUtis has the following methods:</p><pre class="literallayout">ProcessResult exec(String command, String[] arguments,
+                           String workingDirectory,
+                           String standardInput, double timeout)</pre><p>Executes the given command with the arguments as a separate process.
+The standard input is fed into the spawn process and the output is read
+until the process finishes or a timeout occurs. The timeout value 0 means wait
+infinitely long to finish the process. Arguments at the end of the argument
+list are optional.</p><pre class="literallayout">String lookupExecutable(String name)</pre><p>Finds the given executable in the path and returns it with full path.
+If not found, it returns the original string.</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch01s13.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch01.html">Up</a></td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top">Appendix B - Predefined Template Variables </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

@@ -1,0 +1,444 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta name="copyright" content="OpenSim Ltd.">
+  <meta NAME="Author" CONTENT="Andras Varga">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <link rel="STYLESHEET" href="../book.css"  type="text/css">
+  <title>OMNeT++ - Manual</title>
+</head>
+<body>
+
+<p><hr><b><a href="chap1.html">[Prev]</A>&nbsp;<a href="chap3.html">[Next]</A>&nbsp;<a href="toc.html#toc_2.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p><h1><a name="sec103"/>2 Overview</h1>
+<a name="cha:overview"></a>
+
+<p>
+<h2><a name="sec104"/>2.1 Modeling Concepts</h2>
+
+<p>An OMNeT++ model consists of modules that communicate with message passing.
+The active modules are termed <i>simple modules</i>; they are written in C++,
+using the simulation class library. Simple modules can be grouped into
+<i>compound modules</i> and so forth; the number of hierarchy levels is
+unlimited. The whole model, called network in OMNeT++, is itself a compound module.
+Messages can be sent either via connections that span
+modules or directly to other modules. The concept of simple and
+compound modules is similar to DEVS atomic and coupled models.
+
+<p>In Fig. <a href="chap2.html#fig:ch-overview:modules">below</a>, boxes represent simple modules
+(gray background) and compound modules.
+Arrows connecting small boxes represent connections and gates.
+
+<p>
+<br>
+<img src="over-modules.png">
+<center><i>Figure: Simple and compound modules</i></center>
+<a name="fig:ch-overview:modules"></a>
+
+<p>
+
+<p>Modules communicate with messages that may contain arbitrary
+data, in addition to usual attributes such as a timestamp.
+Simple modules typically send messages via gates, but it is also
+possible to send them directly to their destination modules. Gates are the
+input and output interfaces of modules: messages are sent through
+output gates and arrive through input gates. An input gate and output gate
+can be linked by a connection. Connections are created within a single
+level of module hierarchy; within a compound module, corresponding gates of
+two submodules, or a gate of one submodule and a gate of the compound
+module can be connected. Connections spanning hierarchy levels are
+not permitted, as they would hinder model reuse. Because of the hierarchical
+structure of the model, messages typically travel through a chain of
+connections, starting and arriving in simple modules. Compound modules act like
+"cardboard boxes" in the model, transparently relaying messages between
+their inner realm and the outside world. Parameters such as propagation delay,
+data rate and bit error rate, can be assigned to connections. One can also
+define connection types with specific properties (termed channels) and
+reuse them in several places. Modules can have parameters. Parameters are
+used mainly to pass configuration data to simple modules, and to help
+define model topology. Parameters can take string, numeric, or boolean
+values. Because parameters are represented as objects in the program,
+parameters -- in addition to holding constants -- may transparently act as
+sources of random numbers, with the actual distributions provided with the
+model configuration. They may interactively prompt the user for the value,
+and they might also hold expressions referencing other parameters. Compound
+modules may pass parameters or expressions of parameters to their
+submodules.
+
+<p>
+OMNeT++ provides efficient tools for the user to describe the
+structure of the actual system. Some of the main features are the following:
+<ul>
+<li>hierarchically nested modules
+<li>modules are instances of module types
+<li>modules communicate with messages through channels
+<li>flexible module parameters
+<li>topology description language
+</ul>
+
+<p><h3><a name="sec105"/>2.1.1 Hierarchical Modules</h3>
+
+<p>
+An OMNeT++ model consists of hierarchically nested
+modules<!--module!hierarchy--> that communicate by passing
+messages to each other.
+OMNeT++ models are often referred to as <i>networks</i>. The top
+level module is the <i>system module</i>.  The system module
+contains <i>submodules</i> that can also contain submodules
+themselves (Fig. <a href="chap2.html#fig:ch-overview:modules">below</a>). The depth of module
+nesting is unlimited, allowing the user to reflect the logical
+structure of the actual system in the model structure.
+
+<p>Model structure is described in OMNeT++'s NED language.
+
+<p>Modules that contain submodules are termed <i>compound
+  modules</i><!--module!compound-->, as opposed to <i>simple
+  modules</i><!--module!simple--> at the lowest level of the
+module hierarchy. Simple modules contain the algorithms of the model.
+The user implements the simple modules in C++, using the OMNeT++
+simulation class library.
+
+<p>
+<h3><a name="sec106"/>2.1.2 Module Types</h3>
+<!--module!types-->
+
+<p>Both simple and compound modules are instances of <i>module
+  types</i>. In describing the model, the user defines module types;
+instances of these module types serve as components for more complex
+module types. Finally, the user creates the system module as an
+instance of a previously defined module type; all modules of the
+network are instantiated as submodules and sub-submodules of the
+system module.
+
+<p>When a module type is used as a building block, it makes no difference
+whether it is a simple or compound module. This allows
+the user to split a simple module into several
+simple modules embedded into a compound<!--module!compound--> module,
+or vice versa, to aggregate the functionality of a compound module into a
+single simple module, without affecting existing users of the module
+type.
+
+<p>Module types can be stored in files separately from the place
+of their actual usage. This means that the user can group existing
+module types and create <i>component libraries</i><!--module!libraries-->. This feature
+will be discussed later, in chapter <a href="chap10.html#sec353">[10]</a>.
+
+<p>
+
+<p><h3><a name="sec107"/>2.1.3 Messages, Gates, Links</h3>
+
+<p>Modules communicate by exchanging
+<i>messages</i><!--message!exchanging-->. In an actual simulation,
+messages can represent frames or packets in a computer network, jobs
+or customers in a queuing network or other types of mobile entities.
+Messages can contain arbitrarily complex data structures. Simple
+modules can send messages either directly to their destination or
+along a predefined path, through gates and connections.
+
+<p>
+The &#8220;local simulation time&#8221; of a module advances when the module
+receives a message. The message can arrive from another module
+or from the same module (<i>self-messages</i> are used to implement
+timers).
+
+<p>
+<i>Gates</i><!--gate--> are the input and output interfaces of
+modules; messages are sent out through output gates and arrive through
+input gates.
+
+<p>Each <i>connection</i><!--connection--> (also called
+<i>link</i><!--link-->) is created within a single level of the
+module hierarchy: within a compound module, one can connect the
+corresponding gates of two submodules, or a gate of one submodule and
+a gate of the compound module (Fig.
+<a href="chap2.html#fig:ch-overview:modules">below</a>).
+
+<p>Because of the hierarchical structure of the model, messages typically
+travel through a series of connections, starting and arriving in simple
+modules. Compound modules act like &#8220;cardboard boxes&#8221; in the model,
+transparently relaying messages between their inner realm and the
+outside world.
+
+<p>
+<h3><a name="sec108"/>2.1.4 Modeling of Packet Transmissions</h3>
+
+<p>To facilitate the modeling of communication networks, connections
+can be used to model physical links. Connections support
+the following parameters: <i>data rate</i>, <i>propagation delay</i>,
+<i>bit error rate</i> and <i>packet error rate</i>, and may be
+disabled. These parameters and the underlying algorithms are encapsulated
+into <i>channel</i> objects. The user can parameterize the channel
+types provided by OMNeT++, and also create new ones.
+
+<p>When data rates are in use, a packet object is by default delivered to the
+target module at the simulation time that corresponds to the end of the
+packet reception. Since this behavior is not suitable for the modeling of
+some protocols (e.g. half-duplex Ethernet), OMNeT++ provides the possibility
+for the target module to specify that it wants the packet object to be
+delivered to it when the packet reception starts.
+
+<p>
+<h3><a name="sec109"/>2.1.5 Parameters</h3>
+<!--module!parameters-->
+<!--parameters|seemodule parameters-->
+
+<p>Modules can have parameters. Parameters can be assigned  in either
+the NED files or the configuration file <tt>omnetpp.ini</tt>.
+
+<p>Parameters can be used to customize simple module behavior,
+and to parameterize the model topology.
+
+<p>Parameters can take string, numeric or boolean values, or can
+contain XML data trees. Numeric values include expressions using
+other parameters and calling C functions, random variables from
+different distributions, and values input interactively by the user.
+
+<p>Numeric-valued parameters can be used to construct topologies in a
+flexible way. Within a compound module, parameters can define the
+number of submodules, number of gates, and the way the internal
+connections are made.
+
+<p>
+<h3><a name="sec110"/>2.1.6 Topology Description Method</h3>
+<!--topology!description-->
+
+<p>The user defines the structure of the model in NED language descriptions
+(Network Description). The NED language will be discussed in detail
+in chapter <a href="chap3.html#sec115">[3]</a>.
+
+<p>
+<h2><a name="sec111"/>2.2 Programming the Algorithms</h2>
+
+<p>The simple<!--module!simple--> modules of a model contain algorithms
+as C++ functions.
+The full flexibility and power of the programming language can
+be used, supported by the OMNeT++ simulation class library.
+The simulation programmer can choose between event-driven and process-style
+description, and freely use object-oriented concepts
+(inheritance, polymorphism etc) and design patterns to extend the
+functionality of the simulator.
+
+<p>Simulation objects (messages, modules, queues etc.) are represented
+by C++ classes. They have been designed to work together efficiently,
+creating a powerful simulation programming framework.
+The following classes are part of the simulation class library:
+
+<p><ul>
+  <li>module, gate, parameter, channel
+  <li>message, packet
+  <li>container classes (e.g. queue, array)
+  <li>data collection classes
+  <li>statistic and distribution estimation classes (histograms, <i>P<sup>2</sup></i>
+  algorithm for calculating quantiles etc.)
+  <li>transient detection and result accuracy detection classes
+</ul>
+
+<p>The classes are also specially instrumented, allowing one
+to traverse objects of a running simulation and display information
+about them such as name, class name, state variables or contents.
+This feature makes it possible to create a simulation GUI where
+all internals of the simulation are visible.
+
+<p>
+
+
+<p><h2><a name="sec112"/>2.3 Using OMNeT++</h2>
+
+<p>
+<h3><a name="sec113"/>2.3.1 Building and Running Simulations</h3>
+<!--simulation!building-->
+<!--simulation!running-->
+
+<p>This section provides insights into working with OMNeT++ in practice.
+Issues such as model files and compiling and running simulations are
+discussed.
+
+<p>An OMNeT++ model consists of the following parts:
+<ul>
+  <li>NED language topology description(s)<!--ned!files--> (<tt>.ned</tt> files)
+    that describe the module structure with parameters, gates, etc.
+    NED files can be written using any text editor, but the OMNeT++ IDE
+    provides excellent support for two-way graphical and text editing.
+  <li>Message definitions (<tt>.msg</tt> files). You can define various message
+    types and add data fields to them. OMNeT++ will translate message definitions
+    into full-fledged C++ classes.
+  <li>Simple module sources. They are C++ files, with <tt>.h</tt>/<tt>.cc</tt> suffix.
+</ul>
+
+<p>The simulation system provides the following components:
+<ul>
+  <li>Simulation kernel<!--simulation!kernel-->. This contains the
+    code that manages the simulation and the simulation class library.
+    It is written in C++, compiled into a shared or static library.
+  <li>User interfaces<!--simulation!user interface-->.
+    <!--user interface--> OMNeT++ user interfaces
+    are used in simulation execution, to facilitate debugging,
+    demonstration, or batch execution of simulations. They are
+    written in C++, compiled into libraries.
+</ul>
+
+<p>
+Simulation programs are built from the above components. First,
+<tt>.msg</tt> files are translated into C++ code using the <tt>opp_msgc</tt>.
+program. Then all C++ sources are compiled and linked with the simulation
+kernel and a user interface library to form a simulation executable or
+shared library. NED files<!--ned!files--> are loaded dynamically in their original
+text forms when the simulation program starts.
+
+<p>
+<p class="subheading">Running the Simulation and Analyzing the Results</p>
+
+<p>The simulation may be compiled as a standalone program executable;
+thus it can be run on other machines without OMNeT++
+being present, or it can be created as a shared library. In this case the
+OMNeT++ shared libraries must be present on that system.
+When the program is started, it first reads all NED files<!--ned!files-->
+containing your model topology, then it reads a configuration
+file<!--simulation!configuration file--> (usually called
+<tt>omnetpp.ini</tt><!--omnetpp.ini-->). This file contains settings that
+control how the simulation is executed, values for model parameters, etc.
+The configuration file can also prescribe several simulation runs; in
+the simplest case, they will be executed by the simulation program one
+after another.
+
+<p>The output of the simulation is written into result files: output vector
+files<!--output!vector file-->, output scalar files<!--output!scalar file-->,
+and possibly the user's own output files.
+OMNeT++ contains an Integrated Development Environment (IDE) that provides
+rich environment for analyzing these files. Output files are line-oriented
+text files which makes it possible to process them with a variety of tools
+and programming languages as well, including Matlab, GNU R, Perl, Python,
+and spreadsheet programs.
+
+<p>
+<p class="subheading">User Interfaces</p>
+<!--simulation!user interface-->
+
+<p>The primary purpose of user interfaces is to make the internals
+of the model visible to the user, to control simulation execution,
+and possibly allow the user to intervene by changing variables/objects
+inside the model. This is very important in the development/debugging
+phase of the simulation project. Equally important, a hands-on
+experience allows the user to get a feel of the model's
+behavior. The graphical user interface can also be used to
+demonstrate a model's operation.
+
+<p>
+The same simulation model can be executed with various user
+interfaces, with no change in the model files themselves.
+The user would typically test and debug the simulation with a powerful
+graphical user interface, and finally run it with a simple,
+fast user interface that supports batch execution.
+
+<p>
+<p class="subheading">Component Libraries</p>
+<!--module!libraries-->
+
+<p>Module types can be stored in files separate from the place
+of their actual use, enabling the user to group existing
+module types and create component libraries.
+
+<p>
+<p class="subheading">Universal Standalone Simulation Programs</p>
+
+<p>
+A simulation executable can store several independent models
+that use the same set of simple modules. The user can specify
+in the configuration file which model is to be run. This
+allows one to build one large executable that contains several
+simulation models, and distribute it as a standalone simulation
+tool. The flexibility of the topology description language also
+supports this approach.
+
+<p>
+<h3><a name="sec114"/>2.3.2 What Is in the Distribution</h3>
+
+<p>If you installed the source distribution, the OMNeT++ directory on your system
+should contain the following subdirectories. (If you installed a precompiled
+distribution, some of the directories may be missing, or there might be
+additional directories, e.g. containing software bundled with OMNeT++.)
+
+<p>The simulation system itself:
+
+<p><pre class="verbatim">
+  <b>omnetpp/</b>         OMNeT++ root directory
+    <b>bin/</b>           OMNeT++ executables
+    <b>include/</b>       header files for simulation models
+    <b>lib/</b>           library files
+    <b>images/</b>        icons and backgrounds for network graphics
+    <b>doc/</b>           manuals, readme files, license, APIs, etc.
+      <b>ide-customization-guide/</b> how to write new wizards for the IDE
+      <b>ide-developersguide/</b> writing extensions for the IDE
+      <b>manual/</b>      manual in HTML
+      <b>migration/</b>   how to migrate your models from 3.x to 4.0 version
+      <b>ned2/</b>        DTD definition of the XML syntax for NED files
+      <b>tictoc-tutorial/</b>  introduction into using OMNeT++
+      <b>api/</b>         API reference in HTML
+      <b>nedxml-api/</b>  API reference for the NEDXML library
+      <b>parsim-api/</b>  API reference for the parallel simulation library
+    <b>migrate/</b>       tools to help model migration from 3.x to 4.0 version
+    <b>src/</b>           OMNeT++ sources
+      <b>sim/</b>         simulation kernel
+        <b>parsim/</b>    files for distributed execution
+        <b>netbuilder/</b>files for dynamically reading NED files
+      <b>envir/</b>       common code for user interfaces
+      <b>cmdenv/</b>      command-line user interface
+      <b>tkenv/</b>       Tcl/Tk-based user interface
+      <b>nedxml/</b>      NEDXML library, nedtool, opp_msgc
+      <b>scave/</b>       result analysis library
+      <b>eventlog/</b>    eventlog processing library
+      <b>layout/</b>      graph layouter for network graphics
+      <b>common/</b>      common library
+      <b>utils/</b>       opp_makemake, opp_test, etc.
+    <b>test/</b>          regression test suite
+      <b>core/</b>        tests for the simulation library
+      <b>anim/</b>        tests for graphics and animation
+      <b>dist/</b>        tests for the built-in distributions
+      <b>makemake/</b>    tests for opp_makemake
+      ...
+</pre>
+
+<p>The Eclipse-based Simulation IDE is in the <tt>ide</tt> directory.
+
+<p><pre class="verbatim">
+    <b>ide/</b>           Simulation IDE
+      <b>features/</b>    Eclipse feature definitions
+      <b>plugins/</b>     IDE plugins (extensions to the IDE can be dropped here)
+      ...
+</pre>
+
+<p>The Windows version of OMNeT++ contains a redistribution of the MinGW
+gcc compiler, together with a copy of MSYS that provides Unix tools
+commonly used in Makefiles. The MSYS directory also contains various
+3rd party open-source libraries needed to compile and run OMNeT++.
+
+<p><pre class="verbatim">
+    <b>mingw/</b>       MinGW gcc port
+    <b>msys/</b>        MSYS plus libraries
+</pre>
+
+<p>Sample simulations are in the <tt>samples</tt> directory.
+
+<p><pre class="verbatim">
+    <b>samples/</b>     directories for sample simulations
+      <b>aloha/</b>     models the Aloha protocol
+      <b>cqn/</b>       Closed Queueing Network
+      ...
+</pre>
+
+<p>The <tt>contrib</tt> directory contains material from the OMNeT++ community.
+
+<p><pre class="verbatim">
+    <b>contrib/</b>     directory for contributed material
+      <b>akaroa/</b>    Patch to compile akaroa on newer gcc systems
+      <b>jsimplemodule/</b>  Write simple modules in Java
+      <b>topologyexport/</b>  Export the topology of a model in runtime
+      ...
+</pre>
+
+<p>
+
+<hr class='pgbr'><p><hr><b><a href="chap1.html">[Prev]</A>&nbsp;<a href="chap3.html">[Next]</A>&nbsp;<a href="toc.html#toc_2.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p>
+
+</body>
+</html>

@@ -1,0 +1,657 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta name="copyright" content="OpenSim Ltd.">
+  <meta NAME="Author" CONTENT="Andras Varga">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <link rel="STYLESHEET" href="../book.css"  type="text/css">
+  <title>OMNeT++ - Manual</title>
+</head>
+<body>
+
+<p><hr><b><a href="chap4.html">[Prev]</A>&nbsp;<a href="chap6.html">[Next]</A>&nbsp;<a href="toc.html#toc_5.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p><h1><a name="sec200"/>5 Messages and Packets</h1>
+<a name="cha:messages"></a>
+
+<p><h2><a name="sec201"/>5.1 Overview</h2>
+<a name="sec:ch-msgs:overview"></a>
+
+<p>Messages are a central concept in OMNeT++. In the model, message objects
+represent events, packets, commands, jobs, customers or other kinds of
+entities, depending on the model domain.
+
+<p>Messages are represented with the <tt><a href="../api/classcMessage.html">cMessage</a></tt> class and its subclass
+<tt><a href="../api/classcPacket.html">cPacket</a></tt>. <tt><a href="../api/classcPacket.html">cPacket</a></tt> is used for network packets (frames,
+datagrams, transport packets, etc.) in a communication network, and
+<tt><a href="../api/classcMessage.html">cMessage</a></tt> is used for everything else. Users are free to subclass
+both <tt><a href="../api/classcMessage.html">cMessage</a></tt> and <tt><a href="../api/classcPacket.html">cPacket</a></tt> to create new types and to
+add data.
+
+<p><tt><a href="../api/classcMessage.html">cMessage</a></tt> has the following fields; some are used by
+the simulation kernel, and others are provided for the convenience
+of the simulation programmer:
+
+<p><ul>
+  <li> The <i>name</i> field is a string (<tt>const char *</tt>),
+    which can be freely used by the simulation programmer. The message
+    name is displayed at many places in the graphical runtime interface,
+    so it is generally useful to choose a descriptive name. Message name
+    is inherited from <tt><a href="../api/classcObject.html">cObject</a></tt> (see section
+    <a href="chap7.html#sec258">[7.1.1]</a>).
+  <li> <i>Message kind</i> is an integer field.
+    Some negative values are reserved by the simulation library, but zero
+    and positive values can be freely used in the model for any purpose.
+    Message kind is typically used to carry a value that conveys the
+    role, type, category or identity of the message.
+  <li> The <i>scheduling priority</i> field is used by the simulation
+    kernel to determine the delivery order of messages that have the same
+    arrival time values. This field is rarely used in practice.
+  <li> The <i>send time</i>, <i>arrival time</i>, <i>source module</i>,
+    <i>source gate</i>, <i>destination module</i>, <i>destination gate</i>
+    fields store information about the message's last sending or scheduling,
+    and should not be modified from the model. These fields are primarily
+    used internally by the simulation kernel while the message is in the
+    future events set (FES)<!--FES-->, but the information is still in
+    the message object when the message is delivered to a module.
+  <li> <i>Time stamp</i> (not to be confused with <i>arrival time</i>)
+    is a utility field, which the programmer can freely use for any purpose.
+    The time stamp is not examined or changed by the simulation kernel at all.
+  <li> The <i>parameter list</i>, <i>control info</i> and
+    <i>context pointer</i> fields make some simulation tasks easier
+    to program, and they will be discussed later.
+</ul>
+
+<p>The <tt><a href="../api/classcPacket.html">cPacket</a></tt> class extends <tt><a href="../api/classcMessage.html">cMessage</a></tt> with fields that are
+useful for representing network packets:
+
+<p><ul>
+  <li> The <i>packet length</i> field represents the length of the packet
+    in bits. It is used by the simulation kernel to compute the transmission
+    duration when a packet travels through a connection that has an assigned
+    data rate, and also for error modeling on channels with a nonzero
+    bit error rate.
+  <li> The <i>encapsulated packet</i> field helps modeling protocol layers
+    by supporting the concept of encapsulation and decapsulation.
+  <li> The <i>bit error flag</i> field carries the result of error
+    modelling after the packet is sent through a channel that has a nonzero
+    packet error rate (PER) or bit error rate (BER). It is up to the receiver
+    to examine this flag after having received the packet, and to act upon it.
+  <li> The <i>duration</i> field carries the transmission duration after
+    the packet was sent through a channel with a data rate.
+  <li> The <i>is-reception-start</i> flag tells whether this packet
+    represents the start or the end of the reception after the packet travelled
+    through a channel with a data rate. This flag is controlled by the
+    <i>deliver-on-reception-start</i> flag of the receiving gate.
+</ul>
+
+<p>
+<h2><a name="sec202"/>5.2 The <a href="../api/classcMessage.html">cMessage</a> Class</h2>
+<a name="sec:ch-msgs:cmessage"></a>
+
+<p><h3><a name="sec203"/>5.2.1 Basic Usage</h3>
+
+<p>The <tt><a href="../api/classcMessage.html">cMessage</a></tt> constructor accepts an <i>object name</i>
+and a <i>message kind</i>, both optional:
+
+<pre class="cpp">
+<a href="../api/classcMessage.html">cMessage</a>(const char *name=NULL, short kind=0);
+</pre>
+<p>
+Descriptive message names can be very useful when tracing, debugging or
+demonstrating the simulation, so it is recommended to use them.
+Message kind is usually initialized with a symbolic constant
+(e.g. an <i>enum</i> value) which signals what the message object
+represents. Only positive values and zero can be used --
+negative values are reserved for use by the simulation kernel.
+
+<p>The following lines show some examples of message creation:
+
+<pre class="cpp">
+<a href="../api/classcMessage.html">cMessage</a> *msg1 = new <a href="../api/classcMessage.html">cMessage</a>();
+<a href="../api/classcMessage.html">cMessage</a> *msg2 = new <a href="../api/classcMessage.html">cMessage</a>("timeout");
+<a href="../api/classcMessage.html">cMessage</a> *msg3 = new <a href="../api/classcMessage.html">cMessage</a>("timeout", KIND_TIMEOUT);
+</pre>
+<p>
+Once a message has been created, its basic data members can be set
+with the following methods:
+
+<pre class="cpp">
+void setName(const char *name);
+void setKind(short k);
+void setTimestamp();
+void setTimestamp(simtime_t t);
+void setSchedulingPriority(short p);
+</pre>
+<p>
+The argument-less <tt>setTimeStamp()</tt> method is equivalent to
+<tt>setTimeStamp(simTime())</tt>.
+
+<p>The corresponding getter methods are:
+
+<pre class="cpp">
+const char *getName() const;
+short getKind() const;
+simtime_t getTimestamp() const;
+short getSchedulingPriority() const;
+</pre>
+<p>
+The <tt>getName()</tt>/<tt>setName()</tt> methods are inherited from
+a generic base class in the simulation library, <tt><a href="../api/classcNamedObject.html">cNamedObject</a></tt>.
+
+<p>Two more interesting methods:
+
+<pre class="cpp">
+bool isPacket() const;
+simtime_t getCreationTime() const;
+</pre>
+<p>
+The <tt>isPacket()</tt> method returns <tt>true</tt> if the particular message
+object is a subclass of <tt><a href="../api/classcPacket.html">cPacket</a></tt>, and <tt>false</tt> otherwise. As
+<tt>isPacket()</tt> is implemented as a virtual function that just contains
+a <tt>return false</tt> or a <tt>return true</tt> statement, it might be faster
+than calling <tt>dynamic_cast&lt;<a href="../api/classcPacket.html">cPacket</a>*&gt;</tt>.
+
+<p>The <tt>getCreationTime()</tt> method returns the creation time of the
+message. It is worthwhile to mention that with cloned messages (see
+<tt>dup()</tt> later), the creation time of the original message is returned
+and not the time of the cloning operation. This is particularly useful when
+modeling communication protocols, because many protocols clone the
+transmitted packages to be able to do retransmissions and/or
+segmentation/reassembly.
+
+<p>
+<h3><a name="sec204"/>5.2.2 Duplicating Messages</h3>
+<!--message!duplication-->
+
+<p>It is often necessary to duplicate a message or a packet, for example,
+to send one and keep a copy. Duplication can be done in the same way as
+for any other OMNeT++ object:
+
+<pre class="cpp">
+<a href="../api/classcMessage.html">cMessage</a> *copy = msg-&gt;dup();
+</pre>
+<p>
+The resulting message (or packet) will be an exact copy of the original
+including message parameters and encapsulated messages, except for the
+message ID field. The creation time field is also copied, so
+for cloned messages <tt>getCreationTime()</tt> will return the creation
+time of the original, not the time of the cloning operation.
+  <br><ul><font size=-1>[Note, however, that the simulation library may delay the
+  duplication of the encapsulated message until it is really needed;
+  see section <a href="chap5.html#sec217">[5.4.5]</a>.]</font></ul>
+
+<p>If you subclass from <tt><a href="../api/classcMessage.html">cMessage</a></tt> or <tt><a href="../api/classcPacket.html">cPacket</a></tt>, you need
+to reimplement <tt>dup()</tt>; the recommended implementation is to delegate
+to the copy constructor of the new class:
+
+<pre class="cpp">
+class FooMessage : public <a href="../api/classcMessage.html">cMessage</a> {
+  public:
+    FooMessage(const FooMessage& other) {...}
+    virtual FooMessage *dup() const {return new FooMessage(*this);}
+    ...
+};
+</pre>
+<p>
+For generated classes (chapter <a href="chap6.html#sec222">[6]</a>), this is
+taken care of automatically.
+
+<p>
+<h3><a name="sec205"/>5.2.3 Message IDs</h3>
+<!--message!IDs-->
+
+<p>Every message object has a unique numeric <i>message ID</i>. It is normally
+used for identifying the message in a recorded event log file, but may occasionally
+be useful for other purposes as well. If you clone a message (<tt>msg-&gt;dup()</tt>),
+the clone will have a different ID.
+
+<p>There is also another ID called <i>tree ID</i>. A tree ID starts out with
+the value of the message ID; however, if you clone a message, the clone
+will retain the tree ID of the original. Thus, messages that have the same
+tree ID have been created by cloning the same original message or its
+clones (with one exception, the original message).  The size of <tt>long</tt>
+is usually enough so that IDs remain unique during a single simulation run
+(i.e. the counter does not wrap).
+
+<p>The methods for obtaining message IDs:
+
+<pre class="cpp">
+long getId() const;
+long getTreeId() const;
+</pre>
+<p>
+
+<p><h3><a name="sec206"/>5.2.4 Control Info</h3>
+
+<p>One of the main application areas of OMNeT++ is the simulation of
+telecommunication networks. Here, protocol layers are usually
+implemented as modules which exchange packets. Packets themselves
+are represented by messages subclassed from <tt><a href="../api/classcPacket.html">cPacket</a></tt>.
+
+<p>However, communication between protocol layers requires sending
+additional information to be attached to packets. For example,
+a TCP implementation sending down a TCP packet to IP will want
+to specify the destination IP address and possibly
+other parameters. When IP passes up a packet to TCP after
+decapsulation from the IP header, it will want to let TCP know
+at least the source IP address.
+
+<p>This additional information is represented by <i>control info</i> objects
+in OMNeT++. Control info objects have to be subclassed from <tt><a href="../api/classcObject.html">cObject</a></tt>
+(a small footprint base class with no data members), and can be attached to
+any message. <tt><a href="../api/classcMessage.html">cMessage</a></tt> has the following methods for this purpose:
+
+<pre class="cpp">
+void setControlInfo(<a href="../api/classcObject.html">cObject</a> *controlInfo);
+<a href="../api/classcObject.html">cObject</a> *getControlInfo() const;
+<a href="../api/classcObject.html">cObject</a> *removeControlInfo();
+</pre>
+<p>
+When a "command" is associated with the message sending (such as
+TCP OPEN, SEND, CLOSE, etc), the message kind field (<tt>getKind()</tt>,
+<tt>setKind()</tt> methods of <tt><a href="../api/classcMessage.html">cMessage</a></tt>) should carry the command code.
+When the command doesn't involve a data packet (e.g.
+TCP CLOSE command), a dummy packet (empty <tt><a href="../api/classcMessage.html">cMessage</a></tt>) can be sent.
+
+<p>An object set as control info via <tt>setControlInfo()</tt> will be owned
+by the message object. When the message is deallocated, the control
+info object is deleted as well.
+
+<p>
+<h3><a name="sec207"/>5.2.5 Information About the Last Arrival</h3>
+
+<p>The following methods return the sending and arrival times that correspond
+to the last sending of the message.
+
+<pre class="cpp">
+simtime_t getSendingTime() const;
+simtime_t getArrivalTime() const;
+</pre>
+<p>
+The following methods can be used to determine where the message came from
+and which gate it arrived on (or will arrive if it is currently scheduled
+or under way.) There are two sets of methods, one returning module/gate Ids,
+and the other returning pointers.
+
+<pre class="cpp">
+int getSenderModuleId() const;
+int getSenderGateId() const;
+int getArrivalModuleId() const;
+int getArrivalGateId() const;
+<a href="../api/classcModule.html">cModule</a> *getSenderModule() const;
+<a href="../api/classcGate.html">cGate</a> *getSenderGate() const;
+<a href="../api/classcModule.html">cModule</a> *getArrivalModule() const;
+<a href="../api/classcGate.html">cGate</a> *getArrivalGate() const;
+</pre>
+<p>
+There are further convenience functions to tell whether
+the message arrived on a specific gate given with id or
+with name and index.
+
+<pre class="cpp">
+bool arrivedOn(int gateId) const;
+bool arrivedOn(const char *gatename) const;
+bool arrivedOn(const char *gatename, int gateindex) const;
+</pre>
+<p>
+
+<p><h3><a name="sec208"/>5.2.6 Display String</h3>
+
+<p><i>Display strings</i> affect the message's visualization on animating user interfaces, e.g. Tkenv.
+Message objects do not store a display string by default, but contain a <tt>getDisplayString()</tt>
+method that can be overridden in subclasses to return a desired string.  The method:
+
+<pre class="cpp">
+const char *getDisplayString() const;
+</pre>
+<p>
+See chapter <a href="chap11.html#sec378">[11]</a> for more information on display strings.
+
+<p>
+
+<p><h2><a name="sec209"/>5.3 Self-Messages</h2>
+<a name="sec:ch-msgs:self-messages"></a>
+
+<p><h3><a name="sec210"/>5.3.1 Using a Message as Self-Message</h3>
+
+<p>Messages are often used to represent events internal to a module,
+such as a periodically firing timer to represent expiry of a timeout.
+A message is termed <i>self-message</i> when it is used
+in such a scenario -- otherwise self-messages are normal messages
+of class <tt><a href="../api/classcMessage.html">cMessage</a></tt> or a class derived from it.
+
+<p>When a message is delivered to a module by the simulation kernel,
+you can call the <tt>isSelfMessage()</tt> method to determine if it is
+a self-message; it other words, if it was scheduled with
+<tt>scheduleAt()</tt> or was sent with one of the
+<tt>send...()</tt> methods. The <tt>isScheduled()</tt> method
+returns true if the message is currently scheduled. A scheduled
+message can also be cancelled (<tt>cancelEvent()</tt>).
+
+<pre class="cpp">
+bool isSelfMessage() const;
+bool isScheduled() const;
+</pre>
+<p>
+The methods <tt>getSendingTime()</tt> / <tt>getArrivalTime()</tt> are also
+useful with self-messages: they return the time the message was scheduled
+and arrived (or will arrive; while the message is scheduled, arrival time
+is the time it will be delivered to the module).
+
+<p>
+<h3><a name="sec211"/>5.3.2 Context Pointer</h3>
+
+<p><tt><a href="../api/classcMessage.html">cMessage</a></tt> contains a <i>context pointer</i> of type <tt>void*</tt>,
+which can be accessed by the following functions:
+
+<pre class="cpp">
+void setContextPointer(void *p);
+void *getContextPointer() const;
+</pre>
+<p>
+The context pointer can be used for any purpose by the simulation programmer.
+It is not used by the simulation kernel, and it is treated as
+a mere pointer (no memory management is done on it).
+
+<p>Intended purpose: a module which schedules several self-messages (timers)
+will need to identify a self-message when it arrives back to the module,
+ie. the module will have to determine which timer went off and what to do
+then. The context pointer can be made to point at a data structure kept by
+the module which can carry enough &#8220;context&#8221; information about the event.
+
+<p>
+
+<p><h2><a name="sec212"/>5.4 The <a href="../api/classcPacket.html">cPacket</a> Class</h2>
+<a name="sec:ch-msgs:cpacket"></a>
+
+<p><h3><a name="sec213"/>5.4.1 Basic Usage</h3>
+
+<p>The <tt><a href="../api/classcPacket.html">cPacket</a></tt> constructor is similar to the <tt><a href="../api/classcMessage.html">cMessage</a></tt>
+constructor, but it accepts an additional <i>bit length</i> argument:
+
+<pre class="cpp">
+<a href="../api/classcPacket.html">cPacket</a>(const char *name=NULL, short kind=0, int64 bitLength=0);
+</pre>
+<p>
+The most important field <tt><a href="../api/classcPacket.html">cPacket</a></tt> has over <tt><a href="../api/classcMessage.html">cMessage</a></tt> is
+the message length. This field is kept in bits, but it can also be
+set/get in bytes. If the bit length is not a multiple of eight, the
+<tt>getByteLength()</tt> method will round it up.
+
+<pre class="cpp">
+void setBitLength(int64 l);
+void setByteLength(int64 l);
+void addBitLength(int64 delta);
+void addByteLength(int64 delta);
+int64 getBitLength() const;
+int64 getByteLength() const;
+</pre>
+<p>
+Another extra field is the bit error flag. It can be accessed with the
+following methods:
+
+<pre class="cpp">
+void setBitError(bool e);
+bool hasBitError() const;
+</pre>
+<p>
+
+<p><h3><a name="sec214"/>5.4.2 Identifying the Protocol</h3>
+
+<p>In OMNeT++ protocol models, the protocol type is usually represented in the
+message subclass. For example, instances of class <tt>IPv6Datagram</tt>
+represent IPv6 datagrams and <tt>EthernetFrame</tt> represents Ethernet
+frames. The C++ <tt>dynamic_cast</tt> operator can be used to determine if a
+message object is of a specific protocol.
+
+<p>An example:
+
+<pre class="cpp">
+<a href="../api/classcMessage.html">cMessage</a> *msg = receive();
+if (dynamic_cast&lt;IPv6Datagram *&gt;(msg) != NULL)
+{
+    IPv6Datagram *datagram = (IPv6Datagram *)msg;
+    ...
+}
+</pre>
+<p>
+
+<p><h3><a name="sec215"/>5.4.3 Information About the Last Transmission</h3>
+
+<p>When a packet has been received, some information can be obtained
+about the transmission, namely the <i>transmission duration</i>
+and the <i>is-reception-start</i> flag. They are returned by
+the following methods:
+
+<pre class="cpp">
+simtime_t getDuration() const;
+bool isReceptionStart() const;
+</pre>
+<p>
+
+<p><h3><a name="sec216"/>5.4.4 Encapsulating Packets</h3>
+
+<p>It is often necessary to encapsulate a packet<!--packet!encapsulation-->
+into another when you are modeling layered protocols of computer networks.
+
+<p>The following <tt><a href="../api/classcPacket.html">cPacket</a></tt> methods are associated with encapsulation:
+
+<pre class="cpp">
+void encapsulate(<a href="../api/classcPacket.html">cPacket</a> *packet);
+<a href="../api/classcPacket.html">cPacket</a> *decapsulate();
+<a href="../api/classcPacket.html">cPacket</a> *getEncapsulatedPacket() const;
+</pre>
+<p>
+The <tt>encapsulate()</tt> function encapsulates a packet into another one.
+The length of the packet will grow by the length of the encapsulated
+packet. An exception: when the encapsulating (outer) packet has zero
+length, OMNeT++ assumes it is not a real packet but some out-of-band signal,
+so its length is left at zero.
+
+<p>A packet can only hold one encapsulated packet at a time; the second
+<tt>encapsulate()</tt> call will result in an error. It is also an error if
+the packet to be encapsulated is not owned by the module.
+
+<p>You can get back the encapsulated packet by calling <tt>decapsulate()</tt>.
+<tt>decapsulate()</tt> will decrease the length of the packet accordingly,
+except if it was zero. If the length would become negative, an error
+occurs.
+
+<p>The <tt>getEncapsulatedPacket()</tt> function returns a pointer to the
+encapsulated packet, or <tt>NULL</tt> if no packet is encapsulated.
+
+<p>Example usage:
+
+<pre class="cpp">
+<a href="../api/classcPacket.html">cPacket</a> *data = new <a href="../api/classcPacket.html">cPacket</a>("data");
+data-&gt;setByteLength(1024);
+
+UDPPacket *udp = new UDPPacket("udp"); // subclassed from <a href="../api/classcPacket.html">cPacket</a>
+udp-&gt;setByteLength(8);
+
+udp-&gt;encapsulate(data);
+ev &lt;&lt; udp-&gt;getByteLength() &lt;&lt; endl; // --&gt; 8+1024 = 1032
+</pre>
+<p>
+And the corresponding decapsulation code:
+
+<pre class="cpp">
+<a href="../api/classcPacket.html">cPacket</a> *payload = udp-&gt;decapsulate();
+</pre>
+<p>
+
+<p>
+<h3><a name="sec217"/>5.4.5 Reference Counting</h3>
+<a name="sec:messages:reference-counting"></a>
+
+<p>Since the 3.2 release, OMNeT++ implements reference counting of
+encapsulated packets, meaning that if you <tt>dup()</tt> a packet
+that contains an encapsulated packet, then the encapsulated packet will
+not be duplicated, only a reference count incremented. Duplication of
+the encapsulated packet is deferred until <tt>decapsulate()</tt>
+actually gets called. If the outer packet is deleted without its
+<tt>decapsulate()</tt> method ever being called, then the reference
+count of the encapsulated packet is simply decremented. The
+encapsulated packet is deleted when its reference count reaches
+zero.
+
+<p>Reference counting can significantly improve performance, especially
+in LAN and wireless scenarios. For example, in the simulation of a
+broadcast LAN or WLAN, the IP, TCP and higher layer packets won't
+be duplicated (and then discarded without being used) if the
+MAC address doesn't match in the first place.
+
+<p>The reference counting mechanism works transparently. However, there
+is one implication: <b>one must not change anything in a packet
+that is encapsulated into another!</b> That is,
+<tt>getEncapsulatedPacket()</tt> should be viewed as if it returned a
+pointer to a read-only object (it returns a <tt>const</tt> pointer
+indeed), for quite obvious reasons: the encapsulated packet may be
+shared between several packets, and any change would affect those
+other packets as well.
+
+<p>
+<h3><a name="sec218"/>5.4.6 Encapsulating Several Packets</h3>
+
+<p>The <tt><a href="../api/classcPacket.html">cPacket</a></tt> class does not directly support encapsulating more
+than one packet, but you can subclass <tt><a href="../api/classcPacket.html">cPacket</a></tt> or <tt><a href="../api/classcMessage.html">cMessage</a></tt>
+to add the necessary functionality. (It is recommended that you
+use the message definition syntax that will be described in chapter
+<a href="chap6.html#sec222">[6]</a> -- it can spare you some work.)
+
+<p>You can store the messages in a fixed-size or a dynamically allocated
+array, or you can use STL classes like <tt>std::vector</tt> or <tt>std::list</tt>.
+There is one additional &#8220;trick&#8221; that you might not expect: your message
+class has to <b>take ownership</b> of the inserted messages, and
+<b>release</b> them when they are removed from the message. These are
+done via the <tt>take()</tt> and <tt>drop()</tt> methods. Let us see
+an example which assumes you have added to the class an <tt>std::list</tt> member
+called <tt>messages</tt> that stores message pointers:
+
+<pre class="cpp">
+void MultiMessage::insertMessage(<a href="../api/classcMessage.html">cMessage</a> *msg)
+{
+    take(msg);  // take ownership
+    messages.push_back(msg);  // store pointer
+}
+
+void MultiMessage::removeMessage(<a href="../api/classcMessage.html">cMessage</a> *msg)
+{
+    messages.remove(msg);  // remove pointer
+    drop(msg);  // release ownership
+}
+</pre>
+<p>
+You will also have to provide an <tt>operator=()</tt> method to
+make sure your message objects can be copied and duplicated
+properly -- this is something often needed in simulations
+(think of broadcasts and retransmissions!). Section
+<a href="chap7.html#sec302">[7.12]</a> contains more
+about the things you need to take care of when deriving new classes.
+
+<p>
+
+<p><h2><a name="sec219"/>5.5 Attaching Parameters and Objects</h2>
+<a name="sec:ch-msgs:attaching-objects"></a>
+
+<p>If you want to add parameters or objects to a message, the preferred
+way to do that is via message definitions, described in chapter
+<a href="chap6.html#sec222">[6]</a>.
+
+<p>
+<h3><a name="sec220"/>5.5.1 Attaching Objects</h3>
+
+<p>The <tt><a href="../api/classcMessage.html">cMessage</a></tt> class has an internal <tt><a href="../api/classcArray.html">cArray</a></tt> object which can
+carry objects<!--message!attaching objects-->. Only objects
+that are derived from <tt><a href="../api/classcObject.html">cObject</a></tt> (most OMNeT++ classes are so) can be attached.
+The <tt>addObject()</tt>, <tt>getObject()</tt>, <tt>hasObject()</tt>,
+<tt>removeObject()</tt> methods use the object name
+as the key to the array. An example:
+
+<pre class="cpp">
+<a href="../api/classcLongHistogram.html">cLongHistogram</a> *pklenDistr = new <a href="../api/classcLongHistogram.html">cLongHistogram</a>("pklenDistr");
+msg-&gt;addObject(pklenDistr);
+...
+if (msg-&gt;hasObject("pklenDistr"))
+{
+   <a href="../api/classcLongHistogram.html">cLongHistogram</a> *pklenDistr =
+       (<a href="../api/classcLongHistogram.html">cLongHistogram</a> *) msg-&gt;getObject("pklenDistr");
+   ...
+}
+</pre>
+<p>
+You should take care that names of the attached objects don't
+conflict with each other or with <tt><a href="../api/classcMsgPar.html">cMsgPar</a></tt> parameter names
+(see next section).
+If you do not attach anything to the message and do not call the
+<tt>getParList()</tt> function, the internal <tt><a href="../api/classcArray.html">cArray</a></tt> object
+will not be created. This saves both storage and execution time.
+
+<p>You can attach non-object types (or non-<tt><a href="../api/classcObject.html">cObject</a></tt> objects) to
+the message<!--message!attaching non-object types--> by using
+<tt><a href="../api/classcMsgPar.html">cMsgPar</a></tt>'s <tt>void*</tt> pointer 'P') type (see later in the description
+of <tt><a href="../api/classcMsgPar.html">cMsgPar</a></tt>). An example:
+
+<pre class="cpp">
+struct conn_t *conn = new conn_t; // conn_t is a C struct
+msg-&gt;addPar("conn") = (void *) conn;
+msg-&gt;par("conn").configPointer(NULL,NULL,sizeof(struct conn_t));
+</pre>
+<p>
+
+<p><h3><a name="sec221"/>5.5.2 Attaching Parameters</h3>
+
+<p>The preferred way of extending messages with new data fields is to use
+message definitions (see chapter <a href="chap6.html#sec222">[6]</a>).
+
+<p>The old, deprecated way of adding new fields to messages is via
+attaching <tt><a href="../api/classcMsgPar.html">cMsgPar</a></tt> objects.
+There are several downsides of this approach, the worst being
+large memory and execution time overhead. <tt><a href="../api/classcMsgPar.html">cMsgPar</a></tt>'s are
+heavy-weight and fairly complex objects themselves.
+It has been reported that using <tt><a href="../api/classcMsgPar.html">cMsgPar</a></tt> message parameters
+might account for a large part of execution time, sometimes as much as 80%.
+Using <tt><a href="../api/classcMsgPar.html">cMsgPar</a></tt> is also error-prone because <tt><a href="../api/classcMsgPar.html">cMsgPar</a></tt> objects
+have to be added dynamically and individually to each message object.
+In contrast, subclassing benefits from static type checking:
+if you mistype the name of a field in the C++ code, the compiler
+can detect the mistake.
+
+<p>If you still need <tt><a href="../api/classcMsgPar.html">cMsgPar</a></tt>s for some reason, here is a short summary.
+At the sender side you can add a new named parameter to the message
+with the <tt>addPar()</tt> member function, then set its value with
+one of the methods <tt>setBoolValue()</tt>, <tt>setLongValue()</tt>,
+<tt>setStringValue()</tt>, <tt>setDoubleValue()</tt>, <tt>setPointerValue()</tt>,
+<tt>setObjectValue()</tt>, and <tt>setXMLValue()</tt>. There are also overloaded
+assignment operators for the corresponding C/C++ types.
+
+<p>At the receiver side, you can look up the parameter object on the message
+by name and obtain a reference to it with the <tt>par()</tt> member function.
+<tt>hasPar()</tt> can be used to check first whether the message object has a parameter
+object with the given name. Then the value can be read with the methods
+<tt>boolValue()</tt>, <tt>longValue()</tt>, <tt>stringValue()</tt>,
+<tt>doubleValue()</tt>, <tt>pointerValue()</tt>, <tt>objectValue()</tt>,
+<tt>xmlValue()</tt>, or by using the provided overloaded type cast operators.
+
+<p>Example usage:
+
+<pre class="cpp">
+msg-&gt;addPar("destAddr");
+msg-&gt;par("destAddr").setLongValue(168);
+...
+long destAddr = msg-&gt;par("destAddr").longValue();
+</pre>
+<p>
+Or, using overloaded operators:
+
+<pre class="cpp">
+msg-&gt;addPar("destAddr");
+msg-&gt;par("destAddr") = 168;
+...
+long destAddr = msg-&gt;par("destAddr");
+</pre>
+<p>
+<hr class='pgbr'><p><hr><b><a href="chap4.html">[Prev]</A>&nbsp;<a href="chap6.html">[Next]</A>&nbsp;<a href="toc.html#toc_5.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p>
+
+</body>
+</html>

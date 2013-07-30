@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<toc label="IDE Customization Guide" topic="index.html">
+  <topic label="Writing Wizards" href="content/ide-customization-guide/ch01.html">
+    <topic label="Motivation" href="content/ide-customization-guide/ch01.html#_motivation"/>
+    <topic label="Overview" href="content/ide-customization-guide/ch01s02.html">
+      <topic label="Template Processing" href="content/ide-customization-guide/ch01s02.html#_template_processing"/>
+      <topic label="Defining the GUI" href="content/ide-customization-guide/ch01s02.html#_defining_the_gui"/>
+    </topic>
+    <topic label="Using the IDE" href="content/ide-customization-guide/ch01s03.html">
+      <topic label="Editing XSWT Files" href="content/ide-customization-guide/ch01s03.html#_editing_xswt_files"/>
+      <topic label="Editing Template Files" href="content/ide-customization-guide/ch01s03.html#_editing_template_files"/>
+    </topic>
+    <topic label="Writing an Example Wizard" href="content/ide-customization-guide/ch01s04.html">
+      <topic label="Configuring the Wizard" href="content/ide-customization-guide/ch01s04.html#_configuring_the_wizard"/>
+      <topic label="Creating a New Wizard Page" href="content/ide-customization-guide/ch01s04.html#_creating_a_new_wizard_page"/>
+      <topic label="Creating Templated Files" href="content/ide-customization-guide/ch01s04.html#_creating_templated_files"/>
+    </topic>
+    <topic label="Wizard Types" href="content/ide-customization-guide/ch01s05.html">
+      <topic label="New Project Wizards" href="content/ide-customization-guide/ch01s05.html#_new_project_wizards"/>
+      <topic label="New Simulation Wizards" href="content/ide-customization-guide/ch01s05.html#_new_simulation_wizards"/>
+      <topic label="New INI, MSG or NED File Wizards" href="content/ide-customization-guide/ch01s05.html#_new_ini_msg_or_ned_file_wizards"/>
+      <topic label="New Simple Module Wizard" href="content/ide-customization-guide/ch01s05.html#_new_simple_module_wizard"/>
+      <topic label="Import Wizards" href="content/ide-customization-guide/ch01s05.html#_import_wizards"/>
+      <topic label="Export Wizards" href="content/ide-customization-guide/ch01s05.html#_export_wizards"/>
+      <topic label="New Wizard Wizard" href="content/ide-customization-guide/ch01s05.html#_new_wizard_wizard"/>
+    </topic>
+    <topic label="Configuration Keys" href="content/ide-customization-guide/ch01s06.html"/>
+    <topic label="Templates" href="content/ide-customization-guide/ch01s07.html">
+      <topic label="Generating multiple files" href="content/ide-customization-guide/ch01s07.html#_generating_multiple_files"/>
+      <topic label="Conditional file creation" href="content/ide-customization-guide/ch01s07.html#_conditional_file_creation"/>
+    </topic>
+    <topic label="Custom Wizard Pages" href="content/ide-customization-guide/ch01s08.html">
+      <topic label="XSWT Forms" href="content/ide-customization-guide/ch01s08.html#_xswt_forms"/>
+      <topic label="Binding of Template Variables to Widgets" href="content/ide-customization-guide/ch01s08.html#_binding_of_template_variables_to_widgets"/>
+      <topic label="Conditional Pages" href="content/ide-customization-guide/ch01s08.html#_conditional_pages"/>
+      <topic label="Conditional Widgets" href="content/ide-customization-guide/ch01s08.html#_conditional_widgets"/>
+    </topic>
+    <topic label="Extending the Wizards in Java" href="content/ide-customization-guide/ch01s09.html">
+      <topic label="Creating Wizard Pages" href="content/ide-customization-guide/ch01s09.html#_creating_wizard_pages"/>
+      <topic label="Creating Custom Widgets" href="content/ide-customization-guide/ch01s09.html#_creating_custom_widgets"/>
+      <topic label="Extending your Template with Custom Classes and Widgets" href="content/ide-customization-guide/ch01s09.html#_extending_your_template_with_custom_classes_and_widgets"/>
+      <topic label="Extending the Template Processing" href="content/ide-customization-guide/ch01s09.html#_extending_the_template_processing"/>
+    </topic>
+    <topic label="Common Pitfalls" href="content/ide-customization-guide/ch01s10.html"/>
+    <topic label="XSWT Tips and Tricks" href="content/ide-customization-guide/ch01s11.html"/>
+    <topic label="Appendix A - Widgets in XSWT" href="content/ide-customization-guide/ch01s12.html">
+      <topic label="Standard SWT widgets" href="content/ide-customization-guide/ch01s12.html#_standard_swt_widgets"/>
+      <topic label="Custom widgets" href="content/ide-customization-guide/ch01s12.html#_custom_widgets"/>
+    </topic>
+    <topic label="Appendix B - Predefined Template Variables" href="content/ide-customization-guide/ch01s13.html">
+      <topic label="General" href="content/ide-customization-guide/ch01s13.html#_general"/>
+      <topic label="Template information" href="content/ide-customization-guide/ch01s13.html#_template_information"/>
+      <topic label="File name related variables" href="content/ide-customization-guide/ch01s13.html#_file_name_related_variables"/>
+      <topic label="Project name related variables" href="content/ide-customization-guide/ch01s13.html#_project_name_related_variables"/>
+      <topic label="C⁠+⁠+ project control" href="content/ide-customization-guide/ch01s13.html#_c_x2060_x2060_project_control"/>
+      <topic label="NED files and message files" href="content/ide-customization-guide/ch01s13.html#_ned_files_and_message_files"/>
+      <topic label="Variables specific to New Simulation wizards" href="content/ide-customization-guide/ch01s13.html#_variables_specific_to_new_simulation_wizards"/>
+      <topic label="Variables for New Wizard generation" href="content/ide-customization-guide/ch01s13.html#_variables_for_new_wizard_generation"/>
+      <topic label="Miscellaneous" href="content/ide-customization-guide/ch01s13.html#_miscellaneous"/>
+    </topic>
+    <topic label="Appendix C - Functions, Classes and Macros available from Templates" href="content/ide-customization-guide/ch01s14.html">
+      <topic label="Custom Macros and Functions" href="content/ide-customization-guide/ch01s14.html#_custom_macros_and_functions"/>
+      <topic label="Math" href="content/ide-customization-guide/ch01s14.html#_math"/>
+      <topic label="StringUtils" href="content/ide-customization-guide/ch01s14.html#_stringutils"/>
+      <topic label="WordUtils" href="content/ide-customization-guide/ch01s14.html#_wordutils"/>
+      <topic label="CollectionUtils" href="content/ide-customization-guide/ch01s14.html#_collectionutils"/>
+      <topic label="FileUtils" href="content/ide-customization-guide/ch01s14.html#_fileutils"/>
+      <topic label="NedUtils" href="content/ide-customization-guide/ch01s14.html#_nedutils"/>
+      <topic label="IDEUtils" href="content/ide-customization-guide/ch01s14.html#_ideutils"/>
+      <topic label="LangUtils" href="content/ide-customization-guide/ch01s14.html#_langutils"/>
+      <topic label="ProcessUtils" href="content/ide-customization-guide/ch01s14.html#_processutils"/>
+    </topic>
+  </topic>
+</toc>

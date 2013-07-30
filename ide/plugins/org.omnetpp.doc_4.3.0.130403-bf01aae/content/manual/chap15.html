@@ -1,0 +1,537 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta name="copyright" content="OpenSim Ltd.">
+  <meta NAME="Author" CONTENT="Andras Varga">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <link rel="STYLESHEET" href="../book.css"  type="text/css">
+  <title>OMNeT++ - Manual</title>
+</head>
+<body>
+
+<p><hr><b><a href="chap14.html">[Prev]</A>&nbsp;<a href="chap16.html">[Next]</A>&nbsp;<a href="toc.html#toc_15.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p><h1><a name="sec455"/>15 Parallel Distributed Simulation</h1>
+<a name="cha:parallel-execution"></a>
+
+
+<h2><a name="sec456"/>15.1 Introduction to Parallel Discrete Event Simulation</h2>
+
+<p>OMNeT++ supports parallel execution<!--parallel simulation--> of large
+simulations. This section provides a brief picture
+of the problems and methods of parallel
+discrete event simulation (PDES<!--PDES-->). Interested readers are
+strongly encouraged to look into the literature.
+
+<p>For parallel execution, the model is to be partitioned into several
+LPs (logical processes) that will be simulated independently on
+different hosts or processors. Each LP will have its own local
+Future Event Set, and thus will maintain its own local simulation
+time. The main issue with parallel simulations is keeping LPs
+synchronized in order to avoid violating the causality of events.
+Without synchronization, a message sent by one LP could arrive in
+another LP when the simulation time in the receiving LP has already
+passed the timestamp (arrival time) of the message. This would break
+causality<!--event!causality--> of events in the receiving LP.
+
+<p>There are two broad categories of parallel simulation algorithms
+that differ in the way they handle causality problems outlined
+above:
+
+<p><ol>
+  <li><b>Conservative algorithms</b><!--parallel simulation!conservative-->
+    prevents incausalities from happening. The Null Message Algorithm
+    exploits knowledge of the time when LPs send messages to other LPs,
+    and uses `null' messages to propagate this information to other LPs.
+    If an LP knows it won't receive any messages from other
+    LPs until <i>t+&Delta; t</i> simulation time, it may advance until
+    <i>t+&Delta; t</i> without the need for external synchronization.
+    Conservative simulation tends to converge to sequential simulation
+    (slowed down by communication between LPs) if there is not
+    enough parallelism in the model, or parallelism is not exploited
+    by sending a sufficient number of `null' messages.
+
+<p>  <li><b>Optimistic synchronization</b><!--parallel simulation!optimistic-->
+    allows incausalities to occur, but detects and
+    repairs them. Repairing involves rollbacks to a previous state,
+    sending out anti-messages to cancel messages sent out during the
+    period that is being rolled back, etc.  Optimistic synchronization
+    is extremely difficult to implement, because it requires periodic
+    state saving and the ability to restore previous states. In any
+    case, implementing optimistic synchronization in OMNeT++ would
+    require -- in addition to a more complicated simulation kernel --
+    writing significantly more complex simple<!--module!simple-->
+    module code from the user.  Optimistic synchronization may be slow
+    in cases of excessive rollbacks.
+</ol>
+
+<p>
+<h2><a name="sec457"/>15.2 Assessing Available Parallelism in a Simulation Model</h2>
+
+<p>OMNeT++ currently supports conservative synchronization
+via the classic Chandy-Misra-Bryant (or null message) algorithm
+[<a href="#bib-chandymisra79">chandymisra79</a>].
+To assess how efficiently a simulation can be parallelized
+with this algorithm, we'll need the following variables:
+
+<p><ul>
+  <li><i>P</i> <i>performance</i> represents the number of events processed per
+    second (ev/sec).
+       <br><ul><font size=-1>[Notations: <i>ev:</i> events, <i>sec:</i> real seconds,
+       <i>simsec:</i> simulated seconds]</font></ul>
+    <i>P</i> depends on the performance of the hardware and the computation-intensiveness
+    of processing an event. <i>P</i> is independent of the size of the model.
+    Depending on the nature of the simulation model and the performance of the
+    computer, <i>P</i> is usually in the range of 20,000..500,000 ev/sec.
+  <li><i>E</i> <i>event density</i> is the number of events that occur per
+    simulated second (ev/simsec). <i>E</i> depends on the model only, and not
+    where the model is executed. <i>E</i> is determined by the size, the detail level
+    and also the nature of the simulated system (e.g. cell-level ATM models
+    produce higher <i>E</i> values than call center simulations.)
+  <li><i>R</i> <i>relative speed</i> measures the simulation time advancement
+    per second (simsec/sec). <i>R</i> strongly depends on both the model and
+    on the software/hardware environment where the model executes.
+    Note that <i>R = P/E</i>.
+  <li><i>L</i> <i>lookahead</i> is measured in simulated seconds (simsec).
+    When simulating telecommunication networks and using link delays as
+    lookahead, <i>L</i> is typically in the msimsec-<i>&mu;</i>simsec range.
+  <li><i>&tau;</i> <i>latency</i> (sec) characterizes the parallel simulation hardware.
+    <i>&tau;</i> is the latency of sending a message from one LP to another. <i>&tau;</i>
+    can be determined using simple benchmark programs. The authors' measurements
+    on a Linux cluster interconnected via a 100Mb Ethernet switch using MPI
+    yielded <i>&tau;</i>=22<i>&mu;</i>s which is consistent with measurements reported
+    in [<a href="#bib-ongfarrell2000">ongfarrell2000</a>]. Specialized hardware such as
+    Quadrics Interconnect [<a href="#bib-quadrics">quadrics</a>] can provide <i>&tau;</i>=5<i>&mu;</i>s or better.
+</ul>
+
+<p>In large simulation models, <i>P</i>, <i>E</i> and <i>R</i> usually stay relatively constant
+(that is, display little fluctuations in time). They are also intuitive and
+easy to measure. The OMNeT++ displays these values on the GUI while the simulation
+is running, see Figure <a href="chap15.html#fig:perfbar-screenshot">below</a>. Cmdenv can also be configured
+to display these values.
+
+<p>
+  <center>
+    <img src="parsim-perfbar-screenshot.png">
+    <center><i>Figure: Performance bar in OMNeT++ showing <i>P</i>, <i>R</i> and <i>E</i></i></center>
+    <a name="fig:perfbar-screenshot"></a>
+  </center>
+
+<p>
+After having approximate values of <i>P</i>, <i>E</i>, <i>L</i> and <i>&tau;</i>,
+calculate the <i>&lambda;</i> <i>coupling factor</i> as the ratio of <i>LE</i> and <i>&tau; P</i>:
+
+<p><i>&lambda; = (LE) / (&tau; P)</i>
+
+<p>Without going into the details: if the resulting <i>&lambda;</i> value is at
+minimum larger than one, but rather in the range 10..100, there is
+a good chance that the simulation will perform well when run in
+parallel. With <i>&lambda; &lt; 1</i>, poor performance is guaranteed.
+For details see the paper [<a href="#bib-ParsimCrit03">ParsimCrit03</a>].
+
+<p>
+<h2><a name="sec458"/>15.3 Parallel Distributed Simulation Support in OMNeT++</h2>
+
+<p><h3><a name="sec459"/>15.3.1 Overview</h3>
+
+<p>This chapter presents the parallel simulation architecture
+of OMNeT++. The design allows simulation models to be run
+in parallel without code modification -- it only requires configuration.
+The implementation relies on the approach of placeholder modules
+and proxy gates to instantiate the model on different LPs --
+the placeholder approach allows simulation techniques such as
+topology discovery and direct message sending to work unmodified with
+PDES. The architecture is modular and extensible, so it can
+serve as a framework for research on parallel simulation.
+
+<p>The OMNeT++ design places a big emphasis on
+<i>separation of models from experiments</i>. The main rationale
+is that usually a large number of simulation experiments need to be done
+on a single model before a conclusion can be drawn about the real system.
+Experiments tend to be ad-hoc and change much faster than simulation
+models; thus it is a natural requirement to be able to
+carry out experiments without disturbing the simulation model itself.
+
+<p>Following the above principle, OMNeT++ allows simulation models
+to be executed in parallel without modification. No special instrumentation
+of the source code or the topology description is needed,
+as partitioning and other PDES configuration is entirely described
+in the configuration files.
+
+<p>OMNeT++ supports the Null Message Algorithm with static
+topologies, using link delays as lookahead. The laziness of null message
+sending can be tuned. Also supported is the Ideal Simulation Protocol
+(ISP) introduced by Bagrodia in 2000 [<a href="#bib-bagrodia00">bagrodia00</a>]. ISP is
+a powerful research vehicle to measure the efficiency of
+PDES algorithms, both optimistic and conservative;
+more precisely, it helps determine the maximum speedup achievable
+by any PDES algorithm for a particular model and simulation environment.
+In OMNeT++, ISP can be used for benchmarking the performance of the
+Null Message Algorithm.
+Additionally, models can be executed without any synchronization, which
+can be useful for educational purposes (to demonstrate the need for
+synchronization) or for simple testing.
+
+<p>For the communication between LPs (logical processes), OMNeT++
+primarily uses MPI, the Message Passing Interface standard
+[<a href="#bib-mpiforum94">mpiforum94</a>].  An alternative communication mechanism is based on
+named pipes, for use on shared memory multiprocessors without the need
+to install MPI.  Additionally, a file system based communication mechanism
+is also available. It communicates via text files created in a shared
+directory, and can be useful for educational purposes (to analyse or
+demonstrate messaging in PDES algorithms) or to debug PDES algorithms.
+Implementation of a shared memory-based communication mechanism is also planned
+for the future, to fully exploit the power of multiprocessors without
+the overhead of and the need to install MPI.
+
+<p>Nearly every model can be run in parallel. The constraints are the following:
+<ul>
+  <li>modules may communicate via sending messages only (no direct method call
+        or member access) unless mapped to the same processor
+  <li>no global variables
+  <li>there are some limitations on direct sending (no sending to a <i>sub</i>module
+        of another module, unless mapped to the same processor)
+  <li>lookahead must be present in the form of link delays
+  <li>currently static topologies are supported (we are working on a
+      research project that aims to eliminate this limitation)
+</ul>
+
+<p>PDES support in OMNeT++ follows a modular and extensible architecture.
+New communication mechanisms can be added by implementing a compact
+API (expressed as a C++ class) and registering the implementation --
+after that, the new communications mechanism can be selected for use
+in the configuration.
+
+<p>New PDES synchronization algorithms can be added in a similar way.
+PDES algorithms are also represented by C++ classes that have
+to implement a very small API
+to integrate with the simulation kernel.
+Setting up the model on various LPs as well as relaying
+model messages across LPs is already taken care of and
+not something the implementation of the synchronization algorithm
+needs to worry about (although it can intervene if needed,
+because the necessary hooks are provided).
+
+<p>The implementation of the Null Message Algorithm is also
+modular in itself in that the lookahead discovery can be plugged
+in via a defined API. Currently implemented lookahead
+discovery uses link delays, but it is possible to
+implement more sophisticated approaches and select them in the
+configuration.
+
+<p>
+
+<p><h3><a name="sec460"/>15.3.2 Parallel Simulation Example</h3>
+
+<p>We will use the Parallel CQN example simulation for demonstrating the
+PDES capabilities of OMNeT++.
+The model consists of <i>N</i> tandem queues where each tandem consists
+of a switch and <i>k</i> single-server queues with exponential service times
+(Figure <a href="chap15.html#fig:cqn-model">below</a>).
+The last queues are looped back to their switches. Each switch
+randomly chooses the first queue of one of the tandems as destination,
+using uniform distribution. The queues and switches are connected
+with links that have nonzero propagation delays.
+Our OMNeT++ model for CQN wraps tandems into compound modules.
+
+<p>
+
+<p>  <center>
+    <img src="parsim-cqn-model.png">
+    <center><i>Figure: The Closed Queueing Network (CQN) model</i></center>
+    <a name="fig:cqn-model"></a>
+  </center>
+
+<p>
+To run the model in parallel, we assign tandems to different LPs
+(Figure <a href="chap15.html#fig:cqn-partitioning">below</a>). Lookahead is provided
+by delays on the marked links.
+
+<p>
+  <center>
+    <img src="parsim-cqn-partitioning.png">
+    <center><i>Figure: Partitioning the CQN model</i></center>
+    <a name="fig:cqn-partitioning"></a>
+  </center>
+
+<p>
+To run the CQN model in parallel, we have to configure it for parallel
+execution. In OMNeT++, the configuration is in the
+<tt>omnetpp.ini</tt> file. For configuration, first we have to specify
+partitioning, that is, assign modules to processors. This is done
+by the following lines:
+
+<pre class="inifile">
+[General]
+*.tandemQueue[0]**.partition-id = 0
+*.tandemQueue[1]**.partition-id = 1
+*.tandemQueue[2]**.partition-id = 2
+</pre>
+<p>
+The numbers after the equal sign identify the LP.
+
+<p>Then we have to select the communication library and the parallel
+simulation algorithm, and enable parallel simulation:
+
+<pre class="inifile">
+[General]
+parallel-simulation = true
+parsim-communications-class = "cMPICommunications"
+parsim-synchronization-class = "cNullMessageProtocol"
+</pre>
+<p>
+When the parallel simulation is run, LPs are represented
+by multiple running instances of the same program.
+When using LAM-MPI [<a href="#bib-lammpi">lammpi</a>], the mpirun program (part of LAM-MPI)
+is used to launch the program on the desired processors.
+When named pipes or file communications is selected, the opp_prun
+OMNeT++ utility can be used to start the processes.
+Alternatively, one can run the processes by hand (the -p flag
+tells OMNeT++ the index of the given LP and the total number of LPs):
+
+<pre class="commandline">
+./cqn -p0,3 &
+./cqn -p1,3 &
+./cqn -p2,3 &
+</pre>
+<p>
+For PDES, one will usually want to select the command-line user interface,
+and redirect the output to files. (OMNeT++ provides the necessary
+configuration options.)
+
+<p>The graphical user interface of OMNeT++ can also be used
+(as evidenced by Figure <a href="chap15.html#fig:parsim-screenshot">below</a>),
+independently of the selected communication mechanism.
+The GUI interface can be useful for educational or demonstration purposes.
+OMNeT++ displays debugging output about the Null Message Algorithm,
+EITs and EOTs can be inspected, etc.
+
+<p>
+
+
+<p>
+  <center>
+    <img src="parsim-screenshot.png">
+    <center><i>Figure: Screenshot of CQN running in three LPs</i></center>
+    <a name="fig:parsim-screenshot"></a>
+  </center>
+
+<p>
+
+<p>
+<h3><a name="sec461"/>15.3.3 Placeholder Modules, Proxy Gates</h3>
+
+<p>When setting up a model partitioned to several LPs,
+OMNeT++ uses placeholder modules and proxy gates.
+In the local LP, placeholders represent sibling submodules
+that are instantiated on other LPs.
+With placeholder modules, every module has all of its siblings
+present in the local LP -- either as placeholder or as the &#8220;real thing&#8221;.
+Proxy gates take care of forwarding messages to the LP where
+the module is instantiated (see Figure <a href="chap15.html#fig:plach">below</a>).
+
+<p>The main advantage of using placeholders is that algorithms such as
+topology discovery embedded in the model can be used with PDES unmodified.
+Also, modules can use direct message sending to any sibling module,
+including placeholders. This is so because the destination of direct message
+sending is an input gate of the destination module -- if the destination
+module is a placeholder, the input gate will be a proxy gate which
+transparently forwards the messages to the LP where the &#8220;real&#8221; module
+was instantiated. A limitation is that the destination of direct message
+sending cannot be a <i>submodule</i> of a sibling (which is
+probably a bad practice anyway, as it violates encapsulation),
+simply because placeholders are empty and so its submodules are
+not present in the local LP.
+
+<p>Instantiation of compound modules is slightly more complicated.
+Since submodules can be on different LPs, the compound module may
+not be &#8220;fully present&#8221; on any given LP, and it may have to be
+present on several LPs (wherever it has submodules instantiated).
+Thus, compound modules are instantiated wherever they have
+at least one submodule instantiated, and are represented by placeholders
+everywhere else (Figure <a href="chap15.html#fig:inst">below</a>).
+
+<p>
+
+<p>  <center>
+    <img src="parsim-placeholders.png">
+    <center><i>Figure: Placeholder modules and proxy gates</i></center>
+    <a name="fig:plach"></a>
+  </center>
+
+<p>
+
+<p>  <center>
+    <img src="parsim-placeholders2.png">
+    <center><i>Figure: Instantiating compound modules</i></center>
+    <a name="fig:inst"></a>
+  </center>
+
+<p>
+
+<p>
+<h3><a name="sec462"/>15.3.4 Configuration</h3>
+
+<p>Parallel simulation configuration is the <tt>[General]</tt> section of <tt>omnetpp.ini</tt>.
+
+<p>The parallel distributed simulation feature can be turned on with the
+<b><tt>parallel-simulation</tt></b> boolean option.
+
+<p>The <b><tt>parsim-communications-class</tt></b> selects the class that implements
+communication between partitions. The class must implement the
+<tt><a href="../api/classcParsimCommunications.html">cParsimCommunications</a></tt> interface.
+
+<p>
+The <b><tt>parsim-synchronization-class</tt></b> selects the parallel simulation algorithm.
+The class must implement the <tt>cParsimSynchronizer</tt> interface.
+
+<p>
+The following two options configure the Null Message Algorithm, so
+they are only effective if <tt>cNullMessageProtocol</tt> has been selected
+as synchronization class:
+
+<p><ul>
+  <li> <b><tt>parsim-nullmessageprotocol-lookahead-class</tt></b>
+    selects the lookahead class for the NMA; the class must be subclassed
+    from <tt>cNMPLookahead</tt>. The default class is <tt>cLinkDelayLookahead</tt>.
+
+<p>  <li> <b><tt>parsim-nullmessageprotocol-laziness</tt></b> expects a number
+    in the <i>(0,1)</i> interval (the default is 0.5), and it ontrols how often
+    NMA should send out null messages; the value is understood in proportion
+    to the lookahead, e.g. 0.5 means every <i>lookahead/2</i> simsec.
+</ul>
+
+<p>The <b><tt>parsim-debug</tt></b> boolean option enables/disables printing
+log messages about the parallel simulation algorithm. It is turned on
+by default, but for production runs we recommend turning it off.
+
+<p>Other configuration options configure MPI buffer sizes and other details;
+see options that begin with <tt>parsim-</tt> in Appendix <a href="chap24.html#sec543">[24]</a>.
+
+<p>
+When you are using cross-mounted home directories (the simulation's
+directory is on a disk mounted on all nodes of the cluster),
+a useful configuration setting is
+
+<pre class="inifile">
+[General]
+fname-append-host = true
+</pre>
+<p>
+It will cause the host names to be appended to the names of
+all output vector files, so that partitions don't overwrite each other's
+output files. (See section <a href="chap10.html#sec372">[10.5.3]</a>)
+
+<p>
+
+<p>
+
+<p><h3><a name="sec463"/>15.3.5 Design of PDES Support in OMNeT++</h3>
+
+<p>The design of PDES support in OMNeT++ follows a layered approach,
+with a modular and extensible architecture. The overall
+architecture is depicted in Figure <a href="chap15.html#fig:parsim-arch">below</a>.
+
+<p>
+  <center>
+    <img src="parsim-arch.png">
+    <center><i>Figure: Architecture of OMNeT++ PDES implementation</i></center>
+    <a name="fig:parsim-arch"></a>
+  </center>
+
+<p>
+The parallel simulation subsytem is an optional component
+itself, which can be removed from the simulation kernel
+if not needed. It consists of three layers, from the bottom up:
+Communications Layer, Partitioning Layer and Synchronization Layer.
+
+<p><p class="subheading">The Communications Layer</p>
+
+<p>The purpose of the Communications Layer is to
+provide elementary messaging services between partitions for the
+upper layer. The services include send, blocking receive,
+nonblocking receive and broadcast. The send/receive operations
+work with <i>buffers</i>, which encapsulate packing and unpacking
+operations for primitive C++ types. The message class and
+other classes in the simulation library can pack and unpack
+themselves into such buffers. The Communications layer API
+is defined in the <tt><a href="../api/classcParsimCommunications.html">cParsimCommunications</a></tt> interface
+(abstract class); specific implementations like the MPI
+one (<tt>cMPICommunications</tt>) subclass from this,
+and encapsulate MPI send/receive calls. The matching buffer
+class <tt>cMPICommBuffer</tt> encapsulates MPI pack/unpack
+operations.
+
+<p><p class="subheading">The Partitioning Layer</p>
+
+<p>The Partitioning Layer is responsible for instantiating
+modules on different LPs according to the partitioning specified
+in the configuration, for configuring proxy gates.
+During the simulation, this layer also ensures that cross-partition
+simulation messages reach their destinations. It intercepts messages
+that arrive at proxy gates and transmits them to the destination LP
+using the services of the Communications Layer. The receiving LP
+unpacks the message and injects it at the gate the proxy gate points at.
+The implementation basically encapsulates the
+<tt>cParsimSegment</tt>, <tt>cPlaceholderModule</tt>,
+<tt>cProxyGate</tt> classes.
+
+<p><p class="subheading">The Synchronization Layer</p>
+
+<p>The Synchronization Layer encapsulates the parallel
+simulation algorithm. Parallel simulation algorithms are also represented
+by classes, subclassed from the <tt>cParsimSynchronizer</tt> abstract class.
+The parallel simulation algorithm is invoked on the following hooks:
+event scheduling, processing model messages outgoing from the LP,
+and messages (model messages or internal messages) arriving
+from other LPs. The first hook, event scheduling, is a function
+invoked by the simulation kernel to determine the next simulation
+event; it also has full access to the future event set (FES<!--FES-->) and
+can add/remove events for its own use.
+Conservative parallel simulation algorithms will use this hook
+to block the simulation if the next event is unsafe, e.g. the
+null message algorithm implementation (<tt>cNullMessageProtocol</tt>)
+blocks the simulation if an EIT has been reached until a null message
+arrives (see [<a href="#bib-bagrodia00">bagrodia00</a>] for terminology); also it uses
+this hook to periodically send null messages. The second hook
+is invoked when a model message is sent to another LP;
+the null message algorithm uses this hook to piggyback null
+messages on outgoing model messages. The third hook is invoked
+when any message arrives from other LPs, and it allows the
+parallel simulation algorithm to process its own internal messages
+from other partitions; the null message algorithm processes
+incoming null messages here.
+
+<p>The Null Message Protocol implementation itself is modular;
+it employs a separate, configurable lookahead discovery object.
+Currently only link delay based lookahead discovery has been
+implemented, but it is possible to implement more sophisticated
+types.
+
+<p>The Ideal Simulation Protocol (ISP; see [<a href="#bib-bagrodia00">bagrodia00</a>])
+implementation consists of two parallel simulation
+protocol implementations:
+the first one is based on the null message algorithm and
+additionally records the external events (events received
+from other LPs) to a trace file; the second one executes
+the simulation using the trace file to find out which
+events are safe and which are not.
+
+<p>Note that although we implemented a conservative protocol,
+the provided API itself would allow implementing optimistic
+protocols, too. The parallel simulation algorithm has
+access to the executing simulation model, so it could perform
+saving/restoring model state if model objects support this
+  <br><ul><font size=-1>[Unfortunately, support for state saving/restoration
+  needs to be individually and manually added to each class
+  in the simulation, including user-programmed simple modules.]</font></ul>.
+
+<p>We also expect that because of the modularity, extensibility and
+clean internal architecture of the parallel simulation subsystem,
+the OMNeT++ framework has the potential to become a preferred platform
+for PDES research.
+
+<p>
+<hr class='pgbr'><p><hr><b><a href="chap14.html">[Prev]</A>&nbsp;<a href="chap16.html">[Next]</A>&nbsp;<a href="toc.html#toc_15.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p>
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Initialization (ini) files</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="Migrating OMNeT&#8288;+&#8288;+ Simulations From Version 3.x To 4.x"><link rel="up" href="ch01.html" title="Chapter 1. What has changed since 3.x?"><link rel="prev" href="ch01s03.html" title="Message (msg) files"><link rel="next" href="ch01s05.html" title="Makefiles"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Initialization (ini) files</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch01s03.html">Prev</a> </td><th width="60%" align="center">Chapter 1. What has changed since 3.x?</th><td width="20%" align="right"> <a accesskey="n" href="ch01s05.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id272760"></a>Initialization (ini) files</h2></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>The <code class="literal">[Cmdenv]</code>, <code class="literal">[Tkenv]</code>, <code class="literal">[Parameters]</code>,
+          <code class="literal">[Partitioning]</code>, <code class="literal">[OutVectors]</code> sections no longer
+          exist, and their contents should be copied under the
+          <code class="literal">[General]</code> section.</p></li><li><p>Configuration options from <code class="literal">[Cmdenv]</code> and
+          <code class="literal">[Tkenv]</code> have been prefixed with <code class="literal">cmdenv-</code> and
+          <code class="literal">tkenv-</code>, respectively.</p></li><li><p>The <code class="literal">[Run 1]</code>, <code class="literal">[Run 2]</code>, ... sections are no longer
+          used and should be converted to named configurations:
+          <code class="literal">[Config First]</code>, <code class="literal">[Config Second]</code>, etc.
+          Note that run numbers no longer refer to configuration sections
+          but to iteration numbers.</p></li><li><p>The <code class="literal">cmdenv-express-mode</code> option (which was <code class="literal">express-mode</code> under
+          <code class="literal">[Cmdenv]</code>) defaults to <code class="literal">true</code> instead of <code class="literal">false</code>.</p></li><li><p>Most options in the <code class="literal">[Tkenv]</code> section have been removed,
+          except the following ones: <code class="literal">tkenv-default-run</code>, <code class="literal">tkenv-image-path</code>,
+          <code class="literal">tkenv-plugin-path</code>.</p></li><li><p>The <code class="literal">tkenv-default-run</code> option (which was <code class="literal">default-run</code>
+          under <code class="literal">[Tkenv]</code>) used to refer to a section. Now it refers to
+          an iteration number, so now it only makes sense together with
+          the new <code class="literal">tkenv-default-section</code>.</p></li><li><p>There is a new <code class="literal">cmdenv-interactive</code> option defaulting to
+          <code class="literal">false</code>, which causes Cmdenv to never read the standard input, and abort on
+          missing parameter values. In 3.x, the default behavior was to read values
+          from stdin.</p></li><li><p>The <code class="literal">preload-ned-files</code> option has been removed, because in 4.x,
+          NED files are loaded from directories in the NED path. (The NED path is a
+          string that contains a list of directories, and it it may come from the
+          <code class="literal">NEDPATH</code> environment variable, from a command-line option, or from
+          the <code class="literal">ned-path</code> ini file option. For single-directory simulation models,
+          the default value '.' should be sufficient.</p></li><li><p>In 3.0 the <code class="literal">network</code> option was referring to a NED type loaded from one of
+          the files specified in the <code class="literal">preload-ned-files</code> option. In 4.x, it specifies a
+          qualified name referring to a NED type, which must be available under the
+          directories specified in the <code class="literal">ned-path</code> option. In most cases,
+          the <code class="literal">network</code> option will work unmodified.</p></li><li><p>The <code class="literal">**.somepar.use-default=true</code> syntax should be changed to
+          <code class="literal">**.somepar=default</code>. <code class="literal">**=default</code> does not need to be written out,
+          because it is the default.</p></li><li><p>Several configuration options have been renamed or otherwise changed.
+          For further details, see <code class="filename">src/envir/ChangeLog</code> and other
+          <code class="filename">ChangeLog</code> files.</p></li></ul></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch01s03.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch01.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch01s05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Message (msg) files </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Makefiles</td></tr></table></div></body></html>

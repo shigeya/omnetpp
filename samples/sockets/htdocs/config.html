@@ -1,0 +1,34 @@
+<html>
+<style type="text/css">
+h1,h2,h3,h4,p,table,ul,ol {font-family: Geneva, Arial, Helvetica, sans-serif;}
+pre { margin-left:8pt; background:#fffff4; padding:5pt; border:1px solid; border-color:#a0a0a0 }
+</style>
+
+<body>
+<h3>Configuration</h3>
+
+<p>
+To run the simulation in hardware-in-the-loop mode, we entered the
+following lines into <tt>omnetpp.ini</tt>:
+
+<pre>
+[General]
+scheduler-class = "cSocketRTScheduler"
+</pre>
+
+<p>
+This selects the <tt>cSocketRTScheduler</tt> class as scheduler class.
+This class expects another configuration entry, <tt>socketrtscheduler-port=</tt>,
+which specifies the TCP port to listen on. The default port is 4242;
+you can change it to e.g. 6000 by adding the following line
+under <tt>[General]</tt>:
+
+<pre>
+socketrtscheduler-port=6000
+</pre>
+
+<p>
+<a href="index.html">Home</a>
+
+</body>
+</html>

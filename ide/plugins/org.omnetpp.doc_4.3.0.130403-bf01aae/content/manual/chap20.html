@@ -1,0 +1,321 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta name="copyright" content="OpenSim Ltd.">
+  <meta NAME="Author" CONTENT="Andras Varga">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <link rel="STYLESHEET" href="../book.css"  type="text/css">
+  <title>OMNeT++ - Manual</title>
+</head>
+<body>
+
+<p><hr><b><a href="chap19.html">[Prev]</A>&nbsp;<a href="chap21.html">[Next]</A>&nbsp;<a href="toc.html#toc_20.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p><h1><a name="sec537"/>20 Appendix&#58; NED XML Binding</h1>
+<a name="cha:ned-xml-binding"></a>
+
+<p>This appendix shows the DTD for the XML binding of the NED language and
+message definitions.
+
+
+<pre class="verbatim">
+&lt;!ELEMENT files ((ned-file|msg-file)*)&gt;
+
+&lt;!--
+  **  NED-2.
+  --&gt;
+
+&lt;!ELEMENT ned-file (comment*, (package|import|property-decl|property|
+                    simple-module|compound-module|module-interface|
+                    channel|channel-interface)*)&gt;
+&lt;!ATTLIST ned-file
+     filename           CDATA     #REQUIRED
+     version            CDATA     "2"&gt;
+
+&lt;!-- comments and whitespace; comments include '//' marks. Note that although
+     nearly all elements may contain comment elements, there are places
+     (e.g. within expressions) where they are ignored by the implementation.
+     Default value is a space or a newline, depending on the context.
+ --&gt;
+&lt;!ELEMENT comment EMPTY&gt;
+&lt;!ATTLIST comment
+     locid              NMTOKEN   #REQUIRED
+     content            CDATA     #IMPLIED&gt;
+
+&lt;!ELEMENT package (comment*)&gt;
+&lt;!ATTLIST package
+     name               CDATA     #REQUIRED&gt;
+
+&lt;!ELEMENT import (comment*)&gt;
+&lt;!ATTLIST import
+     import-spec        CDATA     #REQUIRED&gt;
+
+&lt;!ELEMENT property-decl (comment*, property-key*, property*)&gt;
+&lt;!ATTLIST property-decl
+     name               NMTOKEN   #REQUIRED
+     is-array           (true|false) "false"&gt;
+
+&lt;!ELEMENT extends (comment*)&gt;
+&lt;!ATTLIST extends
+     name               CDATA     #REQUIRED&gt;
+
+&lt;!ELEMENT interface-name (comment*)&gt;
+&lt;!ATTLIST interface-name
+     name               CDATA     #REQUIRED&gt;
+
+&lt;!ELEMENT simple-module (comment*, extends?, interface-name*, parameters?, gates?)&gt;
+&lt;!ATTLIST simple-module
+     name               NMTOKEN   #REQUIRED&gt;
+
+&lt;!ELEMENT module-interface (comment*, extends*, parameters?, gates?)&gt;
+&lt;!ATTLIST module-interface
+     name               NMTOKEN   #REQUIRED&gt;
+
+&lt;!ELEMENT compound-module (comment*, extends?, interface-name*,
+                           parameters?, gates?, types?, submodules?, connections?)&gt;
+&lt;!ATTLIST compound-module
+     name               NMTOKEN   #REQUIRED&gt;
+
+&lt;!ELEMENT channel-interface (comment*, extends*, parameters?)&gt;
+&lt;!ATTLIST channel-interface
+     name                NMTOKEN   #REQUIRED&gt;
+
+&lt;!ELEMENT channel (comment*, extends?, interface-name*, parameters?)&gt;
+&lt;!ATTLIST channel
+     name                NMTOKEN   #REQUIRED&gt;
+
+&lt;!ELEMENT parameters (comment*, (property|param)*)&gt;
+&lt;!ATTLIST parameters
+    is-implicit         (true|false)  "false"&gt;
+
+&lt;!ELEMENT param (comment*, expression?, property*)&gt;
+&lt;!ATTLIST param
+     type               (double|int|string|bool|xml) #IMPLIED
+     is-volatile        (true|false)  "false"
+     name               CDATA     #REQUIRED
+     value              CDATA     #IMPLIED
+     is-pattern         (true|false)  "false"
+     is-default         (true|false)  "false"&gt;
+
+&lt;!ELEMENT property (comment*, property-key*)&gt;
+&lt;!ATTLIST property
+     is-implicit        (true|false) "false"
+     name               NMTOKEN   #REQUIRED
+     index              NMTOKEN   #IMPLIED&gt;
+
+&lt;!ELEMENT property-key (comment*, literal*)&gt;
+&lt;!ATTLIST property-key
+     name               CDATA     #IMPLIED&gt;
+
+&lt;!ELEMENT gates (comment*, gate*)&gt;
+
+&lt;!ELEMENT gate (comment*, expression?, property*)&gt;
+&lt;!ATTLIST gate
+     name               NMTOKEN   #REQUIRED
+     type               (input|output|inout) #IMPLIED
+     is-vector          (true|false) "false"
+     vector-size        CDATA     #IMPLIED&gt;
+
+&lt;!ELEMENT types (comment*, (channel|channel-interface|simple-module|
+                               compound-module|module-interface)*)&gt;
+
+&lt;!ELEMENT submodules (comment*, submodule*)&gt;
+
+&lt;!ELEMENT submodule (comment*, expression*, condition?, parameters?, gates?)&gt;
+&lt;!ATTLIST submodule
+     name               NMTOKEN   #REQUIRED
+     type               CDATA     #IMPLIED
+     like-type          CDATA     #IMPLIED
+     like-expr          CDATA     #IMPLIED
+     is-default         (true|false) "false"
+     vector-size        CDATA     #IMPLIED&gt;
+
+&lt;!ELEMENT connections (comment*, (connection|connection-group)*)&gt;
+&lt;!ATTLIST connections
+     allow-unconnected (true|false) "false"&gt;
+
+&lt;!ELEMENT connection (comment*, expression*, parameters?, (loop|condition)*)&gt;
+&lt;!ATTLIST connection
+     src-module          NMTOKEN   #IMPLIED
+     src-module-index    CDATA     #IMPLIED
+     src-gate            NMTOKEN   #REQUIRED
+     src-gate-plusplus  (true|false) "false"
+     src-gate-index      CDATA     #IMPLIED
+     src-gate-subg       (i|o)     #IMPLIED
+     dest-module         NMTOKEN   #IMPLIED
+     dest-module-index   CDATA     #IMPLIED
+     dest-gate           NMTOKEN   #REQUIRED
+     dest-gate-plusplus (true|false) "false"
+     dest-gate-index     CDATA     #IMPLIED
+     dest-gate-subg      (i|o)     #IMPLIED
+     name                NMTOKEN   #IMPLIED
+     type                CDATA     #IMPLIED
+     like-type           CDATA     #IMPLIED
+     like-expr           CDATA     #IMPLIED
+     is-default         (true|false) "false"
+     is-bidirectional   (true|false) "false"
+     is-forward-arrow   (true|false) "true"&gt;
+
+&lt;!ELEMENT connection-group (comment*, (loop|condition)*, connection*)&gt;
+
+&lt;!ELEMENT loop (comment*, expression*)&gt;
+&lt;!ATTLIST loop
+     param-name          NMTOKEN   #REQUIRED
+     from-value          CDATA     #IMPLIED
+     to-value            CDATA     #IMPLIED&gt;
+
+&lt;!ELEMENT condition (comment*, expression?)&gt;
+&lt;!ATTLIST condition
+     condition           CDATA     #IMPLIED&gt;
+
+&lt;!--
+  **  Expressions
+  --&gt;
+
+&lt;!ELEMENT expression (comment*, (operator|function|ident|literal))&gt;
+&lt;!ATTLIST expression
+     target              CDATA     #IMPLIED&gt;
+
+&lt;!ELEMENT operator (comment*, (operator|function|ident|literal)+)&gt;
+&lt;!ATTLIST operator
+     name                CDATA     #REQUIRED&gt;
+
+&lt;!-- functions, "index", "const" and "sizeof" --&gt;
+&lt;!ELEMENT function (comment*, (operator|function|ident|literal)*)&gt;
+&lt;!ATTLIST function
+     name                NMTOKEN   #REQUIRED&gt;
+
+&lt;!-- Ident is either a parameter reference or an argument for the "sizeof"
+     operator; its NED source form is one of the following: "name", "module.name",
+     "module[n].name". If there is a child, it represents the module index n.
+     A reserved module name (with special meaning) is "this".
+--&gt;
+&lt;!ELEMENT ident (comment*, (operator|function|ident|literal)?)&gt;
+&lt;!ATTLIST ident
+     module              CDATA     #IMPLIED
+     name                NMTOKEN   #REQUIRED&gt;
+
+
+&lt;!ELEMENT literal (comment*)&gt;
+&lt;!-- Note: value is in fact REQUIRED, but empty attr value should
+     also be accepted because that represents the "" string literal;
+     "spec" is for properties, to store the null value and "-",
+     the antivalue. Unit can only be present with "double".
+ --&gt;
+&lt;!ATTLIST literal
+     type  (double|int|string|bool|spec)  #REQUIRED
+     unit                CDATA     #IMPLIED
+     text                CDATA     #IMPLIED
+     value               CDATA     #IMPLIED&gt;
+
+&lt;!--**********************************************************************--&gt;
+
+&lt;!--
+**
+** OMNeT++/OMNEST Message Definitions (MSG)
+**
+--&gt;
+
+&lt;!ELEMENT msg-file (comment*, (namespace|property-decl|property|cplusplus|
+                    struct-decl|class-decl|message-decl|packet-decl|enum-decl|
+                    struct|class|message|packet|enum)*)&gt;
+
+&lt;!ATTLIST msg-file
+     filename            CDATA     #IMPLIED
+     version             CDATA     "2"&gt;
+
+&lt;!ELEMENT namespace (comment*)&gt;
+&lt;!ATTLIST namespace
+     name                CDATA     #REQUIRED&gt;  &lt;!-- note: not NMTOKEN because it may contain "::" --&gt;
+
+&lt;!ELEMENT cplusplus (comment*)&gt;
+&lt;!ATTLIST cplusplus
+     body                CDATA     #REQUIRED&gt;
+
+&lt;!-- C++ type announcements --&gt;
+
+&lt;!ELEMENT struct-decl (comment*)&gt;
+&lt;!ATTLIST struct-decl
+     name                CDATA     #REQUIRED&gt;
+
+&lt;!ELEMENT class-decl (comment*)&gt;
+&lt;!ATTLIST class-decl
+     name                CDATA     #REQUIRED
+     is-cobject      (true|false)  "false"
+     extends-name        CDATA     #IMPLIED&gt;
+
+&lt;!ELEMENT message-decl (comment*)&gt;
+&lt;!ATTLIST message-decl
+     name                CDATA     #REQUIRED&gt;
+
+&lt;!ELEMENT packet-decl (comment*)&gt;
+&lt;!ATTLIST packet-decl
+     name                CDATA     #REQUIRED&gt;
+
+&lt;!ELEMENT enum-decl (comment*)&gt;
+&lt;!ATTLIST enum-decl
+     name                CDATA     #REQUIRED&gt;
+
+&lt;!-- Enums --&gt;
+
+&lt;!ELEMENT enum (comment*, enum-fields?)&gt;
+&lt;!ATTLIST enum
+     name                NMTOKEN   #REQUIRED
+     extends-name        CDATA     #IMPLIED
+     source-code         CDATA     #IMPLIED&gt;
+
+&lt;!ELEMENT enum-fields (comment*, enum-field*)&gt;
+
+&lt;!ELEMENT enum-field (comment*)&gt;
+&lt;!ATTLIST enum-field
+     name                NMTOKEN   #REQUIRED
+     value               CDATA     #IMPLIED&gt;
+
+&lt;!-- Message, class, struct --&gt;
+
+&lt;!ELEMENT message (comment*, (property|field)*)&gt;
+&lt;!ATTLIST message
+     name                NMTOKEN   #REQUIRED
+     extends-name        CDATA     #IMPLIED
+     source-code         CDATA     #IMPLIED&gt;
+
+&lt;!ELEMENT packet (comment*, (property|field)*)&gt;
+&lt;!ATTLIST packet
+     name                NMTOKEN   #REQUIRED
+     extends-name        CDATA     #IMPLIED
+     source-code         CDATA     #IMPLIED&gt;
+
+&lt;!ELEMENT class (comment*, (property|field)*)&gt;
+&lt;!ATTLIST class
+     name                NMTOKEN   #REQUIRED
+     extends-name        CDATA     #IMPLIED
+     source-code         CDATA     #IMPLIED&gt;
+
+&lt;!ELEMENT struct (comment*, (property|field)*)&gt;
+&lt;!ATTLIST struct
+     name                NMTOKEN   #REQUIRED
+     extends-name        CDATA     #IMPLIED
+     source-code         CDATA     #IMPLIED&gt;
+
+&lt;!ELEMENT field (comment*, property*)&gt;
+&lt;!ATTLIST field
+     name                NMTOKEN   #REQUIRED
+     data-type           CDATA     #IMPLIED
+     is-abstract     (true|false)  "false"
+     is-readonly     (true|false)  "false"
+     is-vector       (true|false)  "false"
+     vector-size         CDATA     #IMPLIED
+     default-value       CDATA     #IMPLIED&gt;
+
+&lt;!--
+  **  'unknown' is used internally to represent elements not in this NED DTD
+  --&gt;
+&lt;!ELEMENT unknown        ANY&gt;
+&lt;!ATTLIST unknown
+     element             CDATA     #REQUIRED&gt;
+</pre>
+<p>
+
+<hr class='pgbr'><p><hr><b><a href="chap19.html">[Prev]</A>&nbsp;<a href="chap21.html">[Next]</A>&nbsp;<a href="toc.html#toc_20.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p>
+
+</body>
+</html>

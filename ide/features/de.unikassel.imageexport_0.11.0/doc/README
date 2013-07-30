@@ -1,0 +1,49 @@
+Image Export Plugin
+
+This plug in provides an Eclipse wizard to export GEF diagrams to several
+formats (PNG, BMP, JPEG, etc.). Custom editors may easily contribute to make their
+diagrams exportable. Export file formats are pluggable as well.
+
+
+
+Getting Help
+
+If you're looking for help, have a feature request or want to report a bug, or, even better,
+would like to contribute a patch, please use the trackers and forums on the Sourceforge
+project page: http://janus-plugin.sourceforge.net.
+
+Trackers: http://sourceforge.net/tracker/?group_id=110332
+Forums: http://sourceforge.net/forum/?group_id=110332
+
+
+
+Copyright
+
+Copyright (C) 2005, 2006, 2007, 2008 Thomas Maier et. al., University of Kassel,
+see credits file.
+
+This plug in is free software; you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software Foundation.
+This plug in is licensed using version 2 of the License and not any later version.
+
+This plug in is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this
+program; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite
+330, Boston, MA 02111-1307 USA
+
+
+
+Contact Address
+
+URL: http://janus-plugin.sourceforge.net
+email: thomas-m@users.sourceforge.net
+
+Thomas Maier
+University of Kassel
+Research Group Software Engineering
+Wilhelmshöher Allee 73
+34121 Kassel
+Germany

@@ -1,0 +1,39 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Common Pitfalls</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="IDE Customization Guide"><link rel="up" href="ch01.html" title="Chapter 1. Writing Wizards"><link rel="prev" href="ch01s09.html" title="Extending the Wizards in Java"><link rel="next" href="ch01s11.html" title="XSWT Tips and Tricks"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Common Pitfalls</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch01s09.html">Prev</a> </td><th width="60%" align="center">Chapter 1. Writing Wizards</th><td width="20%" align="right"> <a accesskey="n" href="ch01s11.html">Next</a></td></tr></table><hr></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_common_pitfalls"></a>Common Pitfalls</h2></div></div></div><div class="itemizedlist"><ul type="disc"><li>
+Variables need to be defined. Referring to an undefined variable is an
+   error in FreeMarker (i.e. it does not return an empty string as in bash or
+   in makefiles).
+</li><li>
+Default values should be specified in <code class="literal">template.properties</code>, not in the XSWT forms.
+   You should not define them in the XSWT page by pre-filling the corresponding
+   widget (e.g. <code class="literal">&lt;text x:id="n" text="100"&gt;</code>). If you specify the value in a page,
+   the assignment will not take effect if the user skips that page (i.e. clicks
+   <span class="emphasis"><em>Finish</em></span> earlier). That causes the variable to remain undefined, resulting in a
+   runtime error during template processing.
+</li><li>
+Type mismatch. Variables have types in FreeMarker and one can get type conversion
+   errors if the templates are not programmed carefully. For example, comparing a number
+   and a string is a runtime error. A more serious problem is that widgets in wizard pages may implicitly
+   perform type conversion. For example, a <code class="literal">numHosts=100</code> line in <code class="literal">template.properties</code>
+   defines a number, but if you have a <code class="literal">&lt;text x:id="numHosts"/&gt;</code> widget in the form,
+   the variable will come back from it as a string. Even worse, whether the
+   number-&gt;string conversion takes place will depend on whether the page gets
+   displayed in the wizard session. Therefore, it is recommended that
+   you explicitly convert numeric variables to numbers at the top of templates
+   (e.g. <code class="literal">&lt;#assign numHosts = numHosts?number&gt;</code>).
+</li><li>
+For some reason, FreeMarker refuses to print boolean variables (e.g. <code class="literal">${isFoo}</code>
+   results in a runtime error). The common workaround is to write
+   <code class="literal">&lt;#if isFoo&gt;true&lt;#else&gt;false&lt;/#if&gt;</code>; this can be shortened with our <span class="emphasis"><em>iif()</em></span> function:
+   <code class="literal">${iff(isFoo, "true", "false")}</code>.
+</li><li>
+Many string operations are available both as built-in FreeMarker operators
+   (<code class="literal">varname?trim</code>) and as Java methods via  FreeMarker&#8217;s BeanWrapper (<code class="literal">varname.trim()</code>).
+   If you are mixing the two, it is possible that you will start getting
+   spurious errors for the Java method calls. In that case, simply change
+   Java method calls to FreeMarker built-ins.
+</li><li>
+Some Java functionality (the instance of operator, <code class="literal">Class.newInstance()</code>, etc.)
+   cannot be accessed via BeanWrapper. If you hit such a limitation, check
+   our <code class="literal">LangUtils</code> class that provides FreeMarker-callable static methods
+   to plug these holes.
+</li></ul></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch01s09.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch01.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch01s11.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Extending the Wizards in Java </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> XSWT Tips and Tricks</td></tr></table></div></body></html>

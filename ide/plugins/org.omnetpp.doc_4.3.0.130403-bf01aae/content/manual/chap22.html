@@ -1,0 +1,360 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta name="copyright" content="OpenSim Ltd.">
+  <meta NAME="Author" CONTENT="Andras Varga">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <link rel="STYLESHEET" href="../book.css"  type="text/css">
+  <title>OMNeT++ - Manual</title>
+</head>
+<body>
+
+<p><hr><b><a href="chap21.html">[Prev]</A>&nbsp;<a href="chap23.html">[Next]</A>&nbsp;<a href="toc.html#toc_22.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p><h1><a name="sec539"/>22 Appendix&#58; Message Definitions Grammar</h1>
+<a name="cha:msg-language-grammar"></a>
+
+<p>This appendix contains the grammar for the message definitions
+language.
+
+<p>In the language, space, horizontal tab and new line characters count
+as delimiters, so one or more of them is required between two elements of the
+description which would otherwise be unseparable.
+
+<p>'//' (two slashes) may be used to write comments that last to the end of the line.
+
+<p>The language is fully case sensitive.
+
+<p>Notation:
+<ul>
+  <li>rule syntax is that of <i>bison</i>/<i>yacc</i>
+  <li>uppercase words are terminals, lowercase words are nonterminals
+  <li><tt>NAME</tt>, <tt>CHARCONSTANT</tt>, <tt>STRINGCONSTANT</tt>, <tt>INTCONSTANT</tt>,
+        <tt>REALCONSTANT</tt> represent identifier names and string, character,
+        integer and real number literals (defined as in the C language)
+  <li>other terminals represent keywords in all lowercase
+</ul>
+
+<p>Nonterminals ending in <tt>_old</tt> are present so that message files
+from the previous versions of OMNeT++ (3.x) can be parsed.
+
+
+<pre class="verbatim">
+msgfile
+        : definitions
+        ;
+
+definitions
+        : definitions definition
+        |
+        ;
+
+definition
+        : namespace_decl
+        | cplusplus
+        | struct_decl
+        | class_decl
+        | message_decl
+        | packet_decl
+        | enum_decl
+        | enum
+        | message
+        | packet
+        | class
+        | struct
+        ;
+
+namespace_decl
+        : NAMESPACE qname0 ';'
+
+qname0
+        : qname0 DOUBLECOLON NAME
+        | NAME
+        ;
+
+qname
+        : DOUBLECOLON qname0
+        | qname0
+        ;
+
+cplusplus
+        : CPLUSPLUS '{{' ... '}}' opt_semicolon
+        ;
+
+struct_decl
+        : STRUCT qname ';'
+        ;
+
+class_decl
+        : CLASS qname ';'
+        | CLASS NONCOBJECT qname ';'
+        | CLASS qname EXTENDS qname ';'
+        ;
+
+message_decl
+        : MESSAGE qname ';'
+        ;
+
+packet_decl
+        : PACKET qname ';'
+        ;
+
+enum_decl
+        : ENUM qname ';'
+        ;
+
+enum
+        : ENUM NAME '{'
+          opt_enumfields '}' opt_semicolon
+        ;
+
+opt_enumfields
+        : enumfields
+        |
+        ;
+
+enumfields
+        : enumfields enumfield
+        | enumfield
+        ;
+
+enumfield
+        : NAME ';'
+        | NAME '=' enumvalue ';'
+        ;
+
+message
+        : message_header body
+        ;
+
+packet
+        : packet_header body
+        ;
+
+class
+        : class_header body
+        ;
+
+struct
+        : struct_header body
+        ;
+
+message_header
+        : MESSAGE NAME '{'
+        | MESSAGE NAME EXTENDS qname '{'
+        ;
+
+packet_header
+        : PACKET NAME '{'
+        | PACKET NAME EXTENDS qname '{'
+        ;
+
+class_header
+        : CLASS NAME '{'
+        | CLASS NAME EXTENDS qname '{'
+        ;
+
+struct_header
+        : STRUCT NAME '{'
+        | STRUCT NAME EXTENDS qname '{'
+        ;
+
+body
+        : opt_fields_and_properties
+          opt_propertiesblock_old
+          opt_fieldsblock_old
+          '}' opt_semicolon
+        ;
+
+opt_fields_and_properties
+        : fields_and_properties
+        |
+        ;
+
+fields_and_properties
+        : fields_and_properties field
+        | fields_and_properties property
+        | field
+        | property
+        ;
+
+field
+        :  fieldtypename opt_fieldvector opt_inline_properties ';'
+        |  fieldtypename opt_fieldvector opt_inline_properties '=' fieldvalue opt_inline_properties ';'
+        ;
+
+fieldtypename
+        : fieldmodifiers fielddatatype NAME
+        | fieldmodifiers NAME
+        ;
+
+fieldmodifiers
+        : ABSTRACT
+        | READONLY
+        | ABSTRACT READONLY
+        | READONLY ABSTRACT
+        |
+        ;
+
+fielddatatype
+        : qname
+        | qname '*'
+        | CHAR
+        | SHORT
+        | INT
+        | LONG
+        | UNSIGNED CHAR
+        | UNSIGNED SHORT
+        | UNSIGNED INT
+        | UNSIGNED LONG
+        | DOUBLE
+        | STRING
+        | BOOL
+        ;
+
+opt_fieldvector
+        : '[' INTCONSTANT ']'
+        | '[' qname ']'
+        | '[' ']'
+        |
+        ;
+
+fieldvalue
+        : fieldvalue fieldvalueitem
+        | fieldvalueitem
+        ;
+
+fieldvalueitem
+        : STRINGCONSTANT
+        | CHARCONSTANT
+        | INTCONSTANT
+        | REALCONSTANT
+        | TRUE
+        | FALSE
+        | NAME
+        | DOUBLECOLON
+        | '?' | ':' | '&&' | '||' | '##' | '==' | '!=' | '&gt;' | '&gt;=' | '&lt;' | '&lt;='
+        | '&' | '|' | '#' | '&lt;&lt;' | '&gt;&gt;'
+        | '+' | '-' | '*' | '/' | '%' | '^' | '&' | UMIN | '!' | '~'
+        | '.' | ',' | '(' | ')' | '[' | ']'
+        ;
+
+enumvalue
+        : INTCONSTANT
+        | '-' INTCONSTANT
+        | NAME
+        ;
+
+opt_inline_properties
+        : inline_properties
+        |
+        ;
+
+inline_properties
+        : inline_properties property_namevalue
+        | property_namevalue
+        ;
+
+property
+        : property_namevalue ';'
+        ;
+
+property_namevalue
+        : property_name
+        | property_name '(' opt_property_keys ')'
+        ;
+
+property_name
+        : '@' property_name_token
+        | '@' property_name_token '[' NAME ']'
+        | ENUM
+        ;
+
+property_name_token
+        : NAME
+        | ENUM
+        ;
+
+opt_property_keys
+        : property_keys
+        ;
+
+property_keys
+        : property_keys ';' property_key
+        | property_key
+        ;
+
+property_key
+        : NAME '=' property_values
+        | property_values
+        ;
+
+property_values
+        : property_values ',' property_value
+        | property_value
+        ;
+
+property_value
+        : property_value_tokens
+        | STRINGCONSTANT
+        |
+        ;
+
+property_value_tokens
+        : property_value_tokens property_value_token
+        | property_value_token
+        ;
+
+property_value_token
+        : NAME | INTCONSTANT | REALCONSTANT | CHARCONSTANT | TRUE | FALSE
+        | '$' | '@' | ':' | '=' | '[' | ']' | '{' | '}' | '.' | '?'
+        | '^' | '+' | '-' | '*' | '/' | '%' | '&lt;' | '&gt;' | '==' | '!=' | '&lt;=' | '&gt;='
+        | DOUBLECOLON | '||' | '&&' | '##' | '!'
+        | '&' | '|' | '#' '~' | '&lt;&lt;' | '&gt;&gt;'
+        | MESSAGE | PACKET | CLASS | STRUCT | ENUM | NONCOBJECT
+        | BOOL | CHAR | SHORT | INT | LONG | DOUBLE | UNSIGNED | STRING
+        ;
+
+opt_fieldsblock_old
+        : FIELDS ':'
+          opt_fields_old
+        |
+        ;
+
+opt_fields_old
+        : fields_old
+        |
+        ;
+
+fields_old
+        : fields_old field
+        | field
+        ;
+
+opt_propertiesblock_old
+        : PROPERTIES ':'
+          opt_properties_old
+        |
+        ;
+
+opt_properties_old
+        : properties_old
+        |
+        ;
+
+properties_old
+        : properties_old property_old
+        | property_old
+        ;
+
+property_old
+        : NAME '=' property_value ';'
+        ;
+
+opt_semicolon : ';' | ;
+</pre>
+
+<p>
+<hr class='pgbr'><p><hr><b><a href="chap21.html">[Prev]</A>&nbsp;<a href="chap23.html">[Next]</A>&nbsp;<a href="toc.html#toc_22.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p>
+
+</body>
+</html>

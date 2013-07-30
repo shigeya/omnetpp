@@ -1,0 +1,51 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Building the Project</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="OMNeT&#8288;+&#8288;+ User Guide"><link rel="up" href="ch05.html" title="Chapter 5. C++ Development"><link rel="prev" href="ch05s04.html" title="Editing C++ Code"><link rel="next" href="ch05s06.html" title="Configuring the Project"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Building the Project</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch05s04.html">Prev</a> </td><th width="60%" align="center">Chapter 5. C++ Development</th><td width="20%" align="right"> <a accesskey="n" href="ch05s06.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id276150"></a>Building the Project</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id276155"></a>Basics</h3></div></div></div><p>Once you have created your source files and configured your project settings, you can build the
+        project by selecting <span class="emphasis"><em>Build Project</em></span> from the <span class="emphasis"><em>Project</em></span> menu or from the project context menu.
+        You can also press <span class="keycap"><strong>Ctrl+B</strong></span> to build all open projects in the workspace.
+        </p><div class="figure"><a name="pictures/CPP-BuildProject.png"></a><p class="title"><b>Figure 5.10. Building a project</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/CPP-BuildProject.png" align="middle" alt="Building a project"></div></div></div></div><p><br class="figure-break">
+        </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+        You may notice that the initial build of the project starts after a (sometimes long)
+        delay, which is spent on indexing the project. The index is CDT's database of
+        the project's classes, functions, methods, variables, macros, etc.;
+        features such as content assist, go to definition, class hierarchy and refactoring
+        are all based on the index.
+        </p><p>
+        It is important that the C++ index is up to date before the build, because the index is used
+        by the IDE for dependency generation in the generated makefiles. (The input for dependencies
+        is the list of active <code class="literal">#include</code>'s in the sources, and the IDE takes this information
+        from the index.)
+        </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id276219"></a>Build Output</h4></div></div></div><p>The build output (standard output and standard error) is displayed in the <span class="emphasis"><em>Console View</em></span>
+              as the build progresses. Errors and warnings parsed from the output are displayed in the
+              <span class="emphasis"><em>Problems View</em></span>. Double-clicking a line in the <span class="emphasis"><em>Problems View</em></span> will jump to the corresponding
+              source line. Conversely, the <span class="emphasis"><em>Console View</em></span> is more useful when you want to look
+              at the build messages in their natural order (<span class="emphasis"><em>Problems View</em></span> is usually sorted),
+              for example when you get a lot of build errors and you want to begin by looking at
+              the first one.
+          </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id276251"></a>Makefile Generation</h4></div></div></div><p>When you start the build process, a makefile will be created or refreshed in each
+             folder where makefile creation is configured. After that, make will be invoked with the <code class="literal">all</code>
+             target in the folder configured as build root.
+          </p></div><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+	  During the build process, the makefile will print out only the names of the compiled files.
+	  If you want to see the full command line used to compile each file, specify
+	  <code class="literal">V=1</code> (verbose on) on the make command line. To add this option,
+	  open <span class="emphasis"><em>Project Properties | C/C++ Build | Behavior (tab)</em></span> and replace <code class="literal">all</code> with <code class="literal">all V=1</code>
+	  on the <span class="emphasis"><em>Build</em></span> target line.
+	</div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id276290"></a>Cleaning the Project</h4></div></div></div><p>To clean the project, choose <span class="emphasis"><em>Clean...</em></span> from the <span class="emphasis"><em>Project</em></span> menu, or <span class="emphasis"><em>Clean Project</em></span> from the
+             project context menu. This will invoke make with the <code class="literal">clean</code> target in the build root folder.
+             Often you may want to use the <span class="emphasis"><em>Clean Local</em></span> item from the project context menu instead
+             of <span class="emphasis"><em>Clean Projects</em></span>, because it does not clean referenced projects (see next section).
+          </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id276325"></a>Referenced Projects and the Build Process</h4></div></div></div><p>When you start the build, the IDE will build the referenced projects first. When you clean
+              the project, the IDE will also clean the referenced projects first. This is often inconvenient
+              (especially if your project depends on a large third party project). To avoid cleaning the
+              referenced projects, use <span class="emphasis"><em>Clean Local</em></span> from the project context menu.
+          </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id276342"></a>Build Configurations</h4></div></div></div><p>
+              A project is built using the active build configuration. A project may have several build
+              configurations, where each configuration selects a compiler toolchain, debug or release mode,
+              defines symbols, etc. To set the active build configuration, choose <span class="emphasis"><em>Build Configurations | Set Active</em></span>
+              from the project context menu.
+              </p><div class="figure"><a name="pictures/CPP-BuildConfiguration.png"></a><p class="title"><b>Figure 5.11. Activating a build configuration</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/CPP-BuildConfiguration.png" align="middle" alt="Activating a build configuration"></div></div></div></div><p><br class="figure-break">
+          </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id276380"></a>Console View</h3></div></div></div><p>The <span class="emphasis"><em>Console View</em></span> displays the output of the build process.
+        </p><div class="figure"><a name="pictures/CPP-ConsoleView.png"></a><p class="title"><b>Figure 5.12. Build output in a console</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/CPP-ConsoleView.png" align="middle" alt="Build output in a console"></div></div></div></div><br class="figure-break"></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id276414"></a>Problems View</h3></div></div></div><p>The <span class="emphasis"><em>Problems View</em></span> contains the errors and warnings generated by the build process. You can
+        browse the problem list and double-click any message to go to the problem location in the source file.
+        NED file and INI file problems are also reported in this view along with C++ problems. The editors
+        are annotated with these markers, too. Hover over an error marker in the editor window to get the
+        corresponding message as a tooltip.</p><div class="figure"><a name="pictures/CPP-ProblemsView.png"></a><p class="title"><b>Figure 5.13. C++ problems</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/CPP-ProblemsView.png" align="middle" alt="C++ problems"></div></div></div></div><br class="figure-break"></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch05s04.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch05.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch05s06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Editing C++ Code </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Configuring the Project</td></tr></table></div></body></html>

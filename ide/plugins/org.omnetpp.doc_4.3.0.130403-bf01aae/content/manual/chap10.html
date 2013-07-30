@@ -1,0 +1,1035 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta name="copyright" content="OpenSim Ltd.">
+  <meta NAME="Author" CONTENT="Andras Varga">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <link rel="STYLESHEET" href="../book.css"  type="text/css">
+  <title>OMNeT++ - Manual</title>
+</head>
+<body>
+
+<p><hr><b><a href="chap9.html">[Prev]</A>&nbsp;<a href="chap11.html">[Next]</A>&nbsp;<a href="toc.html#toc_10.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p><h1><a name="sec353"/>10 Running Simulations</h1>
+<a name="cha:run-sim"></a>
+
+<p><h2><a name="sec354"/>10.1 Introduction</h2>
+
+<p>This chapter describes how to run simulations. It covers basic usage,
+user interfaces, batch runs, how to use Akaroa, and also explains
+how to solve the most common errors.
+
+<p><h3><a name="sec355"/>10.1.1 Running a Simulation Executable</h3>
+<a name="sec:ch-run-sim:running"></a>
+
+<p>By default, the output of an <tt>opp_makemake</tt>-generated makefile is
+a simulation executable that can be run directly. In simple cases,
+this executable can be run without command-line arguments, but usually
+one will need to specify options to specify what ini file to use,
+which user interface to activate, where to load NED files from, and so on.
+
+<p><p class="subheading">Getting Help</p>
+
+<p>The following sections describe the most frequently used command-line
+options. To get a complete list of supported command line options, run
+the <tt>opp_run</tt> command (or any other simulation executable) with
+the <tt>-h</tt> option.
+
+<pre class="commandline">
+$ opp_run -h
+</pre>
+<p>
+<p class="subheading">Specifying Ini Files</p>
+
+<p>The default ini file is <tt>omnetpp.ini</tt>, and is
+loaded if no other ini file is given on the command line.
+
+<p>Ini files can be specified both as plain arguments and with the <tt>-f</tt>
+option, so the following two commands are equivalent:
+
+<pre class="commandline">
+$ ./fifo experiment.ini common.ini
+$ ./fifo -f experiment.ini -f common.ini
+</pre>
+<p>
+Multiple ini files can be given, and their contents will be merged. This
+allows for partitioning the configuration into separate files, for example
+to simulation options, module parameters and result recording options.
+
+<p>
+<p class="subheading">Specifying the NED Path</p>
+
+<p>NED files are loaded from directories listed on the NED path. More precisely,
+they are loaded from the listed directories and their whole subdirectory trees.
+Directories are separated with a semicolon (<tt>;</tt>).
+
+<p><ul class="note"><b>NOTE</b><br>
+Semicolon is used as separator on both Unix and Windows.
+</ul>
+
+<p>The NED path can be specified in several ways:
+<ul>
+  <li> using the <tt>NEDPATH</tt> environment variable
+  <li> using the <tt>-n</tt> command-line option
+  <li> in ini files, with the <b><tt>ned-path</tt></b> configuration option
+</ul>
+
+<p>NED path resolution rules are as follows:
+
+<p><ul>
+  <li> OMNeT++ checks for NED path specified on the command line with the <tt>-n</tt> option
+  <li> if not found on the command line, it checks for the NEDPATH environment variable
+  <li> the <b><tt>ned-path</tt></b> option value from the ini file is appended to the result of the above steps
+  <li> if the result is still empty, it falls back to "." (the current directory)
+</ul>
+
+<p>
+<p class="subheading">Selecting a User Interface</p>
+
+<p>OMNeT++ simulations can be run under different user interfaces.
+Currently the following user interfaces are supported:
+
+<p><ul>
+  <li> Tkenv: Tcl/Tk-based graphical, windowing user interface
+  <li> Cmdenv: command-line user interface for batch execution
+</ul>
+
+<p>You would typically test and debug your simulation under Tkenv,
+then run actual simulation experiments from the command line or
+shell script, using Cmdenv. Tkenv is also better suited for educational or
+demonstration purposes.
+
+<p>Both Tkenv and Cmdenv are provided in the form of a library, and
+you may choose between them by linking one or both into your
+simulation executable. (Creating the executable was described in
+chapter <a href="chap8.html#sec310">[8]</a>). Both user interfaces
+are supported on Unix and Windows platforms.
+
+<p>You can choose which runtime environment is included in your simulation
+executable when you generate your makefile. By default, both Tkenv and
+Cmdenv is linked in so you can choose between them during runtime, but it
+is possible to specify only a single user interface with the <tt>-u
+Cmdenv</tt> or <tt>-u Tkenv</tt> option on the <tt>opp_makemake</tt> command line.
+This can be useful if you intend to run your simulations on a machine where
+Tcl/Tk is not installed.
+
+<p>By default, Tkenv will be used if both runtime environments are present in
+your executable. You explicitly select a user interface by adding the
+<tt>user-interface=Cmdenv</tt> (or <tt>=Tkenv</tt>) option in your ini file, or
+by specifying <tt>-u Cmdenv</tt> or <tt>-u Tkenv</tt> on the command line. If
+both the config option and the command line option are present, the command
+line option takes precedence.
+
+<p><p class="subheading">Selecting a Configuration and Run Number</p>
+
+<p>Configurations can be selected with the <tt>-c &lt;configname&gt;</tt> command line option.
+If you do not specify the configuration and you are running under:
+
+<p><ul>
+  <li> Tkenv: the runtime environment will prompt you to choose one.
+  <li> Cmdenv: the <tt>General</tt> configuration will be executed.
+</ul>
+
+<p>User interfaces may support the <tt>-r runnumber</tt> option to select runs,
+either one or more, depending on the type of the user interface.
+
+<p>There are several command line options to get information about the iteration
+variables and the number of runs in the configurations:
+
+<p><ul>
+  <li> <tt>-a</tt> -- Prints all configuration names and the number of runs in them.
+  <li> <tt>-x &lt;configname&gt;</tt> -- Prints the number of runs available in the given configuration.
+  <li> <tt>-g</tt> -- Prints the unrolled configuration (together with the -x option) and
+                    expands the iteration variables.
+  <li> <tt>-G</tt> -- Prints even more details than -g.
+</ul>
+
+<p>
+<p class="subheading">Loading Extra Libraries</p>
+
+<p>OMNeT++ allows you to load shared libraries at runtime. This means that you can create
+simulation models as a shared library and load the model later into a different executable without
+the need to explicitly link against that library. This approach has several advantages.
+
+<p><ul>
+  <li> It is possible to distribute the model as a shared library. Others may be able to use
+  it without recompiling it.
+  <li> You can split a large model into smaller, reusable components.
+  <li> You can mix several models (even from different projects)
+    without the need of linking or compiling.
+</ul>
+
+<p>Use the <tt>-l libraryname</tt> command line option to load a library dynamically.
+OMNeT++ will attempt to load it using the <tt>dlopen()</tt> or <tt>LoadLibrary()</tt> functions and
+automatically registers all simple modules in the library.
+
+<p>The prefix and suffix from the library name can be omitted (the extensions
+<tt>.dll</tt>, <tt>.so</tt>, <tt>.dylib</tt>, and also the common <tt>lib</tt> prefix
+on Unix systems). This means that you can specify the library name in a
+platform independent way: if you specify <tt>-l foo</tt>, then OMNeT++ will
+look for <tt>foo.dll</tt>, <tt>libfoo.dll</tt>, <tt>libfoo.so</tt> or <tt>libfoo.dylib</tt>,
+depending on the platform.
+
+<p>It is also possible to specify the libraries to be loaded in the ini file
+with the <b><tt>load-libs</tt></b> configuration option. The values from the command line
+and the config file will be merged.
+
+<p><ul class="note"><b>NOTE</b><br>
+  Runtime loading is not needed if your executable or shared lib was
+  already linked against the library in question. In that case,
+  the platform's dynamic loader will automatically load the library.
+</ul>
+
+<p><ul class="note"><b>NOTE</b><br>
+  You must ensure that the library can be accessed by OMNeT++. Either specify the
+  library name with a full path (pre- and postfixes of the library file name
+  still can be omitted), or adjust the shared library path environment variable
+  of your OS (<tt>PATH</tt> on Windows, <tt>LD_LIBRARY_PATH</tt> on Unix, and
+  <tt>DYLD_LIBRARY_PATH</tt> on Mac OS X.)
+</ul>
+
+<p><h3><a name="sec356"/>10.1.2 Running a Shared Library</h3>
+
+<p>Shared libraries can be run using the <tt>opp_run</tt> program.
+Both <tt>opp_run</tt> and simulation executables are capable of
+loading additional shared libraries; actually, <tt>opp_run</tt>
+is nothing else than an empty simulation executable.
+
+<p>Example:
+<pre class="commandline">
+opp_run -l mymodel
+</pre>
+
+<p>The above example will load the model found in <tt>libmymodel.so</tt> and execute it.
+
+<p><h3><a name="sec357"/>10.1.3 Controlling the Run</h3>
+
+<p>There are several useful configuration options that control how a simulation is run.
+
+<p><ul>
+  <li> <b><tt>cmdenv-express-mode</tt></b> -- Provides only minimal status updates on the console.
+  <li> <b><tt>cmdenv-interactive</tt></b> -- Allows the simulation to ask missing parameter values interactively
+  <li> <b><tt>cmdenv-status-frequency</tt></b> -- Controls how often the status is written to the console.
+  <li> <b><tt>cpu-time-limit</tt></b> -- Limits how long the simulation should run (in wall clock time)
+  <li> <b><tt>sim-time-limit</tt></b> -- Limits how long the simulation should run (in simulation time)
+  <li> <b><tt>debug-on-errors</tt></b> -- If the runtime detects any error, it will generate a breakpoint
+          so you will be able to check the location and the context of the problem in your debugger.
+  <li> <b><tt>fingerprint</tt></b> -- The simulation kernel computes a checksum while running the simulation.
+          It is calculated from the module id and from the current simulation time of each event.
+          If you specify the <b><tt>fingerprint</tt></b> option in the config file, the simulation runtime will
+          compare the computed checksum with the provided one. If there is a difference it will
+          generate an error. This feature is very useful if you make some cosmetic changes to your
+          source and want to be reasonable sure that your changes did not alter the behaviour
+          of the model.
+          <ul class="warning"><b>WARNING</b><br>
+          The value of the calculated fingerprint is heavily dependent on the accuracy of the floating
+          point arithmetic. There are differences between the floating point handling of AMD and Intel CPUs.
+          Running under a processor emulator software like <tt>valgrind</tt> may also produce
+          a different fingerprint. This is normal. Hint: see gcc options <tt>-mfpmath=sse -msse2</tt>.
+          </ul>
+  <li> <b><tt>record-eventlog</tt></b> -- You can turn on the recording of the simulator events. The
+           resulting file can be analyzed later in the IDE with the sequence chart tool.
+</ul>
+
+<p><ul class="note"><b>NOTE</b><br>
+  It is also possible to specify a configuration option on the command line (in which case the
+  command line takes precedence). To do so, prefix the option name with a double
+  dash (--), and be sure not to have spaces around the equal sign. Example:
+  <tt>--debug-on-errors=true</tt>
+</ul>
+
+<p>To get the list of all possible configuration options, type:
+
+<pre class="commandline">
+opp_run -h config
+</pre>
+<p>
+
+<p><h2><a name="sec358"/>10.2 Cmdenv: the Command-Line Interface</h2>
+
+<p>The command line user interface<!--command line user interface--> is
+a small, portable and fast user interface that compiles and runs on
+all platforms. Cmdenv<!--Cmdenv--> is designed primarily for batch execution.
+
+<p>Cmdenv simply executes some or all simulation runs that are described
+in the configuration file. If one run stops with an error message,
+subsequent ones will still be executed. The runs to be executed can be
+passed via command-line argument or in the ini file.
+
+<p><h3><a name="sec359"/>10.2.1 Example Run</h3>
+
+<p>When you run the Fifo example under Cmdenv, you should see
+something like this:
+
+<pre class="commandline">
+$ ./fifo -u Cmdenv -c Fifo1
+
+OMNeT++ Discrete Event Simulation  (C) 1992-2008 Andras Varga, OpenSim Ltd.
+Version: 4.0, edition: Academic Public License -- NOT FOR COMMERCIAL USE
+See the license for distribution terms and warranty disclaimer
+Setting up Cmdenv...
+Loading NED files from .: 5
+
+Preparing for running configuration Fifo1, run #0...
+Scenario: $repetition=0
+Assigned runID=Fifo1-0-20090104-12:23:25-5792
+Setting up network 'FifoNet'...
+Initializing...
+Initializing module FifoNet, stage 0
+Initializing module FifoNet.gen, stage 0
+Initializing module FifoNet.fifo, stage 0
+Initializing module FifoNet.sink, stage 0
+
+Running simulation...
+** Event #1   T=0   Elapsed: 0.000s (0m 00s)  0% completed
+     Speed:     ev/sec=0   simsec/sec=0   ev/simsec=0
+     Messages:  created: 2   present: 2   in FES: 1
+** Event #232448   T=11719.051014922336   Elapsed: 2.003s (0m 02s)  3% completed
+     Speed:     ev/sec=116050   simsec/sec=5850.75   ev/simsec=19.8351
+     Messages:  created: 58114   present: 3   in FES: 2
+...
+** Event #7206882   T=360000.52066583684   Elapsed: 78.282s (1m 18s)  100% completed
+     Speed:     ev/sec=118860   simsec/sec=5911.9   ev/simsec=20.1053
+     Messages:  created: 1801723   present: 3   in FES: 2
+
+&lt;!&gt; Simulation time limit reached -- simulation stopped.
+
+Calling finish() at end of Run #0...
+End.
+</pre>
+<p>
+As Cmdenv runs the simulation, it periodically prints the sequence number
+of the current event, the simulation time, the elapsed (real) time,
+and the performance of the simulation (how many events are processed per
+second; the first two values are 0 because there wasn't enough data
+for it to calculate yet). At the end of the simulation, the <tt>finish()</tt>
+methods of the simple modules are run, and the outputs from them are displayed.
+On my machine this run took 34 seconds. This Cmdenv output can be
+customized via <tt>omnetpp.ini</tt> entries. The output file <tt>results/Fifo1-0.vec</tt>
+contains vector data recorded during simulation (here, queueing times),
+and it can be processed using the IDE or other tools.
+
+<p><h3><a name="sec360"/>10.2.2 Command-Line Options</h3>
+
+<p>The command line environment allows you to specify more than one run by
+using the <tt>-r 2,4,6..8</tt> format. See <a href="chap10.html#sec365">[10.4]</a>
+for more information about running simulation batches.
+
+<p><h3><a name="sec361"/>10.2.3 Cmdenv Ini File Options</h3>
+<a name="sec:ch-run-sim:cmdenv-section"></a>
+
+<p><tt>cmdenv-runs-to-execute</tt> specifies which simulation runs should be executed.
+It accepts a comma-separated list of run numbers or run number ranges, e.g.
+<tt>1,3..4,7..9</tt>. If the value is missing, Cmdenv executes all runs that have
+ini file sections; if no runs are specified in the ini file, Cmdenv does one run.
+The <tt>-r</tt> command line option overrides this ini file setting.
+
+<p>
+Cmdenv can be executed in two modes, selected by the <b><tt>cmdenv-express-mode</tt></b>
+ini file option:
+
+<p><ul>
+    <li> <b>Normal</b> (non-express) mode is for debugging; detailed information
+        will be written to the standard output (event banners, module output,
+        etc).
+    <li> <b>Express</b> mode can be used for long simulation runs; only
+        periodical status updates are displayed about the progress of the
+        simulation.
+</ul>
+
+<p><b><tt>cmdenv-performance-display</tt></b> affects express mode only: it controls
+whether to print performance information. Turning it on results in a 3-line
+entry printed on each update, containing ev/sec, simsec/sec, ev/simsec,
+number of messages created/still present/currently scheduled in FES<!--FES-->.
+
+<p>For a full list of options, see the options beginning with <tt>cmdenv-</tt> in
+Appendix <a href="chap24.html#sec543">[24]</a>.
+
+<p>
+<h3><a name="sec362"/>10.2.4 Interpreting Cmdenv Output</h3>
+<a name="sec:ch-run-sim:interpreting-cmdenv-output"></a>
+
+<p>When the simulation is running in &#8220;express&#8221; mode with detailed
+performance display enabled, Cmdenv periodically outputs a three-line
+status report about the progress of the simulation.
+The output looks like this:
+
+<pre class="commandline">
+...
+** Event #250000   T=123.74354 ( 2m  3s)    Elapsed: 0m 12s
+     Speed:     ev/sec=19731.6   simsec/sec=9.80713   ev/simsec=2011.97
+     Messages:  created: 55532   present: 6553   in FES: 8
+** Event #300000   T=148.55496 ( 2m 28s)    Elapsed: 0m 15s
+     Speed:     ev/sec=19584.8   simsec/sec=9.64698   ev/simsec=2030.15
+     Messages:  created: 66605   present: 7815   in FES: 7
+...
+</pre>
+<p>
+The first line of the status display (beginning with <tt>**</tt>)
+contains:
+
+<p><ul>
+   <li>how many events have been processed so far
+   <li>the current simulation time (T), and
+   <li>the elapsed time (wall clock time) since the beginning of the simulation run.
+</ul>
+
+<p>The second line displays info about simulation performance:
+
+<p><ul>
+   <li><tt>ev/sec</tt> indicates <i>performance</i>: how many events are processed
+     in one real-time second.  On one hand it depends on your hardware
+     (faster CPUs process more events per second), and on the other hand
+     it depends on the complexity (amount of calculations) associated
+     with processing one event. For example, protocol simulations tend to require
+     more processing per event than e.g. queueing networks, thus
+     the latter produce higher ev/sec values.
+     In any case, this value is independent of the size (number of modules) in your model.
+   <li><tt>simsec/sec</tt> shows <i>relative speed</i> of the simulation, that is,
+     how fast the simulation is progressing compared to real time, how many
+     simulated seconds can be done in one real second. This value virtually depends
+     on everything: on the hardware, on the size of the simulation model,
+     on the complexity of events, and the average simulation time between events as well.
+   <li><tt>ev/simsec</tt> is the <i>event density</i>: how many events are
+     there per simulated second. Event density only depends on the simulation model,
+     regardless of the hardware used to simulate it: in a cell-level ATM simulation
+     you will have very hight values (<i>10<sup>9</sup></i>), while in a bank teller simulation
+     this value is probably well under 1. It also depends on the size of your
+     model: if you double the number of modules in your model, you can expect
+     the event density double, too.
+</ul>
+
+<p>The third line displays the number of messages, and it is important
+because it may indicate the `health' of your simulation.
+
+<p><ul>
+   <li><tt>Created</tt>: total number of message objects created since the
+     beginning of the simulation run. This does not mean that this many message
+     object actually exist, because some (many) of them may have been deleted
+     since then. It also does not mean that <i>you</i> created all those
+     messages -- the simulation kernel also creates messages for its own use
+     (e.g. to implement <tt>wait()</tt> in an <tt>activity()</tt> simple module).
+   <li><tt>Present</tt>: the number of message objects currently present
+     in the simulation model, that is, the number of messages created (see above)
+     minus the number of messages already deleted. This number includes
+     the messages in the FES<!--FES-->.
+   <li><tt>In FES</tt>: the number of messages currently scheduled in the
+     Future Event Set.
+</ul>
+
+<p>
+The second value, the number of messages present, is more useful than
+perhaps one would initially think. It can be an indicator of the `health' of the simulation;
+if it is growing steadily, then either you have a memory leak and losing
+messages (which indicates a programming error), or the network you simulate is
+overloaded and queues are steadily filling up (which might indicate wrong input
+parameters).
+
+<p>Of course, if the number of messages does not increase, it does not mean
+that you do <i>not</i> have a memory leak (other memory leaks are also
+possible). Nevertheless the value is still useful, because by far the
+most common way of leaking memory in a simulation is by not deleting messages.
+
+<p>
+
+<p><h2><a name="sec363"/>10.3 Tkenv: the Graphical User Interface</h2>
+
+<p>Tkenv<!--Tkenv--> is a portable graphical windowing user interface.
+Tkenv supports interactive execution of the simulation, tracing and
+debugging<!--simulation!debugging-->. Tkenv is recommended in the
+development stage of a simulation and for presentation purposes,
+since it allows one to get a detailed picture of the state
+of simulation at any point of execution and to follow what happens
+inside the network.
+
+<p><ul class="note"><b>NOTE</b><br>
+  This section only covers the command-line and configuration options
+  of Tkenv; the user interface is described in the Tkenv chapter of the
+  OMNeT++ User Guide.
+</ul>
+
+<p><h3><a name="sec364"/>10.3.1 Command-Line and Configuration Options</h3>
+
+<p>A simulation program built with Tkenv accepts all the general command line
+options. <!--command line options--> Additionally, the <tt>-c configname</tt>
+and <tt>-r runnumber</tt> options can be used to preselect a single run for execution;
+that is, these options suppress the initial run selection dialog.
+
+<p>Tkenv configuration options:
+<ul>
+  <li><b><tt>tkenv-default-config</tt></b>:
+    Specifies which config Tkenv should set up automatically on startup. The
+    default is to ask the user. This option is equivalent to the <tt>-c</tt>
+    command-line option.
+
+<p>  <li><b><tt>tkenv-default-run</tt></b>: Specifies which run (of the default
+    config, see tkenv-default-config) Tkenv should set up automatically on startup.
+    The default is to ask the user. This option is equivalent to the <tt>-r</tt>
+    command-line option.
+
+<p>  <li><b><tt>tkenv-extra-stack</tt></b>:
+    Specifies the extra amount of stack that is reserved for each activity()
+    simple module when the simulation is run under Tkenv.
+
+<p>  <li><b><tt>tkenv-image-path</tt></b>: Specifies the path for loading module icons.
+
+<p>  <li><b><tt>tkenv-plugin-path</tt></b>:
+    Specifies the search path for Tkenv plugins. Tkenv plugins are .tcl files
+    that get evaluated on startup.
+</ul>
+
+<p>Tkenv-specific configuration options can also be specified on the command line
+by prefixing them with two dashes (e.g <tt>--tkenv-option=value</tt>). See
+Appendix <a href="chap24.html#sec543">[24]</a> for the list of possible configuration options.
+
+<p>
+<h2><a name="sec365"/>10.4 Batch Execution</h2>
+<a name="sec:ch-run-sim:batch-execution"></a>
+
+<p>Once your model works reliably, you will usually want to run several
+simulations. You may want to run the model with various
+parameter settings, or you may want <i>(should want?)</i> to
+run the same model with the same parameter settings but with
+different random number generator seeds, to achieve statistically
+more reliable results.
+
+<p>Running a simulation several times by hand can easily become tedious,
+and then a good solution is to write a control script that
+takes care of the task automatically. Unix shell is
+a natural language choice to write the control script in,
+but other languages like Perl, Matlab/Octave, Tcl, Ruby might also have
+justification for this purpose.
+
+<p>Before running simulation batches, you must set a condition to
+stop your simulation. This is usually a time limit set by the
+<b><tt>sim-time-limit</tt></b> configuration option, but you can limit your simulation
+by using wall clock time (<b><tt>cpu-time-limit</tt></b>) or by directly ending a
+simulation with an API call if some condition is true.
+
+<p><h3><a name="sec366"/>10.4.1 Using Cmdenv</h3>
+
+<p>To execute more than one run using Cmdenv, use the <tt>-r</tt> option
+and specify the runs in a comma separated format <tt>1,2,4,9..11</tt>, or you may leave
+out the <tt>-r</tt> option to execute all runs in the experiment.
+
+<p><ul class="warning"><b>WARNING</b><br>
+  Although it is very convenient, we do not recommend that you use this method for
+  running simulation batches. Specifying more than one run number
+  would run those simulations in the same process. This method is more prone to C++ programming
+  errors. A failure in a single run may abort execution (segfault) or invalidate the results of subsequent runs. If you want
+  to execute more than one run, we recommend that you run each of them in a separate process;
+  you can use the <tt>opp_runall</tt> program for this purpose.
+</ul>
+
+<p>
+<h3><a name="sec367"/>10.4.2 Using Shell Scripts</h3>
+
+<p>The following script executes a simulation named <tt>wireless</tt>
+several times, with parameters for the different runs
+given in the <tt>runs.ini</tt> file.
+
+<p>Before you execute your simulation batch, you may check how many
+runs are available in the configuration you are using. Use the
+<tt>-x config</tt> command line option to print the number of runs or
+add the <tt>-g</tt> to get more details.
+
+<pre class="filelisting">
+#! /bin/sh
+./wireless -f runs.ini -r 1
+./wireless -f runs.ini -r 2
+./wireless -f runs.ini -r 3
+./wireless -f runs.ini -r 4
+...
+./wireless -f runs.ini -r 10
+</pre>
+<p>
+To run the above script, type it in a text file called e.g. <tt>run</tt>,
+give it <tt>x</tt> (executable) permission using <tt>chmod</tt>,
+then you can execute it by typing <tt>./run</tt>:
+
+<pre class="commandline">
+$ chmod +x run
+$ ./run
+</pre>
+<p>
+You can simplify the above script by using a <i>for</i> loop.
+In the example below, the variable <tt>i</tt> iterates through
+the values of list given after the <tt>in</tt> keyword.
+It is very practical, since you can leave out or add runs,
+or change the order of runs by simply editing the list --
+to demonstrate this, we skip run 6, and include run 15 instead.
+
+<pre class="filelisting">
+#! /bin/sh
+for i in 3 2 1 4 5 7 15 8 9 10; do
+   ./wireless -f runs.ini -r $i
+done
+</pre>
+<p>
+If you have many runs, you can use a C-style loop:
+
+<pre class="filelisting">
+#! /bin/sh
+for ((i=1; $i&lt;50; i++)); do
+   ./wireless -f runs.ini -r $i
+done
+</pre>
+<p>
+<h3><a name="sec368"/>10.4.3 Using opp_runall</h3>
+
+<p>OMNeT++ has a utility program called <tt>opp_runall</tt> which
+allows you to execute a simulation batch in command line mode.
+You must specify the whole command line you would use to run
+your batch in Cmdenv. There are advantages to running your batches
+this way:
+<ul>
+  <li> Each simulation run executes in a separate operating system process.
+        This means that a crash because of a programming error does not affect
+        the outcome of the other runs. They are totally independent of each other.
+  <li> If you happen to have a multi core/processor machine, you can take advantage
+        of the processing power by running sevaral runs in parallel.
+</ul>
+
+<p>The command basically creates a makefile which contains
+a separate target for each run. By default the makefile will be executed causing each
+target to run. You can give additional options to the <tt>opp_runall</tt> command to
+activate parallel building. The <tt>-j</tt> option can be used to specify the maximum number
+of parallel runs allowed.
+
+<p><ul class="warning"><b>WARNING</b><br>
+  Use the parallel execution option only if you have enough memory to run several simulations
+  side by side. If you run out of memory your operating system will start swapping, and the overall
+  performance of the system will be greatly reduced. Always specify the number of processes
+  after the <tt>-j</tt> option, otherwise the <tt>make</tt> program will try to start <i>all</i>
+  runs at the same time. As a rule of thumb: if you have 4 cores (and enough memory), use <tt>-j4</tt>.
+</ul>
+
+<p>The form of the command is:
+<pre class="commandline">
+opp_runall -j2 ./aloha -u Cmdenv -c PureAlohaExperiment -r 0..23
+</pre>
+
+<p>You can use the <tt>-x ConfigName -g</tt> command line options with your simulation to
+check the number of available runs.
+
+<p>Using the <tt>--export filename</tt> option only generates the <tt>makefile</tt>, but does not start it.
+You can run your batch later by invoking the generated makefile.
+
+
+
+<p><h2><a name="sec369"/>10.5 Akaroa Support: Multiple Replications in Parallel</h2>
+<a name="sec:ch-run-sim:akaroa"></a>
+<!--Akaroa-->
+<!--Multiple Replications in Parallel-->
+
+<p><h3><a name="sec370"/>10.5.1 Introduction</h3>
+
+<p>Typical simulations are Monte-Carlo simulations: they use
+(pseudo-)random numbers to drive the simulation model.
+For the simulation to produce statistically reliable results,
+one has to carefully consider the following:
+
+<p><ul>
+  <li>When the initial transient is over, when can we start
+    collecting data? We usually don't want to include the
+    initial transient when the simulation is still &#8220;warming up.&#8221;
+  <li>When can we stop the simulation? We want to wait long enough
+    so that the statistics we are collecting can &#8220;stabilize&#8221;,
+    or reach the required sample size to be statistically trustable.
+</ul>
+
+<p>Neither question is trivial to answer. One might just suggest
+to wait &#8220;very long&#8221; or &#8220;long enough&#8221;. However, this is neither
+simple (how do you know what is &#8220;long enough&#8221;?) nor practical
+(even with today's high speed processors simulations of modest complexity
+can take hours, and one may not afford multiplying runtimes by,
+say, 10, &#8220;just to be safe.&#8221;) If you need further convincing,
+please read [<a href="#bib-Pawlikowsky02">Pawlikowsky02</a>] and be horrified.
+
+<p>A possible solution is to look at the statistics while the simulation
+is running, and decide at runtime when enough data have been
+collected for the results to have reached the required accuracy.
+One possible criterion is given by the confidence level,
+more precisely, by its width relative to the mean.
+But ex ante it is unknown how many observations have to be collected
+to achieve this level -- it must be determined at runtime.
+
+<p>
+<h3><a name="sec371"/>10.5.2 What Is Akaroa</h3>
+
+<p>Akaroa [<a href="#bib-Akaroa99">Akaroa99</a>] addresses the above problem.
+According to its authors, Akaroa (Akaroa2) is a &#8220;fully automated
+simulation tool designed for running distributed stochastic simulations
+in MRIP scenario&#8221; in a cluster computing environment.
+
+<p>MRIP stands for <i>Multiple Replications in Parallel</i>.
+In MRIP, the computers of the cluster run independent replications
+of the whole simulation process (i.e. with the same parameters but
+different seed for the RNGs (random number generators)),
+generating statistically equivalent streams of simulation output data.
+These data streams are fed to a global data analyser responsible for
+analysis of the final results and for stopping the simulation
+when the results reach a satisfactory accuracy.
+
+<p>The independent simulation processes run independently of one another
+and continuously send their observations to the central analyser
+and control process. This process <i>combines</i> the independent data streams,
+and calculates from these observations an overall estimate of the mean value
+of each parameter.
+Akaroa2 decides by a given confidence level and precision
+whether it has enough observations or not. When it judges that is
+has enough observations it halts the simulation.
+
+<p>If <i>n</i> processors are used, the needed simulation execution time
+is usually <i>n</i> times smaller compared to a one-processor
+simulation (the required number of observations are produced sooner).
+Thus, the simulation would be sped up approximately in proportion
+to the number of processors used and sometimes even more.
+
+<p>Akaroa was designed at the University of Canterbury in Christchurch, New Zealand
+and can be used free of charge for teaching and non-profit research activities.
+
+<p>
+<h3><a name="sec372"/>10.5.3 Using Akaroa with OMNeT++</h3>
+
+<p><p class="subheading">Akaroa</p>
+
+<p>Before the simulation can be run in parallel under Akaroa, you have to
+start up the system:
+
+<p><ul>
+  <li>Start <tt>akmaster</tt> running in the background on some host.
+  <li>On each host where you want to run a simulation engine,
+     start <tt>akslave</tt> in the background.
+</ul>
+
+<p>Each <tt>akslave</tt> establishes a connection with the <tt>akmaster</tt>.
+
+<p>Then you use <tt>akrun</tt> to start a simulation. <tt>akrun</tt> waits
+for the simulation to complete, and writes a report of the results
+to the standard output. The basic usage of the <tt>akrun</tt> command is:
+
+<pre class="commandline">
+akrun -n num_hosts command [argument..]
+</pre>
+<p>
+where <i>command</i> is the name of the simulation you want to start.
+Parameters for Akaroa are read from the file named <tt>Akaroa</tt> in
+the working directory. Collected data from the processes are
+sent to the <tt>akmaster</tt> process, and when the required precision
+has been reached, <tt>akmaster</tt> tells the simulation processes to
+terminate. The results are written to the standard output.
+
+<p>The above description is not detailed enough help you
+set up and successfully use Akaroa -- for that you need to read the
+Akaroa manual.
+
+<p><p class="subheading">Configuring OMNeT++ for Akaroa</p>
+
+<p>First of all, you have to compile OMNeT++ with Akaroa support enabled.
+
+<p>The OMNeT++ simulation must be configured in <tt>omnetpp.ini</tt>
+so that it passes the observations to Akaroa. The simulation model itself does
+not need to be changed -- it continues to write
+the observations into output vectors (<tt><a href="../api/classcOutVector.html">cOutVector</a></tt> objects,
+see chapter <a href="chap7.html#sec256">[7]</a>). You can place some of
+the output vectors under Akaroa control.
+
+<p>You need to add the following to <tt>omnetpp.ini</tt>:
+
+<pre class="inifile">
+[General]
+rng-class = "cAkaroaRNG"
+outputvectormanager-class = "cAkOutputVectorManager"
+</pre>
+<p>
+These lines cause the simulation to obtain random numbers from Akaroa,
+and allows data written to selected output vectors to be passed to Akaroa's
+global data analyser.
+    <br><ul><font size=-1>[For more details on the plugin mechanism these settings make use of,
+    see section <a href="chap16.html#sec465">[16.1]</a>.]</font></ul>
+
+<p>Akaroa's RNG is a Combined Multiple Recursive pseudorandom
+number generator (CMRG) with a period of approximately <i>2<sup>191</sup></i>
+random numbers, and provides a unique stream of random numbers
+for every simulation engine. 
+
+<p><ul class="note"><b>NOTE</b><br>
+It is vital that you obtain random numbers from Akaroa; otherwise,
+all simulation processes will run with the same RNG seeds, and
+produce exactly the same results.
+</ul>
+
+<p>Then you need to specify which output vectors you want to
+be under Akaroa control (by default, none of them are).
+You can use the <tt>*</tt>, <tt>**</tt> wildcards (see
+section <a href="chap9.html#sec337">[9.3.1]</a>) to
+place certain vectors under Akaroa control.
+
+<pre class="inifile">
+&lt;modulename&gt;.&lt;vectorname1&gt;.with-akaroa = true
+&lt;modulename&gt;.&lt;vectorname2&gt;.with-akaroa = true
+</pre>
+<p>
+
+<p><p class="subheading">Using Shared File Systems</p>
+<a name="sec:run-sim:using-shared-filesystems"></a>
+
+<p>It is usually practical to have the same physical disk mounted (e.g. via NFS or Samba)
+on all computers in the cluster. However, because all OMNeT++ simulation
+processes run with the same settings, they would overwrite each other's
+output files (e.g. <tt>omnetpp.vec</tt>, <tt>omnetpp.sca</tt>).
+Your can prevent this from happening using the
+<b><tt>fname-append-host</tt></b> ini file entry:
+
+<pre class="inifile">
+[General]
+fname-append-host = true
+</pre>
+<p>
+When turned on, it appends the host name to the names of the output
+files (output vector, output scalar, snapshot files).
+
+<p>
+
+<p><h2><a name="sec373"/>10.6 Troubleshooting</h2>
+
+<p><h3><a name="sec374"/>10.6.1 Unrecognized Configuration Option</h3>
+
+<p>If you receive an error message about unrecognized configuration
+options you may use <tt>-h config</tt> or <tt>-h configdetails</tt> options
+to display all possible configuration options and their descriptions.
+
+<p><h3><a name="sec375"/>10.6.2 Stack Problems</h3>
+
+<p><p class="subheading">&#8220;Stack violation (<i>FooModule</i> stack too small?) in module <i>bar.foo</i>&#8221;</p>
+<!--stack!too small-->
+
+<p>OMNeT++ detected that the module has used more stack space than it has
+allocated. The solution is to increase the stack for that module type.
+You can call the <tt>getStackUsage()</tt> from <tt>finish()</tt> to find out
+actually how much stack the module used.
+
+<p>
+<p class="subheading">&#8220;Error: Cannot allocate <i>nn</i> bytes stack for module <i>foo.bar&#8221;</i></p>
+
+<p>The resolution depends on whether you are using OMNeT++ on Unix or on Windows.
+
+<p><b>Unix.</b>
+If you get the above message, you have to increase the total stack
+size<!--stack!size--> (the sum of all coroutine stacks). You can do
+so in <tt>omnetpp.ini</tt>:
+
+<pre class="inifile">
+[General]
+total-stack = 2MiB
+</pre>
+<p>
+There is no performance penalty if you set <tt>total-stack</tt> too high. I
+recommend to set it to a few K less than the maximum process stack
+size allowed by the operating system (<tt>ulimit -s</tt>; see
+next section).
+
+<p>
+<b>Windows.</b>
+You need to set a <i>low</i> (!) &#8220;reserved stack size&#8221;
+in the linker options, for example 64K (/stack:65536 linker flag) will do.
+The &#8220;reserved stack size&#8221; is an attribute in the Windows exe
+files' internal header. It can be set from the linker, or with
+the <tt>editbin</tt> Microsoft utility. You can use the <tt>opp_stacktool</tt>
+program (which relies on another Microsoft utility called <tt>dumpbin</tt>)
+to display reserved stack size for executables.
+
+<p>You need a low reserved stack size because the Win32 Fiber API,
+which is the mechanism underlying <tt>activity()</tt>, uses
+this number as the coroutine stack size, and with 1MiB being the default,
+it is easy to run out of the 2GiB possible address space (2GiB/1MiB=2048).
+
+<p>A more detailed explanation follows.
+Each fiber has its own stack, by default 1MiB (this is the &#8220;reserved&#8221;
+stack space -- i.e. reserved in the address space, but not the full
+1MiB is actually &#8220;committed&#8221;, i.e. has physical memory assigned to it).
+This means that a 2GiB address space will run out after 2048 fibers,
+which is way too few. (In practice, you won't even be able to create
+this many fibers, because physical memory is also a limiting factor).
+Therefore, the 1MiB reserved stack size (RSS) must be set to a smaller
+value: the coroutine stack size requested for the module, plus
+the <tt>extra-stack-kb</tt> amount for Cmdenv/Tkenv -- which makes
+about 16K with Cmdenv, and about 48K when using Tkenv.
+Unfortunately, the CreateFiber() Win32 API doesn't allow the RSS to be
+specified. The more advanced CreateFiberEx() API which accepts RSS as
+parameter is unfortunately only available from Windows XP.
+
+<p>The alternative is the stacksize parameter stored in the EXE header,
+which can be set
+via the STACKSIZE .def file parameter, via the /stack linker option,
+or on an existing executable using the editbin /stack utility.
+This parameter specifies a common RSS for the main program stack,
+fiber and thread stacks. 64K should be enough. This is the way the
+simulation executable should be created; linked with the /stack:65536
+option, or the /stack:65536 parameter applied using editbin later.
+For example, after applying the editbin /stacksize:65536 command to
+dyna.exe, I was able to successfully run the Dyna sample with 8000
+Client modules on my Win2K PC with 256M RAM (that means about 12000
+modules at runtime, including about 4000 dynamically created modules.)
+
+<p>
+<p class="subheading">&#8220;Segmentation fault&#8221;</p>
+
+<p>On Unix, if you set the total stack size higher, you may get a
+segmentation fault during network setup<!--segmentation fault--> (or
+during execution if you use dynamically created modules), for exceeding
+the operating system limit for maximum stack size. For example, in
+Linux 2.4.x, the default stack limit is 8192K (that is, 8MiB). The
+<tt>ulimit</tt> shell command can be used to modify the
+resource limits, and you can raise the allowed maximum stack size
+up to 64M.
+
+<pre class="commandline">
+$ ulimit -s 65500
+$ ulimit -s
+65500
+</pre>
+<p>
+Further increase is only possible if you are root.
+Resource limits are inherited by child processes.
+The following sequence can be used under Linux to get a shell with
+256M stack limit:
+
+<pre class="commandline">
+$ su root
+Password:
+# ulimit -s 262144
+# su andras
+$ ulimit -s
+262144
+</pre>
+<p>
+If you don't want to go through the above process at each login, you
+can change the limit in the PAM configuration files. In Redhat Linux
+(maybe other systems too), add the following line to
+<tt>/etc/pam.d/login</tt>:
+
+<pre class="filelisting">
+session    required    /lib/security/pam_limits.so
+</pre>
+<p>
+and the following line to <tt>/etc/security/limits.conf</tt>:
+
+<pre class="filelisting">
+*    hard    stack    65536
+</pre>
+<p>
+<p>
+A more drastic solution is to recompile the kernel with a larger stack
+limit. Edit <tt>/usr/src/linux/include/linux/sched.h</tt> and increase
+<tt>_STK_LIM</tt> from <tt>(8*1024*1024)</tt> to <tt>(64*1024*1024)</tt>.
+</p>
+
+<p>Finally, if you are tight with memory, you can switch to Cmdenv. Tkenv
+increases the stack size of each module by about 32K<!--stack!for
+  Tkenv--> so that user interface code that is called from a
+simple module's context can be safely executed.
+Cmdenv does not need that much extra stack.
+
+<p>
+<p class="subheading">Eventually...</p>
+
+<p>Once you get to the point where you have to adjust the total stack size to
+get your program running, you should probably consider transforming (some
+of) your <tt>activity()</tt> simple modules to <tt>handleMessage()</tt>.
+<tt>activity()</tt> does not scale well for large simulations.
+
+<p>
+
+<p><h3><a name="sec376"/>10.6.3 Memory Leaks and Crashes</h3>
+
+<p>The most common problems in C++ are associated with memory allocation
+(usage of <tt>new</tt> and <tt>delete</tt>):
+
+<p><ul>
+   <li><i>memory leaks,</i> that is, forgetting to delete objects
+     or memory blocks no longer used;
+   <li><i>crashes,</i> usually due to referring to an already deleted
+     object or memory block, or trying to delete one for a second time;
+   <li><i>heap corruption</i> (eventually leading to crash) due to
+     overrunning allocated blocks, i.e. writing past the end of an allocated
+     array.
+</ul>
+
+<p>The most common cause of memory leaks in OMNeT++ simulations is
+forgetting to delete messages. Both Tkenv and Cmdenv are able
+to display the number of messages currently in the simulation,
+helping you to determine if you have such a memory leak;
+see section <a href="chap10.html#sec362">[10.2.4]</a>.
+If you find that the number of messages is steadily increasing,
+you need to find where the message objects are located. You can do so
+by selecting <i>Inspect|From list of all objects...</i> from
+the Tkenv menu, and reviewing the list in the dialog that pops up.
+
+<p>If the number of messages is stable, it is still possible
+you are leaking other <tt><a href="../api/classcOwnedObject.html">cOwnedObject</a></tt>-based objects. You can
+find them using Tkenv's <i>Inspect|From list of all objects...</i>
+function as well.
+
+<p>If you are leaking non-<tt><a href="../api/classcOwnedObject.html">cOwnedObject</a></tt>-based objects or just
+memory blocks (structs, arrays, etc., allocated by <tt>new</tt>),
+you will not be able to find them via Tkenv. You will probably need
+a specialized memory debugging tool like the ones described below.
+
+<p><p class="subheading">Memory Debugging Tools</p>
+
+<p>If you suspect that you may have memory allocation problems
+(crashes associated with double-deletion or accessing already
+deleted block, or memory leaks), you can use specialized tools
+to track them down.
+
+<p>By far the most efficient, most robust and most versatile tool
+is <i>Valgrind</i>, originally developed for debugging KDE.
+
+<p>Other memory debuggers are <i>NJAMD</i>, <i>MemProf</i>,
+<i>MPatrol</i>, <i>dmalloc</i> and <i>ElectricFence</i>.
+Most of the above tools support tracking down memory leaks as well as
+detecting double deletion, writing past the end of an allocated block, etc.
+
+<p>A proven commercial tool is <i>Rational Purify</i>. It has
+a good reputation and has proved its usefulness many times.
+
+<p><h3><a name="sec377"/>10.6.4 Simulation Executes Slowly</h3>
+
+<p>Check the following if you think your simulation is running too slowly:
+
+<p><ul>
+  <li> Turn on express mode with the <tt>cmdenv-express-mode=true</tt> configuration option.
+  <li> Be sure that event logging is turned off (<tt>record-eventlog=false</tt> configuration option).
+  <li> Turn of vector file recording if you don't absolutely need it (<tt>**.vector-recording=false</tt>).
+  <li> If you are running under Tkenv, disable animation features, close inspectors,
+        hide the timeline, hide object tree, turn off log filtering.
+  <li> Compile your code as release instead of debug (in some cases this can give you 5x speedup)
+</ul>
+
+<p>
+What can you do if the simulation executes much slower than you expect?
+The best advice that can be given here is that you should
+<b>use a good profiler</b> to find out how much time is spent in each
+part of the program. Do not make the mistake of omitting this step,
+thinking that you know which part is slow! Even for experienced
+programmers, a profiling session is all too often full of surprises.
+It often turns out that lots of CPU time is spent in completely
+innocent-looking statements, while big and complex algorithms
+don't take nearly as much time as you expected. <i>Don't assume anything
+-- profile before you optimize!</i>
+
+<p>A great profiler on Linux is the <i>Valgrind</i>-based
+<i>callgrind</i>, and its visualizer <i>KCachegrind</i>.
+Unfortunately it won't be ported to Windows anytime soon.
+On Windows, you are out of luck -- commercial products may help, or,
+port your simulation to Linux. The latter goes usually much more smoothly
+than one would expect.
+
+<p>
+
+<hr class='pgbr'><p><hr><b><a href="chap9.html">[Prev]</A>&nbsp;<a href="chap11.html">[Next]</A>&nbsp;<a href="toc.html#toc_10.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p>
+
+</body>
+</html>

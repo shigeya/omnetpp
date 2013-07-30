@@ -1,0 +1,126 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Wizard Types</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="IDE Customization Guide"><link rel="up" href="ch01.html" title="Chapter 1. Writing Wizards"><link rel="prev" href="ch01s04.html" title="Writing an Example Wizard"><link rel="next" href="ch01s06.html" title="Configuration Keys"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Wizard Types</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch01s04.html">Prev</a> </td><th width="60%" align="center">Chapter 1. Writing Wizards</th><td width="20%" align="right"> <a accesskey="n" href="ch01s06.html">Next</a></td></tr></table><hr></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_wizard_types"></a>Wizard Types</h2></div></div></div><p>The wizard will set the <code class="literal">wizardType</code> template variable when it executes,
+so template code can check under which wizard type it is running (using <code class="literal">&lt;#if&gt;..&lt;/#if&gt;</code>), and
+execute accordingly. This feature allows the user to create templates that
+can be used for multiple wizard types.</p><p>There are several types of wizards you can create. Each one has a different
+goal.</p><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_new_project_wizards"></a>New Project Wizards</h3></div></div></div><pre class="literallayout">wizardType = project</pre><p>Project wizards create new projects and let the user create files in them.
+It is possible to adjust project properties to customize the new project.
+You can add C&#8288;+&#8288;+ support to the project, set source and NED folders, etc.</p><p>The first two pages of the wizard are standard: they prompt the user for
+the name of the new project and let the user choose a content template.
+These pages are followed by pages provided by the selected content template.
+If the user selected C&#8288;+&#8288;+ support on the first page, custom pages are
+followed by the standard CDT New Project pages.</p><p>When the user clicks <span class="emphasis"><em>Finish</em></span>, the wizard creates the project and configures
+it according to the selected options (C&#8288;+&#8288;+ support, source folders, etc.). Then,
+template files are copied into the new project, performing template processing
+as necessary. Templated pages are responsible for creating the <code class="literal">package.ned</code>
+file according to the <code class="literal">nedPackageName</code> and <code class="literal">namespaceName</code> options, as well
+as creating source files in the NED and C&#8288;+&#8288;+ source folders.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>NED and C&#8288;+&#8288;+ files are not automatically placed into the
+      NED and C&#8288;+&#8288;+ source folders. Templated pages have to be written
+      (for example using <code class="literal">setoutput</code>) so that they explicitly create the files
+      in the proper places.</p></div><p>There are a few useful variables that template files use. The
+<code class="literal">rawProjectName</code> variable contains the project name. This variable cannot be
+directly used as C&#8288;+&#8288;+ or NED package names, type names, etc, because it may
+contain spaces or other characters not allowed in identifiers. For convenience,
+the wizard provides sanitized versions of the project name that can be used
+as identifiers; they are in the variables <code class="literal">projectName</code>, <code class="literal">PROJECTNAME</code> and
+<code class="literal">projectname</code>, and differ in capitalization. The <code class="literal">targetFolder</code> variable
+is set to <code class="literal">/</code><span class="emphasis"><em>&lt;project name&gt;</em></span>. These variables cannot be edited in custom wizard
+pages.</p><p>The variables <code class="literal">addProjectReference</code>, <code class="literal">makemakeOptions</code>, <code class="literal">sourceFolders</code> and
+<code class="literal">nedSourceFolders</code> affect the creation of the project before template files
+get processed. It is allowable to provide an initialization value for these
+variables in <code class="literal">template.properties</code> and to let the user change them in
+custom pages.</p><p>For conformance with other wizards, the project wizard initializes
+the following variables with different case versions of the project name:
+<code class="literal">targetTypeName</code>, <code class="literal">nedPackageName</code>, and <code class="literal">namespaceName</code>. The <code class="literal">targetMainFile</code>
+variable is initialized to <span class="emphasis"><em>projectName</em></span>+<code class="literal">.ned</code>, but there is no requirement
+for the template to actually create this file. It can provide a
+different initialization value for these variables in <code class="literal">template.properties</code>
+and can let the user change them in custom pages.</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Tip</h3><p>If the new project contains a simulation, it is recommended that <code class="literal">targetTypeName</code>
+     and <code class="literal">targetMainFile</code> are used as the network name and NED file name respectively.</p></div><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>The <code class="literal">targetFileName</code> variable is not set because the project wizard
+      is not required to create a file.</p></div><p>See the appendix for the variable names that are supported in project wizard
+templates.</p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_new_simulation_wizards"></a>New Simulation Wizards</h3></div></div></div><pre class="literallayout">wizardType = simulation</pre><p>A new simulation is basically a new folder containing all files required to run a
+simulation. The simulation folder usually contains NED files, an INI file,
+and possibly also CC, H and MSG files.</p><p>The first two pages of the wizard are standard; they prompt the user for
+the parent and name of the new folder, and let the user choose a content template.
+These pages are followed by pages provided by the selected content template.
+Simulations can only be created in new folders under existing projects or folders.</p><p>When the user clicks <span class="emphasis"><em>Finish</em></span>, the wizard creates the folder. The
+template files are then copied into the new folder, performing template processing
+as necessary.</p><p>There are a few useful variables that template files can use. The
+<code class="literal">simulationFolderName</code> contains the name of the new folder (without path).
+This variable cannot be directly used as a C&#8288;+&#8288;+ or NED identifier, because it may
+contain spaces or other characters not allowed in identifiers. For convenience,
+the wizard provides the <code class="literal">simulationName</code> variable which is a sanitized version
+of the folder name. The <code class="literal">targetFolder</code> variable is set to the workspace path of the new
+folder. These variables cannot be edited in custom wizard pages.</p><p>For conformance with other wizards, the simulation wizard initializes
+the <code class="literal">targetTypeName</code> variable with the simulation name. The <code class="literal">targetMainFile</code>
+variable is initialized to <span class="emphasis"><em>simulationName</em></span>+<code class="literal">.ned</code>, but there is no requirement
+that the template actually creates this file. It can provide a
+different initialization value for these variables in <code class="literal">template.properties</code>
+and can let the user change them in custom pages.</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Tip</h3><p>The intended purpose of <code class="literal">targetTypeName</code> and <code class="literal">targetMainFile</code> is to be used
+     as the network name and NED file name respectively in the new simulation.</p></div><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>The <code class="literal">targetFileName</code> variable is not set because the simulation wizard
+      is not required to create a file.</p></div><p>The <code class="literal">nedPackageName</code> and <code class="literal">namespaceName</code> variables are set by the wizard to the
+NED package name and C&#8288;+&#8288;+ namespace expected for the given folder. These values
+are derived from the folder path, the toplevel <code class="literal">package.ned</code> file and the
+<code class="literal">@namespace</code> property in it, and cannot be overridden.</p><p>See the appendix for the variable names that are supported in simulation wizard
+templates.</p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_new_ini_msg_or_ned_file_wizards"></a>New INI, MSG or NED File Wizards</h3></div></div></div><pre class="literallayout">wizardType = compoundmodule, network, nedfile, inifile, msgfile</pre><p>These wizard types generate a single file. The first two pages of the wizard
+are standard; they prompt the user for the parent folder and name of the new file,
+and let the user choose a content template. These pages are followed by pages
+provided by the selected content template.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>Currently the wizard does not ensure that the created file will be under
+      a NED/C&#8288;+&#8288;+ source folder. This may change in the future.</p></div><p>When the user clicks <span class="emphasis"><em>Finish</em></span>, template files are copied into the selected parent
+folder, performing template processing as necessary. The template files
+are expected to create a file with the name chosen by the user.</p><p>The wizard passes the file name to the template files in the <code class="literal">targetFileName</code>
+variable.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>The wizard does not prevent the templates from creating other files than
+      <code class="literal">targetFileName</code>. It is the responsibility of the template author to
+      ensure that only a single file is created.</p></div><p>There are a few useful variables that template files can use. The
+<code class="literal">targetFolder</code> variable is set to the workspace path of the parent
+folder. This variable cannot be edited in custom wizard pages.</p><p>For conformance with other wizards, the new wizard initializes the
+<code class="literal">targetTypeName</code> variable to a sanitized version of the file name (minus
+extension). This variable can be used as a NED or message type name
+in the generated file. The <code class="literal">targetMainFile</code> variable is the same as
+<code class="literal">targetFileName</code>.</p><p>One can provide a different initialization value for the <code class="literal">targetTypeName</code>
+variable in <code class="literal">template.properties</code> and let the user change it in custom pages.</p><p>The <code class="literal">nedPackageName</code> and <code class="literal">namespaceName</code> variables are set by the wizard to the
+NED package name and C&#8288;+&#8288;+ namespace expected for the given folder. These values
+are derived from the file path, the toplevel <code class="literal">package.ned</code> file and the
+<code class="literal">@namespace</code> property in it, and cannot be overridden.</p><p>See the appendix for the variable names that are supported in new file wizard
+templates.</p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_new_simple_module_wizard"></a>New Simple Module Wizard</h3></div></div></div><pre class="literallayout">wizardType = simplemodule</pre><p>The simple module wizard creates a simple module, usually consisting of a
+NED file and C&#8288;+&#8288;+ implementation files. This wizard works in a similar way
+as the <span class="emphasis"><em>New NED File</em></span> or <span class="emphasis"><em>New Compound Module</em></span> wizard, but it is allowed to
+create other files (C&#8288;+&#8288;+ sources) in addition to the NED file.</p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_import_wizards"></a>Import Wizards</h3></div></div></div><pre class="literallayout">wizardType = import</pre><p>An import wizard is not a standalone type, but rather a flag on other wizard types.
+It makes the wizard appear in the <span class="emphasis"><em>File|Import&#8230;</em></span> dialog in addition to the <span class="emphasis"><em>File|New &#8230;</em></span>
+dialogs.</p><p>To access the import wizards, choose <span class="emphasis"><em>OMNeT++</em></span>, <span class="emphasis"><em>Networks, simulations and other items</em></span>
+as import source on the first page of the <span class="emphasis"><em>Import</em></span> dialog. The next page will be the
+content template selection page. After choosing a template, the next page
+will be the file, folder or project name selection page of the <span class="emphasis"><em>New&#8230;</em></span> wizard,
+followed by the custom wizard pages.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>If an import wizard supports more than one wizard types (e.g. <code class="literal">project</code>, <code class="literal">simulation</code>,
+  <code class="literal">nedfile</code>, etc.), the <span class="emphasis"><em>File|Import&#8230;</em></span> dialog will use only one of those types. The type
+  is chosen in the following order of preference: <code class="literal">network</code>, <code class="literal">nedfile</code>, <code class="literal">compoundmodule</code>,
+  <code class="literal">simplemodule</code>, <code class="literal">msgfile</code>, <code class="literal">inifile</code>, <code class="literal">simulation</code>, and <code class="literal">project</code>. This may be changed
+  in the future to explicit wizard type selection.</p></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_export_wizards"></a>Export Wizards</h3></div></div></div><pre class="literallayout">wizardType = export</pre><p>Export wizards can be accessed via the <span class="emphasis"><em>File|Export&#8230;</em></span> dialog and export data
+into one or more files in the workspace or in the file system.</p><p>To access the export wizards, choose <span class="emphasis"><em>OMNeT++</em></span>, <span class="emphasis"><em>Networks, simulations and other items</em></span>
+as export destination on the first page of the <span class="emphasis"><em>Export</em></span> dialog. The next page will be
+the content template selection page, followed by the custom wizard pages.</p><p>Export wizards do not have a standard file/folder selection page, the target
+file name(s) must be obtained from the user on custom wizard pages.</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Tip</h3><p>You can use the <code class="literal">SaveAsChooser</code> and <code class="literal">ExternalSaveAsChooser</code> custom controls
+     to prompt for a file name in the workspace and in the file system respectively.</p></div><p>The export wizard does not set <code class="literal">targetFileName</code>, <code class="literal">targetMainFile</code>, or any similar
+variables. It is entirely up to the template author to define a variable for storing the
+output file name, letting the user edit it, and saving the content in that file.</p><p>Template files are not allowed to produce any output; they are supposed to create
+the target files programmatically.</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Tip</h3><p>Templates can use static methods of the <code class="literal">FileUtils</code> class, such as
+   <code class="literal">createFile(workspacepath, content)</code> and <code class="literal">createExternalFile(filesystempath, content)</code>,
+   to create the files. Here, <code class="literal">content</code> is a string that holds the text to be written
+   out into the file in the platform&#8217;s default encoding.</p></div><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Tip</h3><p>The content text may be assembled using plain string concatenation
+  (<code class="literal">&lt;#assign content = content + "\nsome text"&gt;</code>), or templated content
+  (<code class="literal">&lt;#assign content&gt;some text, ${foo} and ${bar}...&lt;/#assign&gt;</code>).</p></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_new_wizard_wizard"></a>New Wizard Wizard</h3></div></div></div><pre class="literallayout">wizardType = wizard</pre><p>A <span class="emphasis"><em>New Wizard</em></span> wizard creates a wizard under the <code class="literal">templates/</code> folder of a workspace
+project.</p><p>The first two pages of the wizard are standard. They prompt the user to select
+the project that will hold the wizard, choose the wizard name (name of the new folder under
+<code class="literal">templates/</code>), and pick a content template. These pages are
+followed by pages provided by the selected content template.</p><p>When the user clicks <span class="emphasis"><em>Finish</em></span>, the wizard creates the folder under the
+<code class="literal">templates/</code> folder of the chosen project. After that, template files are copied
+into the new folder, performing template processing as necessary.</p><p>There are a few useful variables that template files can use. The
+<code class="literal">newWizardName</code> variable contains the name of the new folder (without path),
+and <code class="literal">newWizardProject</code> contains the name of the project. The project name variables
+(<code class="literal">rawProjectName</code>, <code class="literal">projectName</code>, <code class="literal">PROJECTNAME</code>, etc.) and <code class="literal">targetFolder</code>
+variables are also set. These variables cannot be edited in custom wizard pages.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>The wizard does not set the <code class="literal">targetFileName</code> and <code class="literal">targetMainFile</code> variables.</p></div><p>See the appendix for the variable names that are supported in <span class="emphasis"><em>New Wizard</em></span> wizard
+templates.</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Tip</h3><p>To create a <code class="literal">template.properties</code> file for the new wizard, use a
+   <code class="literal">template.properties.ftl</code> file in the wizard wizard. Similarly, you will
+   likely have files with the <code class="literal">.xswt.ftl</code> and <code class="literal">.ftl.ftl</code> extensions in the
+   wizard wizard. Inside <code class="literal">.ftl.ftl</code> files, use the <code class="literal">&lt;#noparse&gt;..&lt;/#noparse&gt;</code>
+   directive to protect parts that you want to be copied verbatim into the
+   created wizards.</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch01s04.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch01.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch01s06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Writing an Example Wizard </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Configuration Keys</td></tr></table></div></body></html>

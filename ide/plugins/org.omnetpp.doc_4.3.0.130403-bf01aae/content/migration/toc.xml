@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<toc label="Migrating OMNeT⁠+⁠+ Simulations From Version 3.x To 4.x" topic="index.html">
+  <topic label="What has changed since 3.x?" href="content/migration/ch01.html">
+    <topic label="Overview" href="content/migration/ch01.html#id272452"/>
+    <topic label="NED files" href="content/migration/ch01s02.html"/>
+    <topic label="Message (msg) files" href="content/migration/ch01s03.html"/>
+    <topic label="Initialization (ini) files" href="content/migration/ch01s04.html"/>
+    <topic label="Makefiles" href="content/migration/ch01s05.html"/>
+    <topic label="C++ code (cc/h files)" href="content/migration/ch01s06.html"/>
+    <topic label="Environment variables" href="content/migration/ch01s07.html"/>
+    <topic label="Command line options" href="content/migration/ch01s08.html"/>
+  </topic>
+  <topic label="Migration tools" href="content/migration/ch02.html">
+    <topic label="migratened" href="content/migration/ch02.html#id273786"/>
+    <topic label="migratemsg" href="content/migration/ch02s02.html"/>
+    <topic label="migrateini" href="content/migration/ch02s03.html"/>
+    <topic label="migratecpp" href="content/migration/ch02s04.html"/>
+    <topic label="opp_makemake" href="content/migration/ch02s05.html"/>
+  </topic>
+  <topic label="How to migrate" href="content/migration/ch03.html">
+    <topic label="Getting your simulation model working" href="content/migration/ch03.html#id274193"/>
+    <topic label="Making use of new OMNeT⁠+⁠+ features" href="content/migration/ch03s02.html">
+      <topic label="NED files" href="content/migration/ch03s02.html#id275123"/>
+      <topic label="ini files" href="content/migration/ch03s02.html#id275363"/>
+      <topic label="C++ code" href="content/migration/ch03s02.html#id275472"/>
+    </topic>
+  </topic>
+</toc>

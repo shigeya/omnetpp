@@ -1,0 +1,521 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta name="copyright" content="OpenSim Ltd.">
+  <meta NAME="Author" CONTENT="Andras Varga">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <link rel="STYLESHEET" href="../book.css"  type="text/css">
+  <title>OMNeT++ - Manual</title>
+</head>
+<body>
+
+<p><hr><b><a href="chap13.html">[Prev]</A>&nbsp;<a href="chap15.html">[Next]</A>&nbsp;<a href="toc.html#toc_14.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p><h1><a name="sec437"/>14 Documenting NED and Messages</h1>
+<a name="cha:neddoc"></a>
+
+<p><h2><a name="sec438"/>14.1 Overview</h2>
+
+<p>OMNeT++ provides a tool which can generate HTML documentation from NED files
+and message definitions. Like Javadoc and Doxygen, the NED documentation tool
+makes use of source code comments. The generated HTML documentation
+lists all modules, channels, messages, etc., and presents their details including
+description, gates, parameters, assignable submodule parameters, and
+syntax-highlighted source code. The documentation also includes clickable
+network diagrams (exported from the graphical editor) and usage diagrams as
+well as inheritance diagrams.
+
+<p>The documentation tool integrates with Doxygen, meaning that it can
+hyperlink simple modules and message classes to their C++ implementation
+classes in the Doxygen documentation. If you also generate the C++
+documentation with some Doxygen features turned on (such as
+<i>inline-sources</i> and <i>referenced-by-relation</i>, combined with
+<i>extract-all</i>, <i>extract-private</i> and
+<i>extract-static</i>), the result is an easily browsable and very
+informative presentation of the source code. Of course, one still has to
+write documentation comments in the code.
+
+<p>In the 4.0 version, the documentation tool is part of the Eclipse-based
+simulation IDE.
+
+<p>
+<h2><a name="sec439"/>14.2 Documentation Comments</h2>
+
+<p>Documentation is embedded in normal comments. All <tt>//</tt> comments
+that are in the &#8220;right place&#8221; (from the documentation tool's
+point of view) will be included in the generated documentation.
+  <br><ul><font size=-1>[In contrast, Javadoc and Doxygen use special comments (those
+     beginning with <tt>/**</tt>, <tt>///</tt>, <tt>//&lt;</tt> or a similar
+     marker) to distinguish documentation from &#8220;normal&#8221; comments in the
+     source code. In OMNeT++ there is no need for that: NED and the message
+     syntax is so compact that practically all comments one would want to write
+     in them can serve documentation purposes.]</font></ul>
+
+<p>Example:
+
+<pre class="ned">
+//
+// An ad-hoc traffic generator to test the Ethernet models.
+//
+simple Gen
+{
+    parameters:
+        string destAddress;  // destination MAC address
+        int protocolId;      // value for SSAP/DSAP in Ethernet frame
+        double waitMean @unit(s); // mean for exponential interarrival times
+    gates:
+        output out;  // to Ethernet LLC
+}
+</pre>
+<p>
+You can also place comments above parameters and gates. This is useful
+if they need long explanations. Example:
+
+<pre class="ned">
+//
+// Deletes packets and optionally keeps statistics.
+//
+simple Sink
+{
+    parameters:
+        // You can turn statistics generation on and off. This is
+        // a very long comment because it has to be described what
+        // statistics are collected (or not).
+        bool collectStatistics = default(true);
+    gates:
+        input in;
+}
+</pre>
+<p>
+<h3><a name="sec440"/>14.2.1 Private Comments</h3>
+
+<p>If you want a comment line <i>not</i> to appear in the documentation,
+begin it with <tt>//#</tt>. Those lines will be ignored by the
+documentation tool, and can be used to make &#8220;private&#8221; comments
+like <tt>FIXME</tt> or <tt>TODO</tt>, or to comment out unused code.
+
+<pre class="ned">
+//
+// An ad-hoc traffic generator to test the Ethernet models.
+//# TODO above description needs to be refined
+//
+simple Gen
+{
+    parameters:
+        string destAddress;  // destination MAC address
+        int protocolId;      // value for SSAP/DSAP in Ethernet frame
+        //# double burstiness;  -- not yet supported
+        double waitMean @unit(s); // mean for exponential interarrival times
+    gates:
+        output out;  // to Ethernet LLC
+}
+</pre>
+<p>
+
+<p><h3><a name="sec441"/>14.2.2 More on Comment Placement</h3>
+
+<p>Comments should be written where the tool will find them.
+This is a) immediately above the documented item, or b) after the
+documented item, on the same line.
+
+<p>In the former case, make sure there is no blank line left
+between the comment and the documented item. Blank lines
+detach the comment from the documented item.
+
+<p>Example:
+<pre class="ned">
+// This is wrong! Because of the blank line, this comment is not
+// associated with the following simple module!
+
+simple Gen
+{
+    ...
+}
+</pre>
+
+<p>Do not try to comment groups of parameters together. The result
+will be awkward.
+
+<p><h2><a name="sec442"/>14.3 Referring to Other NED and Message Types</h2>
+
+<p>You can reference other NED and message types by name in comments. There
+are two styles in which references can be written: automatic linking and
+tilde linking. The same style must be following throughout the whole
+project, and the correct one must be selected in the documentation
+generator tool when it is run.
+
+<p><h3><a name="sec443"/>14.3.1 Automatic Linking</h3>
+
+<p>In the automatic linking style, words that match existing NED of message
+types are hyperlinked automatically. It is usually enough to write the
+simple name of the type (e.g. <tt>TCP</tt>), you don't need to spell out the
+fully qualified type (<tt>inet.transport.tcp.TCP</tt>), although you can.
+
+<p>Automatic hyperlinking is sometimes overly agressive. For example, when you
+write <tt>IP address</tt> in a comment and an <tt>IP</tt> module exists
+in the project, it will create a hyperlink to the module, which is probably
+not what you want. You can prevent hyperlinking of a word by inserting a
+backslash in front it: <tt>\IP address</tt>. The backslash will
+not appear in the HTML output. The <tt>&lt;nohtml&gt;</tt> tag will also prevent
+hyperlinking words in the enclosed text: <tt>&lt;nohtml&gt;IP address&lt;/nohtml&gt;</tt>.
+On the other hand, if you deliberately want to print a backslash immediately
+in front of a word (e.g. output <i>&#8220;use \t to print a Tab&#8221;</i>),
+use either two backslashes (<tt>use \\t...</tt>) or the
+<tt>&lt;nohtml&gt;</tt> tag (<tt>&lt;nohtml&gt;use \t...&lt;/nohtml&gt;</tt>).
+Backslashes in other contexts (i.e. when not in front of a word) do not have
+a special meaning, and are preserved in the output.
+
+<p>The detailed rules:
+
+<p><ol>
+  <li> Words matching a type name are automatically hyperlinked
+  <li> A backslash immediately followed by an identifier (i.e. letter or underscore)
+        prevents hyperlinking, and the backslash is removed from the output
+  <li> A double backslash followed by an identifier produces a single backslash,
+        plus the potentially hyperlinked identifier
+  <li> Backslashes in any other contexts are not interpreted, and preserved in the output
+  <li> Tildes are not interpreted, and are preserved in the output
+  <li> Inside <tt>&lt;nohtml&gt;</tt>, no backslash processing or hyperlinking takes place
+</ol>
+
+<p><h3><a name="sec444"/>14.3.2 Tilde Linking</h3>
+
+<p>In the tilde style, only words that are explicitly marked with a tilde are
+subject to hyperlinking: <tt>~TCP</tt>,
+<tt>~inet.transport.tcp.TCP</tt>.
+
+<p>To produce a literal tilde followed by an identifier in the output (for example,
+to output <i>&#8220;the ~TCP() destructor&#8221;</i>), you need to
+double the tilde character: <tt>the ~~TCP() destructor</tt>.
+
+<p>The detailed rules:
+
+<p><ol>
+  <li> Words matching a type name are <i>not</i> hyperlinked automatically
+  <li> A tilde immediately followed by an identifier (i.e. letter or underscore)
+        will be hyperlinked, and the tilde is removed from the output. It is
+        considered an error if there is no type with that name.
+  <li> A double tilde followed by an identifier produces a single tilde plus the identifier
+  <li> Tildes in any other contexts are not interpreted, and preserved in the output
+  <li> Backslashes are not interpreted, and are preserved in the output
+  <li> Inside <tt>&lt;nohtml&gt;</tt>, no tilde processing or hyperlinking takes place
+</ol>
+
+<p><h2><a name="sec445"/>14.4 Text Layout and Formatting</h2>
+
+<p><h3><a name="sec446"/>14.4.1 Paragraphs and Lists</h3>
+
+<p>If you write longer descriptions, you will need text formatting capabilities.
+Text formatting works like in Javadoc or Doxygen -- you can break up the
+text into paragraphs and create bulleted/numbered lists without
+special commands, and use HTML for more fancy formatting.
+
+<p>Paragraphs are separated by empty lines, like in LaTeX or Doxygen.
+Lines beginning with `<tt>-</tt>' will be turned into bulleted lists,
+and lines beginning with `<tt>-#</tt>' into numbered lists.
+
+<p>Example:
+
+<pre class="ned">
+//
+// Ethernet MAC layer. MAC performs transmission and reception of frames.
+//
+// Processing of frames received from higher layers:
+// - sends out frame to the network
+// - no encapsulation of frames -- this is done by higher layers.
+// - can send PAUSE message if requested by higher layers (PAUSE protocol,
+//   used in switches). PAUSE is not implemented yet.
+//
+// Supported frame types:
+// -# IEEE 802.3
+// -# Ethernet-II
+//
+</pre>
+<p>
+
+<p><h3><a name="sec447"/>14.4.2 Special Tags</h3>
+
+<p>The documentation tool understands the following tags and will render them accordingly:
+<tt>@author</tt>, <tt>@date</tt>, <tt>@todo</tt>, <tt>@bug</tt>, <tt>@see</tt>, <tt>@since</tt>,
+<tt>@warning</tt>, <tt>@version</tt>. Example usage:
+
+<pre class="ned">
+//
+// @author Jack Foo
+// @date 2005-02-11
+//
+</pre>
+<p>
+
+<p><h3><a name="sec448"/>14.4.3 Text Formatting Using HTML</h3>
+
+<p>Common HTML tags are understood as formatting commands.
+The most useful tags are: <tt>&lt;i&gt;..&lt;/i&gt;</tt> (italic),
+<tt>&lt;b&gt;..&lt;/b&gt;</tt> (bold), <tt>&lt;tt&gt;..&lt;/tt&gt;</tt> (typewriter font),
+<tt>&lt;sub&gt;..&lt;/sub&gt;</tt> (subscript), <tt>&lt;sup&gt;..&lt;/sup&gt;</tt> (superscript),
+<tt>&lt;br&gt;</tt> (line break), <tt>&lt;h3&gt;</tt> (heading),
+<tt>&lt;pre&gt;..&lt;/pre&gt;</tt> (preformatted text) and <tt>&lt;a href=..&gt;..&lt;/a&gt;</tt> (link),
+as well as a few other tags used for table creation (see below).
+For example, <tt>&lt;i&gt;Hello&lt;/i&gt;</tt> will be rendered as &#8220;<i>Hello</i>&#8221;
+(using an italic font).
+
+<p>The complete list of HTML tags interpreted by the documentation tool are:
+<tt>&lt;a&gt;</tt>, <tt>&lt;b&gt;</tt>, <tt>&lt;body&gt;</tt>, <tt>&lt;br&gt;</tt>, <tt>&lt;center&gt;</tt>,
+<tt>&lt;caption&gt;</tt>, <tt>&lt;code&gt;</tt>, <tt>&lt;dd&gt;</tt>, <tt>&lt;dfn&gt;</tt>, <tt>&lt;dl&gt;</tt>,
+<tt>&lt;dt&gt;</tt>, <tt>&lt;em&gt;</tt>, <tt>&lt;form&gt;</tt>, <tt>&lt;font&gt;</tt>, <tt>&lt;hr&gt;</tt>,
+<tt>&lt;h1&gt;</tt>, <tt>&lt;h2&gt;</tt>, <tt>&lt;h3&gt;</tt>, <tt>&lt;i&gt;</tt>, <tt>&lt;input&gt;</tt>, <tt>&lt;img&gt;</tt>,
+<tt>&lt;li&gt;</tt>, <tt>&lt;meta&gt;</tt>, <tt>&lt;multicol&gt;</tt>, <tt>&lt;ol&gt;</tt>, <tt>&lt;p&gt;</tt>, <tt>&lt;small&gt;</tt>,
+<tt>&lt;span&gt;</tt>, <tt>&lt;strong&gt;</tt>,
+<tt>&lt;sub&gt;</tt>, <tt>&lt;sup&gt;</tt>, <tt>&lt;table&gt;</tt>, <tt>&lt;td&gt;</tt>, <tt>&lt;th&gt;</tt>, <tt>&lt;tr&gt;</tt>,
+<tt>&lt;tt&gt;</tt>, <tt>&lt;kbd&gt;</tt>, <tt>&lt;ul&gt;</tt>, <tt>&lt;var&gt;</tt>.
+
+<p>Any tags not in the above list will not be interpreted as formatting commands
+but will be printed verbatim -- for example, <tt>&lt;what&gt;bar&lt;/what&gt;</tt>
+will be rendered literally as &#8220;&lt;what&gt;bar&lt;/what&gt;&#8221; (unlike HTML where
+unknown tags are simply ignored, i.e. HTML would display &#8220;bar&#8221;).
+
+<p>If you insert links to external pages (web sites), its useful to add
+the <tt>target="_blank"</tt> attribute to ensure pages come up in a new
+browser window and not just in the current frame which looks awkward.
+(Alternatively, you can use the <tt>target="_top"</tt> attribute
+which replaces all frames in the current browser).
+
+<p>Examples:
+
+<pre class="ned">
+//
+// For more info on Ethernet and other LAN standards, see the
+// &lt;a href="http://www.ieee802.org/" target="_blank"&gt;IEEE 802
+// Committee's site&lt;/a&gt;.
+//
+</pre>
+<p>
+You can also use the <tt>&lt;a href=..&gt;</tt> tag to create links within the page:
+
+<pre class="ned">
+//
+// See the &lt;a href="#resources"&gt;resources&lt;/a&gt; in this page.
+// ...
+// &lt;a name="resources"&gt;&lt;b&gt;Resources&lt;/b&gt;&lt;/a&gt;
+// ...
+//
+</pre>
+<p>
+You can use the <tt>&lt;pre&gt;..&lt;/pre&gt;</tt> HTML tag to insert source code examples
+into the documentation. Line breaks and indentation will be preserved,
+but HTML tags continue to be interpreted (or you can turn them off
+with <tt>&lt;nohtml&gt;</tt>, see later).
+
+<p>Example:
+
+<pre class="ned">
+// &lt;pre&gt;
+// // my preferred way of indentation in C/C++ is this:
+// &lt;b&gt;for&lt;/b&gt; (&lt;b&gt;int&lt;/b&gt; i=0; i&lt;10; i++)
+// {
+//     printf(&lt;i&gt;"%d\n"&lt;/i&gt;, i);
+// }
+// &lt;/pre&gt;
+</pre>
+<p>
+will be rendered as
+
+<p><pre class="verbatim">
+// my preferred way of indentation in C/C++ is this:
+<b>for</b> (<b>int</b> i=0; i&lt;10; i++)
+{
+    printf(<i>"%d\n"</i>, i);
+}
+</pre>
+
+<p>HTML is also the way to create tables. The example below
+
+<pre class="ned">
+//
+// &lt;table border="1"&gt;
+//   &lt;tr&gt;  &lt;th&gt;#&lt;/th&gt; &lt;th&gt;number&lt;/th&gt; &lt;/tr&gt;
+//   &lt;tr&gt;  &lt;td&gt;1&lt;/td&gt; &lt;td&gt;one&lt;/td&gt;    &lt;/tr&gt;
+//   &lt;tr&gt;  &lt;td&gt;2&lt;/td&gt; &lt;td&gt;two&lt;/td&gt;    &lt;/tr&gt;
+//   &lt;tr&gt;  &lt;td&gt;3&lt;/td&gt; &lt;td&gt;three&lt;/td&gt;  &lt;/tr&gt;
+// &lt;/table&gt;
+//
+</pre>
+<p>
+will be rendered approximately as:
+
+<p><table border>
+<TR> <TD align=left>
+
+<p><b>#</b> </TD> <TD align=left> <b>number</b> </TD></TR>
+<TR> <TD align=left> 1 </TD> <TD align=left> one </TD></TR>
+<TR> <TD align=left> 2 </TD> <TD align=left> two </TD></TR>
+<TR> <TD align=left> 3 </TD> <TD align=left> three </TD></TR>
+</table>
+
+<p>
+<h3><a name="sec449"/>14.4.4 Escaping HTML Tags</h3>
+
+<p>Sometimes you may need to turn off interpreting HTML tags (<tt>&lt;i&gt;</tt>, <tt>&lt;b&gt;</tt>, etc.)
+as formatting instructions, and rather you want them to appear as literal
+<tt>&lt;i&gt;</tt>, <tt>&lt;b&gt;</tt> text in the documentation. You can achieve this via
+surrounding the text with the <tt>&lt;nohtml&gt;</tt>...<tt>&lt;/nohtml&gt;</tt> tag.
+For example,
+
+<pre class="ned">
+// Use the &lt;nohtml&gt;&lt;i&gt;&lt;/nohtml&gt; tag (like &lt;tt&gt;&lt;nohtml&gt;&lt;i&gt;this&lt;/i&gt;&lt;/nohtml&gt;&lt;tt&gt;)
+// to write in &lt;i&gt;italic&lt;/i&gt;.
+</pre>
+<p>
+will be rendered as &#8220;Use the &lt;i&gt; tag (like <tt>&lt;i&gt;this&lt;/i&gt;</tt>) to write
+in <i>italic</i>.&#8221;
+
+<p><tt>&lt;nohtml&gt;</tt>...<tt>&lt;/nohtml&gt;</tt> will also prevent <tt>opp_neddoc</tt>
+from hyperlinking words that are accidentally the same as an existing
+module or message name. Prefixing the word with a backslash will achieve
+the same. That is, either of the following will do:
+
+<pre class="ned">
+// In &lt;nohtml&gt;IP&lt;/nohtml&gt; networks, routing is...
+</pre>
+<p>
+<pre class="ned">
+// In \IP networks, routing is...
+</pre>
+
+<p>Both will prevent hyperlinking the word <i>IP</i> if you happen to have
+an <tt>IP</tt> module in the NED files.
+
+<p>
+
+<p><h2><a name="sec450"/>14.5 Customizing and Adding Pages</h2>
+
+<p><h3><a name="sec451"/>14.5.1 Adding a Custom Title Page</h3>
+
+<p>The title page is the one that appears in the main frame after
+opening the documentation in the browser. By default it contains
+a boilerplate text with the generic title <i>&#8220;OMNeT++ Model Documentation&#8221;</i>.
+You probably want to customize that, and at least change the title
+to the name of the documented simulation model.
+
+<p>You can supply your own version of the title page adding a <tt>@titlepage</tt>
+directive to a file-level comment (a comment that appears at the top of
+a NED file, but is separated from the first <tt>import</tt>, <tt>channel</tt>,
+<tt>module</tt>, etc. definition by at least one blank line).
+In theory you can place your title page definition into
+any NED or MSG file, but it is probably a good idea to create
+a separate <tt>package.ned</tt> file for it.
+
+<p>The lines you write after the <tt>@titlepage</tt> line up to the next
+<tt>@page</tt> line (see later) or the end of the comment will be used
+as the title page.
+You probably want to begin with a title because the documentation
+tool doesn't add one (it lets you have full control over the
+page contents). You can use the <tt>&lt;h1&gt;..&lt;/h1&gt;</tt> HTML tag
+to define a title.
+
+<p>Example:
+
+<pre class="ned">
+//
+// @titlepage
+// &lt;h1&gt;Ethernet Model Documentation&lt;/h1&gt;
+//
+// This documents the Ethernet model created by David Wu and refined by Andras
+// Varga at CTIE, Monash University, Melbourne, Australia.
+//
+</pre>
+<p>
+
+<p><h3><a name="sec452"/>14.5.2 Adding Extra Pages</h3>
+
+<p>You can add new pages to the documentation in a similar way as customizing
+the title page. The directive to be used is <tt>@page</tt>, and it can
+appear in any file-level comment (see above).
+
+<p>The syntax of the <tt>@page</tt> directive is the following:
+
+<pre class="ned">
+// @page filename.html, Title of the Page
+</pre>
+<p>
+Choose a file name that doesn't collide with the files generated
+by the documentation tool (such as <tt>index.html</tt>). If the file name
+does not end in <tt>.html</tt> already, it will be appended.
+The page title you supply will appear on the top of the page as well as
+in the page index.
+
+<p>The lines after the <tt>@page</tt> line up to the next <tt>@page</tt> line
+or the end of the comment will be used as the page body.
+You don't need to add a title because the documentation tool
+automatically adds one.
+
+<p>Example:
+<pre class="ned">
+//
+// @page structure.html, Directory Structure
+//
+// The model core model files and the examples have been placed
+// into different directories. The &lt;tt&gt;examples/&lt;/tt&gt; directory...
+//
+//
+// @page examples.html, Examples
+// ...
+//
+</pre>
+
+<p>You can create links to the generated pages using standard HTML,
+using the <tt>&lt;a href="..."&gt;...&lt;/a&gt;</tt> tag. All HTML files are
+placed in a single directory, so you don't have to worry about
+specifying directories.
+
+<p>Example:
+<pre class="ned">
+//
+// @titlepage
+// ...
+// The structure of the model is described &lt;a href="structure.html"&gt;here&lt;/a&gt;.
+//
+</pre>
+
+<p>
+<h3><a name="sec453"/>14.5.3 Incorporating Externally Created Pages</h3>
+
+<p>You may want to create pages outside the documentation tool
+(e.g. using a HTML editor) and include them in the documentation.
+This is possible, all you have to do is declare such pages with
+the <tt>@externalpage</tt> directive in any of the NED files, and
+they will be added to the page index. The pages can then be linked to
+from other pages using the HTML <tt>&lt;a href="..."&gt;...&lt;/a&gt;</tt> tag.
+
+<p>The <tt>@externalpage</tt> directive is similar in syntax to <tt>@page</tt>:
+
+<pre class="ned">
+// @externalpage filename.html, Title of the Page
+</pre>
+<p>
+The documentation tool does not check if the page exists
+or not. It is your responsibility to copy it manually into
+the directory of the generated documentation, and to make
+sure the hyperlink works.
+
+<p><h2><a name="sec454"/>14.6 File inclusion</h2>
+
+<p>You can include content into the documentation comment with the
+<tt>@include</tt> directive. It expects the path of the file to be incuded
+relative to the file that includes it.
+
+<p>The line of the <tt>@include</tt> directive will be replaced by the
+content of the file. The lines of the included file do not need
+to start with <tt>//</tt>, but otherwise they are processed in the same way
+as the NED comments. They can include other files, but circular
+includes are not allowed.
+
+<pre class="ned">
+// ...
+// @include ../copyright.txt
+// ...
+</pre>
+<p>
+<hr class='pgbr'><p><hr><b><a href="chap13.html">[Prev]</A>&nbsp;<a href="chap15.html">[Next]</A>&nbsp;<a href="toc.html#toc_14.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p>
+
+</body>
+</html>

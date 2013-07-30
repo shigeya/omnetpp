@@ -1,0 +1,326 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta name="copyright" content="OpenSim Ltd.">
+  <meta NAME="Author" CONTENT="Andras Varga">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <link rel="STYLESHEET" href="../book.css"  type="text/css">
+  <title>OMNeT++ - Manual</title>
+</head>
+<body>
+
+<p><hr><b><a href="chap22.html">[Prev]</A>&nbsp;<a href="chap24.html">[Next]</A>&nbsp;<a href="toc.html#toc_23.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p><h1><a name="sec540"/>23 Appendix&#58; Display String Tags</h1>
+<a name="cha:display-string-tags"></a>
+
+<p><h2><a name="sec541"/>23.1 Module and Connection Display String Tags</h2>
+
+<p>Supported module and connection display string tags are listed in the following table.
+
+
+<table border>
+<TR> <TD align=left>
+
+<p><b>Tag[argument index] - name</b> </TD> <TD align=left> <b>Description</b>
+</TD></TR>
+<TR> <TD align=left>
+<b>p</b>[0] - x
+</TD> <TD align=left>
+X position of the center of the icon/shape; defaults to automatic graph layouting
+</TD></TR>
+<TR> <TD align=left>
+<b>p</b>[1] - y
+</TD> <TD align=left>
+Y position of the center of the icon/shape; defaults to automatic graph layouting
+</TD></TR>
+<TR> <TD align=left>
+<b>p</b>[2] - arrangement
+</TD> <TD align=left>
+Arrangement of submodule vectors. Values: row (r), column (c), matrix (m), ring (ri), exact (x)
+</TD></TR>
+<TR> <TD align=left>
+<b>p</b>[3] - arr. par1
+</TD> <TD align=left>
+Depends on arrangement: matrix =&gt; ncols, ring =&gt; rx, exact =&gt; dx, row =&gt; dx, column =&gt; dy
+</TD></TR>
+<TR> <TD align=left>
+<b>p</b>[4] - arr. par2
+</TD> <TD align=left>
+Depends on arrangement: matrix =&gt; dx, ring =&gt; ry, exact =&gt; dy
+</TD></TR>
+<TR> <TD align=left>
+<b>p</b>[5] - arr. par3
+</TD> <TD align=left>
+Depends on arrangement: matrix =&gt; dy
+</TD></TR>
+<TR> <TD align=left>
+<b>b</b>[0] - width
+</TD> <TD align=left>
+Width of object. Default: 40
+</TD></TR>
+<TR> <TD align=left>
+<b>b</b>[1] - height
+</TD> <TD align=left>
+Height of object. Default: 24
+</TD></TR>
+<TR> <TD align=left>
+<b>b</b>[2] - shape
+</TD> <TD align=left>
+Shape of object. Values: rectangle (rect), oval (oval). Default: rect
+</TD></TR>
+<TR> <TD align=left>
+<b>b</b>[3] - fill color
+</TD> <TD align=left>
+Fill color of the object (colorname or #RRGGBB or @HHSSBB). Default: #8080ff
+</TD></TR>
+<TR> <TD align=left>
+<b>b</b>[4] - border color
+</TD> <TD align=left>
+Border color of the object (colorname or #RRGGBB or @HHSSBB). Default: black
+</TD></TR>
+<TR> <TD align=left>
+<b>b</b>[5] - border width
+</TD> <TD align=left>
+Border width of the object. Default: 2
+</TD></TR>
+<TR> <TD align=left>
+<b>i</b>[0] - icon
+</TD> <TD align=left>
+An icon representing the object
+</TD></TR>
+<TR> <TD align=left>
+<b>i</b>[1] - icon color
+</TD> <TD align=left>
+A color to colorize the icon (colorname or #RRGGBB or @HHSSBB)
+</TD></TR>
+<TR> <TD align=left>
+<b>i</b>[2] - icon colorization %
+</TD> <TD align=left>
+Amount of colorization in percent. Default: 30
+</TD></TR>
+<TR> <TD align=left>
+<b>is</b>[0] - icon size
+</TD> <TD align=left>
+The size of the image. Values: very small (vs), small (s), normal (n), large (l), very large (vl)
+</TD></TR>
+<TR> <TD align=left>
+<b>i2</b>[0] - overlay icon
+</TD> <TD align=left>
+An icon added to the upper right corner of the original image
+</TD></TR>
+<TR> <TD align=left>
+<b>i2</b>[1] - overlay icon color
+</TD> <TD align=left>
+A color to colorize the overlay icon (colorname or #RRGGBB or @HHSSBB)
+</TD></TR>
+<TR> <TD align=left>
+<b>i2</b>[2] - overlay icon colorization %
+</TD> <TD align=left>
+Amount of colorization in percent. Default: 30
+</TD></TR>
+<TR> <TD align=left>
+<b>r</b>[0] - range
+</TD> <TD align=left>
+Radius of the range indicator
+</TD></TR>
+<TR> <TD align=left>
+<b>r</b>[1] - range fill color
+</TD> <TD align=left>
+Fill color of the range indicator (colorname or #RRGGBB or @HHSSBB)
+</TD></TR>
+<TR> <TD align=left>
+<b>r</b>[2] - range border color
+</TD> <TD align=left>
+Border color of the range indicator (colorname or #RRGGBB or @HHSSBB). Default: black
+</TD></TR>
+<TR> <TD align=left>
+<b>r</b>[3] - range border width
+</TD> <TD align=left>
+Border width of the range indicator. Default: 1
+</TD></TR>
+<TR> <TD align=left>
+<b>q</b>[0] - queue object
+</TD> <TD align=left>
+Displays the length of the named queue object
+</TD></TR>
+<TR> <TD align=left>
+<b>t</b>[0] - text
+</TD> <TD align=left>
+Additional text to display
+</TD></TR>
+<TR> <TD align=left>
+<b>t</b>[1] - text position
+</TD> <TD align=left>
+Position of the text. Values: left (l), right (r), top (t). Default: t
+</TD></TR>
+<TR> <TD align=left>
+<b>t</b>[2] - text color
+</TD> <TD align=left>
+Color of the displayed text (colorname or #RRGGBB or @HHSSBB). Default: blue
+</TD></TR>
+<TR> <TD align=left>
+<b>tt</b>[0] - tooltip
+</TD> <TD align=left>
+Tooltip to be displayed over the object
+</TD></TR>
+<TR> <TD align=left>
+<b>bgp</b>[0] - bg x
+</TD> <TD align=left>
+Module background horizontal offset
+</TD></TR>
+<TR> <TD align=left>
+<b>bgp</b>[1] - bg y
+</TD> <TD align=left>
+Module background vertical offset
+</TD></TR>
+<TR> <TD align=left>
+<b>bgb</b>[0] - bg width
+</TD> <TD align=left>
+Width of the module background rectangle
+</TD></TR>
+<TR> <TD align=left>
+<b>bgb</b>[1] - bg height
+</TD> <TD align=left>
+Height of the module background rectangle
+</TD></TR>
+<TR> <TD align=left>
+<b>bgb</b>[2] - bg fill color
+</TD> <TD align=left>
+Background fill color (colorname or #RRGGBB or @HHSSBB). Default: grey82
+</TD></TR>
+<TR> <TD align=left>
+<b>bgb</b>[3] - bg border color
+</TD> <TD align=left>
+Border color of the module background rectangle (colorname or #RRGGBB or @HHSSBB). Default: black
+</TD></TR>
+<TR> <TD align=left>
+<b>bgb</b>[4] - bg border width
+</TD> <TD align=left>
+Border width of the module background rectangle. Default: 2
+</TD></TR>
+<TR> <TD align=left>
+<b>bgtt</b>[0] - bg tooltip
+</TD> <TD align=left>
+Tooltip to be displayed over the module's background
+</TD></TR>
+<TR> <TD align=left>
+<b>bgi</b>[0] - bg image
+</TD> <TD align=left>
+An image to be displayed as a module background
+</TD></TR>
+<TR> <TD align=left>
+<b>bgi</b>[1] - bg image mode
+</TD> <TD align=left>
+How to arrange the module's background image. Values: fix (f), tile (t), stretch (s), center (c). Default: fixed
+</TD></TR>
+<TR> <TD align=left>
+<b>bgg</b>[0] - grid tick distance
+</TD> <TD align=left>
+Distance between two major ticks measured in units
+</TD></TR>
+<TR> <TD align=left>
+<b>bgg</b>[1] - grid minor ticks
+</TD> <TD align=left>
+Minor ticks per major ticks. Default: 1
+</TD></TR>
+<TR> <TD align=left>
+<b>bgg</b>[2] - grid color
+</TD> <TD align=left>
+Color of the grid lines (colorname or #RRGGBB or @HHSSBB). Default: grey
+</TD></TR>
+<TR> <TD align=left>
+<b>bgl</b>[0] - layout seed
+</TD> <TD align=left>
+Seed value for layout algorithm
+</TD></TR>
+<TR> <TD align=left>
+<b>bgl</b>[1] - layout algorithm
+</TD> <TD align=left>
+Algorithm for child layouting
+</TD></TR>
+<TR> <TD align=left>
+<b>bgs</b>[0] - pixels per unit
+</TD> <TD align=left>
+Number of pixels per distance unit
+</TD></TR>
+<TR> <TD align=left>
+<b>bgs</b>[1] - unit name
+</TD> <TD align=left>
+Name of distance unit
+</TD></TR>
+<TR> <TD align=left>
+<b>m</b>[0] - routing constraint
+</TD> <TD align=left>
+Connection routing constraint. Values: auto (a), south (s), north (n), east (e), west (w)
+</TD></TR>
+<TR> <TD align=left>
+<b>ls</b>[0] - line color
+</TD> <TD align=left>
+Connection color (colorname or #RRGGBB or @HHSSBB). Default: black
+</TD></TR>
+<TR> <TD align=left>
+<b>ls</b>[1] - line width
+</TD> <TD align=left>
+Connection line width. Default: 1
+</TD></TR>
+<TR> <TD align=left>
+<b>ls</b>[2] - line style
+</TD> <TD align=left>
+Connection line style. Values: solid (s), dotted (d), dashed (da). Default: solid
+</TD></TR>
+<TR> <TD align=left>
+</table>
+
+<p>
+
+<p>
+<h2><a name="sec542"/>23.2 Message Display String Tags</h2>
+
+<p>To customize the appearance of messages in the graphical runtime environment,
+override the <tt>getDisplayString()</tt> method of <tt><a href="../api/classcMessage.html">cMessage</a></tt> or
+<tt><a href="../api/classcPacket.html">cPacket</a></tt> to return a display string.
+
+<p><table border>
+<TR> <TD align=left>
+
+<b>Tag</b> </TD> <TD align=left> <b>Meaning</b> </TD></TR>
+<TR> <TD align=left> <b>b=</b><i>width</i>,<i>height</i>,<b>oval</b>
+</TD> <TD align=left>
+ Ellipse with the given <i>height</i> and <i>width</i>.
+
+<p>Defaults: <i>width</i>=10, <i>height</i>=10</TD></TR>
+<TR> <TD align=left> <b>b=</b><i>width</i>,<i>height</i>,<b>rect</b>
+</TD> <TD align=left>
+ Rectangle with the given <i>height</i> and <i>width</i>.
+
+<p>Defaults: <i>width</i>=10, <i>height</i>=10</TD></TR>
+<TR> <TD align=left> <b>o=</b><i>fillcolor</i>,<i>outlinecolor</i>,<i>borderwidth</i>
+</TD> <TD align=left>
+ Specifies options for the rectangle or oval.
+For color notation, see section <a href="chap11.html#sec388">[11.3]</a>.
+
+<p>Defaults: <i>fillcolor</i>=red, <i>outlinecolor</i>=black,
+<i>borderwidth</i>=1</TD></TR>
+<TR> <TD align=left> <b>i=</b><i>iconname</i>,<i>color</i>,<i>percentage</i>
+</TD> <TD align=left>
+ Use the named icon. It can be colorized, and percentage
+specifies the amount of colorization. If color name is <tt>"kind"</tt>,
+a message kind dependent colors is used (like default behaviour).
+
+<p>Defaults: <i>iconname</i>: no default -- if no icon name is present, a small
+red solid circle will be used;
+<i>color</i>: no coloring; <i>percentage</i>: 30%</TD></TR>
+<TR> <TD align=left> <b>tt=</b><i>tooltip-text</i>
+</TD> <TD align=left>
+ Displays the given text in a tooltip when the user moves
+the mouse over the message icon.</TD></TR>
+<TR> <TD align=left> 
+</table>
+
+<p>
+
+<p>
+<hr class='pgbr'><p><hr><b><a href="chap22.html">[Prev]</A>&nbsp;<a href="chap24.html">[Next]</A>&nbsp;<a href="toc.html#toc_23.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p>
+
+</body>
+</html>

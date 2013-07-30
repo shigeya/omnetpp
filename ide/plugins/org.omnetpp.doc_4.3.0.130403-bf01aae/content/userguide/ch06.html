@@ -1,0 +1,25 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Chapter 6. Launching and Debugging</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="OMNeT&#8288;+&#8288;+ User Guide"><link rel="up" href="index.html" title="OMNeT&#8288;+&#8288;+ User Guide"><link rel="prev" href="ch05s08.html" title="Project Files"><link rel="next" href="ch06s02.html" title="Launch Configurations"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 6. Launching and Debugging</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch05s08.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch06s02.html">Next</a></td></tr></table><hr></div><div class="chapter" lang="en"><div class="titlepage"><div><div><h2 class="title"><a name="launcher"></a>Chapter 6. Launching and Debugging</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="sect1"><a href="ch06.html#id278069">Introduction</a></span></dt><dt><span class="sect1"><a href="ch06s02.html">Launch Configurations</a></span></dt><dt><span class="sect1"><a href="ch06s03.html">Running a Simulation</a></span></dt><dd><dl><dt><span class="sect2"><a href="ch06s03.html#id278164">Quick Run</a></span></dt><dt><span class="sect2"><a href="ch06s03.html#id278213">The Run Configurations Dialog</a></span></dt><dt><span class="sect2"><a href="ch06s03.html#id278289">Creating a Launch Configuration</a></span></dt></dl></dd><dt><span class="sect1"><a href="ch06s04.html">Batch Execution</a></span></dt><dt><span class="sect1"><a href="ch06s05.html">Debugging a Simulation</a></span></dt><dd><dl><dt><span class="sect2"><a href="ch06s05.html#id278828">Starting a Debug Session</a></span></dt><dt><span class="sect2"><a href="ch06s05.html#id278887">Using the Debugger</a></span></dt><dt><span class="sect2"><a href="ch06s05.html#id278968">Pretty Printers</a></span></dt></dl></dd><dt><span class="sect1"><a href="ch06s06.html">Profiling a Simulation on Linux</a></span></dt><dt><span class="sect1"><a href="ch06s07.html">Controlling the Execution and Progress Reporting</a></span></dt></dl></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id278069"></a>Introduction</h2></div></div></div><p>
+      The OMNeT&#8288;+&#8288;+ IDE lets you execute single simulations and simulation batches, and also
+      to debug and, to some extent, profile simulations. You can choose whether you want
+      the simulation to run in graphical mode (using <span class="emphasis"><em>Tkenv</em></span>) or in console (using <span class="emphasis"><em>Cmdenv</em></span>);
+      which simulation configuration and run number to execute; whether to record an eventlog or not;
+      and many other options.
+    </p><p>
+      When running simulation batches, you can specify the number of processes allowed
+      to run in parallel, so you can take advantage of multiple processors or processor cores.
+      The progress of the batch can be monitored, and you can also kill processes from the
+      batch if needed. Batches are based on the <span class="emphasis"><em>parameter study</em></span> feature of INI files;
+      you can read more about it in the <span class="emphasis"><em>OMNeT&#8288;+&#8288;+ User Manual</em></span>.
+    </p><p>
+      Debugging support comes from the Eclipse C/C++ Development Toolkit (CDT), and beyond
+      the basics (single-stepping, stack trace, breakpoints, watches, etc.) it also offers you
+      several conveniences and advanced functionality such as inspection tooltips,
+      conditional breakpoints and so on. Debugging with CDT also has extensive literature
+      on the Internet. Currently CDT uses the GNU Debugger (gdb) as the underlying debugger.
+    </p><p>
+      Profiling support is based on the <span class="emphasis"><em>valgrind</em></span> program, http://valgrind.org. Valgrind is
+      a suite of tools for debugging and profiling on Linux. It can automatically detect various
+      memory access and memory management bugs, and perform detailed profiling of your program.
+      Valgrind support is brought into the OMNeT&#8288;+&#8288;+ IDE by the Linux Tools Project of Eclipse,
+      currently in incubation state.
+    </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch05s08.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ch06s02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Project Files </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Launch Configurations</td></tr></table></div></body></html>

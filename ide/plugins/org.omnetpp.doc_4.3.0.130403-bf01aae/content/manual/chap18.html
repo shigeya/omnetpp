@@ -1,0 +1,1864 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta name="copyright" content="OpenSim Ltd.">
+  <meta NAME="Author" CONTENT="Andras Varga">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <link rel="STYLESHEET" href="../book.css"  type="text/css">
+  <title>OMNeT++ - Manual</title>
+</head>
+<body>
+
+<p><hr><b><a href="chap17.html">[Prev]</A>&nbsp;<a href="chap19.html">[Next]</A>&nbsp;<a href="toc.html#toc_18.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p><h1><a name="sec492"/>18 Appendix&#58; NED Reference</h1>
+<a name="cha:ned-ref"></a>
+
+<p><h2><a name="sec493"/>18.1 Syntax</h2>
+
+<p><h3><a name="sec494"/>18.1.1 NED File Name Extension</h3>
+
+<p>NED files have the <tt>.ned</tt> file name suffix. This is mandatory, and
+cannot be overridden.
+
+<p><h3><a name="sec495"/>18.1.2 NED File Encoding</h3>
+
+<p>NED files are ASCII, but non-ASCII characters are permitted in comments
+and string literals. This allows for using encodings that are a superset
+of ASCII, for example ISO 8859-1 and UTF-8.
+
+<p><ul class="note"><b>NOTE</b><br>
+    There is no standard way to specify or determine the encoding of a NED file.
+    It is up to the user to configure the desired encoding in text editors
+    and other tools that edit or process NED files.
+</ul>
+
+<p>String literals (e.g. in parameter values) will be passed to the C++ code
+as <tt>const char *</tt> without any conversion; it is up to the simulation model
+to interpret them using the desired encoding.
+
+<p>Line ending may be either CR or CRLF, regardless of the platform.
+
+<p>
+<h3><a name="sec496"/>18.1.3 Reserved Words</h3>
+
+<p>NED file authors have to take care that no reserved words are used as identifiers.
+The reserved words of the NED language are:
+
+<p><tt>allowunconnected bool channel channelinterface connections const
+default double extends false for gates if import index inout input int like
+module moduleinterface network output package parameters property simple
+sizeof string submodules this true typename types volatile xml xmldoc</tt>
+
+<p>
+<h3><a name="sec497"/>18.1.4 Identifiers</h3>
+
+<p>Identifiers must be composed of letters of the English alphabet (a-z, A-Z),
+numbers (0-9) and underscore &#8220;_&#8221;. Identifiers may only begin with a
+letter or underscore.
+
+<p>The recommended way to compose identifiers from multiple words is to
+capitalize the beginning of each word (<i>camel case</i>).
+
+<p>
+<h3><a name="sec498"/>18.1.5 Case Sensitivity</h3>
+
+<p>Keywords and identifiers in the NED language are case sensitive. For example,
+<tt>TCP</tt> and <tt>Tcp</tt> are two different names.
+
+<p>
+<h3><a name="sec499"/>18.1.6 Literals</h3>
+<a name="ch-ned-ref:sec:literals"></a>
+
+<p><p class="subheading">String Literals</p>
+
+<p>String literals use double quotes. The following C-style backslash escapes
+are recognized: <tt>\b</tt>, <tt>\f</tt>,
+<tt>\n</tt>, <tt>\r</tt>, <tt>\t</tt>,
+<tt>\\</tt>, <tt>\"</tt>, and
+<tt>\xhh</tt> where <i>h</i> is a hexadecimal digit.
+
+<p><p class="subheading">Numeric Constants</p>
+
+<p>Numeric constants are accepted in the usual decimal, hexadecimal (<tt>0x</tt> prefix)
+and scientific notations. Octal numbers are not accepted (numbers that start
+with the <tt>0</tt> digit are interpreted as decimal.)
+
+<p><p class="subheading">Quantity Constants</p>
+
+<p>A quantity constant has the form <i>(&lt;numeric-constant&gt; &lt;unit&gt;)+</i>, for
+example <tt>12.5mW</tt> or <tt>3h 15min 37.2s</tt>. Whitespace is optional in front
+of a unit, but must be present after a unit if it is followed by a number.
+
+<p>When multiple measurement units are present, they have to be convertible
+into each other (i.e. refer to the same physical quantity).
+
+<p>Section <a href="chap18.html#sec535">[18.5.6]</a> lists the units recognized by OMNeT++.
+Other units can be used as well; the only downside being that OMNeT++ will
+not be able to perform conversions on them.
+
+<p>
+<h3><a name="sec500"/>18.1.7 Comments</h3>
+
+<p>Comments can be placed at the end of lines. Comments begin with a double
+slash <tt>//</tt>, and continue until the end of the line.
+
+<p>
+<h3><a name="sec501"/>18.1.8 Grammar</h3>
+
+<p>The grammar of the NED language can be found in Appendix
+<a href="chap19.html#sec536">[19]</a>.
+
+<p><h2><a name="sec502"/>18.2 Built-in Definitions</h2>
+<a name="ch-ned-ref:sec:built-in-defs"></a>
+
+<p>The NED language has the following built-in definitions, all in the <tt>ned</tt>
+package: channels <tt>IdealChannel</tt>, <tt>DelayChannel</tt>, and <tt>DatarateChannel</tt>;
+module interfaces <tt>IBidirectionalChannel</tt>, and <tt>IUnidirectionalChannel</tt>.
+The latter two are reserved for future use.
+
+<p>The bodies of <tt>@statistic</tt> properties have been omitted for brevity from
+the following listing.
+
+<p><ul class="note"><b>NOTE</b><br>
+You can print the full definitions by running <tt>opp_run -h neddecls</tt>.
+</ul>
+
+<pre class="ned">
+package ned;
+@namespace("");
+
+channel IdealChannel
+{
+    @class(<a href="../api/classcIdealChannel.html">cIdealChannel</a>);
+}
+
+channel DelayChannel
+{
+    @class(<a href="../api/classcDelayChannel.html">cDelayChannel</a>);
+    @signal[messageSent](type=<a href="../api/classcMessage.html">cMessage</a>);
+    @signal[messageDiscarded](type=<a href="../api/classcMessage.html">cMessage</a>);
+    @statistic[messages](...);
+    @statistic[messagesDiscarded](...);
+    bool disabled = default(false);
+    double delay = default(0s) @unit(s); // propagation delay
+}
+
+channel DatarateChannel
+{
+    @class(<a href="../api/classcDatarateChannel.html">cDatarateChannel</a>);
+    @signal[channelBusy](type="int");
+    @signal[messageSent](type=<a href="../api/classcMessage.html">cMessage</a>);
+    @signal[messageDiscarded](type=<a href="../api/classcMessage.html">cMessage</a>);
+    @statistic[busy](...);
+    @statistic[utilization](...);
+    @statistic[packets](...);
+    @statistic[packetBytes](...);
+    @statistic[packetsDiscarded](...);
+    @statistic[throughput](...);
+    bool disabled = default(false);
+    double delay = default(0s) @unit(s); // propagation delay
+    double datarate = default(0bps) @unit(bps); // bits per second; 0=infinite
+    double ber = default(0); // bit error rate (BER)
+    double per = default(0); // packet error rate (PER)
+}
+
+moduleinterface IBidirectionalChannel
+{
+    gates:
+        inout a;
+        inout b;
+}
+
+moduleinterface IUnidirectionalChannel
+{
+    gates:
+        input i;
+        output o;
+}
+</pre>
+<p>
+
+<p>
+<h2><a name="sec503"/>18.3 Packages</h2>
+<a name="ch-ned-ref:sec:packages"></a>
+
+<p>NED supports hierarchical namespaces called <i>packages</i>. The model
+is similar to Java packages, with minor changes.
+
+<p>
+<h3><a name="sec504"/>18.3.1 Package Declaration</h3>
+
+<p>A NED file may contain a package declaration. The package declaration
+uses the <b><tt>package</tt></b> keyword, and specifies the package for the
+definitions in the NED file. If there is no package declaration, the file's
+contents are in the <i>default package</i>.
+
+<p>Component type names must be unique within their package.
+
+<p>
+<h3><a name="sec505"/>18.3.2 Directory Structure, package.ned</h3>
+
+<p>Like in Java, the directory of a NED file must match the package
+declaration. However, it is possible to omit directories at the top which do
+not contain any NED files (like the typical <tt>/org/<i>&lt;projectname&gt;</i></tt>
+directories in Java).
+
+<p>The top of a directory tree containing NED files is named a <i>NED source
+folder</i>.
+
+<p><ul class="note"><b>NOTE</b><br>
+The OMNeT++ runtime recognizes a <tt>NEDPATH</tt> environment variable, which
+contains a list of NED source folders, and is similar to the Java <tt>CLASSPATH</tt>
+variable. <tt>NEDPATH</tt> also has a command-line option equivalent.
+</ul>
+
+<p>The <tt>package.ned</tt> file at the top level of a NED source folder plays a
+special role.
+
+<p>If there is no toplevel <tt>package.ned</tt> or it contains no package declaration,
+the declared package of a NED file in the folder <tt><i>&lt;srcfolder&gt;</i>/x/y/z</tt>
+<i>must</i> be <tt>x.y.z</tt>.
+If there is a toplevel <tt>package.ned</tt> and it declares the package as
+<tt>a.b</tt>, then any NED file in the folder <tt><i>&lt;srcfolder&gt;</i>/x/y/z</tt>
+<i>must</i> have the declared package <tt>a.b.x.y.z</tt>.
+
+<p><ul class="note"><b>NOTE</b><br>
+    <tt>package.ned</tt> files are allowed in other folders as well.
+    They may contain properties and/or documentation for their package,
+    but cannot be used to define the package they are in.
+</ul>
+
+<p>
+
+<p>
+<h2><a name="sec506"/>18.4 Components</h2>
+
+<p>Simple modules, compound modules, networks, channels, module interfaces
+and channel interfaces are called <i>components</i>.
+
+<p>
+<h3><a name="sec507"/>18.4.1 Simple Modules</h3>
+<a name="ch-ned-ref:sec:simple-modules"></a>
+
+<p>Simple module types are declared with the <b><tt>simple</tt></b> keyword;
+see the NED Grammar (Appendix <a href="chap19.html#sec536">[19]</a>) for the
+syntax.
+
+<p>Simple modules may have properties (<a href="chap18.html#sec514">[18.4.8]</a>),
+parameters (<a href="chap18.html#sec515">[18.4.9]</a>)
+and gates (<a href="chap18.html#sec517">[18.4.11]</a>).
+
+<p>A simple module type may not have inner types (<a href="chap18.html#sec521">[18.4.15]</a>).
+
+<p>A simple module type may extend another simple module type, and
+may implement one or more module interfaces (<a href="chap18.html#sec511">[18.4.5]</a>).
+Inheritance rules are described in section <a href="chap18.html#sec527">[18.4.21]</a>,
+and interface implementation rules in section <a href="chap18.html#sec526">[18.4.20]</a>.
+
+<p>Every simple module type has an associated C++ class, which must be
+subclassed from <tt><a href="../api/classcSimpleModule.html">cSimpleModule</a></tt>. The way of associating the
+NED type with the C++ class is described in section
+<a href="chap18.html#sec513">[18.4.7]</a>.
+
+<p>
+
+<p><h3><a name="sec508"/>18.4.2 Compound Modules</h3>
+<a name="ch-ned-ref:sec:compound-modules"></a>
+
+<p>Compound module types are declared with the <b><tt>module</tt></b> keyword;
+see the NED Grammar (Appendix <a href="chap19.html#sec536">[19]</a>) for the
+syntax.
+
+<p>A compound module may have properties (<a href="chap18.html#sec514">[18.4.8]</a>),
+parameters (<a href="chap18.html#sec515">[18.4.9]</a>),
+and gates (<a href="chap18.html#sec517">[18.4.11]</a>); its internal structure is defined by
+its submodules (<a href="chap18.html#sec518">[18.4.12]</a>) and
+connections (<a href="chap18.html#sec519">[18.4.13]</a>);
+and it may also have inner types (<a href="chap18.html#sec521">[18.4.15]</a>)
+that can be used for its submodules and connections.
+
+<p>A compound module type may extend another compound module type, and
+may implement one or more module interfaces (<a href="chap18.html#sec511">[18.4.5]</a>).
+Inheritance rules are described in section <a href="chap18.html#sec527">[18.4.21]</a>,
+and interface implementation rules in section <a href="chap18.html#sec526">[18.4.20]</a>.
+
+<p>
+
+<p><h3><a name="sec509"/>18.4.3 Networks</h3>
+<a name="ch-ned-ref:sec:networks"></a>
+
+<p><p class="subheading">The network Keyword</p>
+
+<p>A network declared with the <b><tt>network</tt></b> keyword is equivalent to a compound
+module (<b><tt>module</tt></b> keyword) with the <b><tt>@isNetwork(true)</tt></b> property.
+
+<p><ul class="note"><b>NOTE</b><br>
+    A simple module can only be designated to be a network by spelling out the
+    <b><tt>@isNetwork</tt></b> property; the <b><tt>network</tt></b> keyword cannot
+    be used for that purpose.
+</ul>
+
+<p><p class="subheading">The @isNetwork Property</p>
+
+<p>The <b><tt>@isNetwork</tt></b> property is only recognized for simple modules and
+compound modules. The value may be empty, true or false:
+
+<pre class="ned">
+@isNetwork;
+@isNetwork();
+@isNetwork(true);
+@isNetwork(false);
+</pre>
+<p>
+The empty value corresponds to <b><tt>@isNetwork(true)</tt></b>.
+
+<p>The <b><tt>@isNetwork</tt></b> property is not inherited; that is, a subclass
+of a module with <b><tt>@isNetwork</tt></b> set does not automatically become a network.
+The <b><tt>@isNetwork</tt></b> property needs to be explicitly added to the subclass
+to make it a network.
+
+<p><ul class="rationale"><b>Rationale</b><br>
+    Subclassing may introduce changes to a module that make it unfit to be used
+    as a network.
+</ul>
+
+<p>
+
+<p><h3><a name="sec510"/>18.4.4 Channels</h3>
+<a name="ch-ned-ref:sec:channels"></a>
+
+<p>Channel types are declared with the <b><tt>channel</tt></b> keyword;
+see the NED Grammar (Appendix <a href="chap19.html#sec536">[19]</a>) for the
+syntax.
+
+<p>Channel types may have properties (<a href="chap18.html#sec514">[18.4.8]</a>)
+and parameters (<a href="chap18.html#sec515">[18.4.9]</a>).
+
+<p>A channel type may not have inner types (<a href="chap18.html#sec521">[18.4.15]</a>).
+
+<p>A channel type may extend another channel type, and
+may implement one or more channel interfaces (<a href="chap18.html#sec512">[18.4.6]</a>).
+Inheritance rules are described in section <a href="chap18.html#sec527">[18.4.21]</a>,
+and interface implementation rules in section <a href="chap18.html#sec526">[18.4.20]</a>.
+
+<p>Every channel type has an associated C++ class, which must be
+subclassed from <tt><a href="../api/classcChannel.html">cChannel</a></tt>. The way of associating the
+NED type with the C++ class is described in section
+<a href="chap18.html#sec513">[18.4.7]</a>.
+
+<p>The <tt>@defaultname</tt> property of a channel type determines the default name
+of the channel object when used in a connection.
+
+<p>
+<h3><a name="sec511"/>18.4.5 Module Interfaces</h3>
+<a name="ch-ned-ref:sec:module-interfaces"></a>
+
+<p>Module interface types are declared with the <b><tt>moduleinterface</tt></b> keyword;
+see the NED Grammar (Appendix <a href="chap19.html#sec536">[19]</a>) for the
+syntax.
+
+<p>Module interfaces may have properties (<a href="chap18.html#sec514">[18.4.8]</a>),
+parameters (<a href="chap18.html#sec515">[18.4.9]</a>), and
+gates (<a href="chap18.html#sec517">[18.4.11]</a>). However, parameters are not allowed
+to have a value assigned, not even a default value.
+
+<p>A module interface type may not have inner types (<a href="chap18.html#sec521">[18.4.15]</a>).
+
+<p>A module interface type may extend one or more other module interface types.
+Inheritance rules are described in section <a href="chap18.html#sec527">[18.4.21]</a>.
+
+<p>
+
+<p><h3><a name="sec512"/>18.4.6 Channel Interfaces</h3>
+<a name="ch-ned-ref:sec:channel-interfaces"></a>
+
+<p>Channel interface types are declared with the <b><tt>channelinterface</tt></b> keyword;
+see the NED Grammar (Appendix <a href="chap19.html#sec536">[19]</a>) for the
+syntax.
+
+<p>Channel interfaces may have properties (<a href="chap18.html#sec514">[18.4.8]</a>) and
+parameters (<a href="chap18.html#sec515">[18.4.9]</a>). However, parameters are not
+allowed to have a value assigned, not even a default value.
+
+<p>A channel interface type may not have inner types (<a href="chap18.html#sec521">[18.4.15]</a>).
+
+<p>A channel interface type may extend one or more other channel interface types.
+Inheritance rules are described in section <a href="chap18.html#sec527">[18.4.21]</a>.
+
+<p>
+
+<p><h3><a name="sec513"/>18.4.7 Resolving the C++ Implementation Class</h3>
+<a name="ch-ned-ref:sec:resolving-cpp-class"></a>
+
+<p>The procedure for determining the C++ implementation class for simple modules
+and for channels are identical. It goes as follows (we are going to say
+<i>component</i> instead of <i>&#8220;simple module or channel&#8221;</i>):
+
+<p>If the component extends another component and has no <b><tt>@class</tt></b>
+property, the C++ implementation class is inherited from the base type.
+
+<p>If the component contains a <b><tt>@class</tt></b> property, the C++ class name
+will be composed of the <i>current namespace</i> (see below) and the
+value of the <b><tt>@class</tt></b> property. The <b><tt>@class</tt></b> property should
+contain a single value.
+
+<p><ul class="note"><b>NOTE</b><br>
+    The <b><tt>@class</tt></b> property may itself contain a namespace declaration (ie.
+    may contain &#8220;<tt>::</tt>&#8221;).
+</ul>
+
+<p>If the component contains no <b><tt>@class</tt></b> property and has no base
+class, the C++ class name will be composed of the <i>current namespace</i> and the
+unqualified name of the component.
+
+<p><ul class="important"><b>IMPORTANT</b><br>
+    NED subclassing does not imply subclassing the C++ implementation! If you
+    want to subclass a simple module or channel in NED as well as in C++, you
+    explicitly need to specify the <b><tt>@class</tt></b> property, otherwise the
+    derived simple module or channel will continue to use the C++ class from its
+    super type.
+</ul>
+
+<p>For compound modules, the built-in default compound module C++ class
+<tt><a href="../api/classcCompoundModule.html">cCompoundModule</a></tt> will be used, unless the module contains the
+<b><tt>@class</tt></b> property. When <b><tt>@class</tt></b> is present, the resolution
+rules are the same as with simple modules.
+
+<p>
+<p class="subheading">Current Namespace</p>
+<a name="ch:ned-ref:current-namespace"></a>
+
+<p>The <i>current namespace</i> is the value of the first <b><tt>@namespace</tt></b>
+property found while searching the following order:
+
+<p><ol>
+  <li> the current NED file
+  <li> the <tt>package.ned</tt> file in the current package or the first ancestor
+        package searching upwards
+</ol>
+
+<p><ul class="note"><b>NOTE</b><br>
+    Note that namespaces coming from multiple <b><tt>@namespace</tt></b> properties
+    in different scopes do not nest, but rather, the nearest one wins.
+</ul>
+
+<p>The <b><tt>@namespace</tt></b> property should contain a single value.
+
+<p>
+
+<p><h3><a name="sec514"/>18.4.8 Properties</h3>
+<a name="ch-ned-ref:sec:properties"></a>
+
+<p>Properties are a means of adding metadata annotations to NED files, component types,
+parameters, gates, submodules, and connections.
+
+<p><p class="subheading">Identifying a Property</p>
+
+<p>Properties are identified by name. It is possible to have several properties
+on the same object with the same name, as long as they have unique indices.
+An index is an identifier in square brackets after the property name.
+
+<p>The following example shows a property without index, one with the index <tt>index1</tt>,
+and a third with the index <tt>index2</tt>.
+
+<pre class="ned">
+@prop1();
+@prop2[index1]();
+@prop3[index2]();
+</pre>
+<p>
+
+<p><p class="subheading">Property Value</p>
+
+<p>The value of the property is specified inside parentheses. The property value consists of
+<i>key=valuelist</i> pairs, separated by semicolons; <i>valuelist</i> elements
+are separated with commas. Example:
+
+<pre class="ned">
+@prop(key1=value11,value12,value13;key2=value21,value22)
+</pre>
+<p>
+Keys must be unique.
+
+<p>If the key+equal sign part (<tt>key=</tt>) is missing, the valuelist belongs
+to the <i>default key</i>. Examples:
+
+<pre class="ned">
+@prop1(value1,value2)
+@prop2(value1,value2;key1=value11,value12,value13)
+</pre>
+<p>
+Most of the properties use the default key with one value. Examples:
+
+<pre class="ned">
+@namespace(inet);
+@class(Foo);
+@unit(s);
+</pre>
+<p>
+Property values have a liberal syntax (see Appendix <a href="chap19.html#sec536">[19]</a>).
+Values that do not fit the grammar (notably, those containing a comma or
+a semicolon) need to be surrounded with double quotes.
+
+<p>When interpreting a property value, one layer of quotes is removed
+automatically, that is, <tt>foo</tt> and <tt>"foo"</tt> are the same.
+Within quotes, escaping works in the same way as within string literals
+(see <a href="chap18.html#sec499">[18.1.6]</a>).
+
+<p>Example:
+
+<pre class="ned">
+@prop(marks=the ! mark, "the , mark", "the ; mark", other marks); // 4 items
+</pre>
+<p>
+
+<p><p class="subheading">Placement</p>
+
+<p>Properties may be added to NED files, component types, parameters,
+gates, submodules and connections. For the exact syntax, see
+Appendix <a href="chap19.html#sec536">[19]</a>.
+
+<p>When a component type extends another component type(s), properties
+are merged. This is described in section <a href="chap18.html#sec527">[18.4.21]</a>.
+
+<p>
+<p class="subheading">Property Declarations</p>
+
+<p>The <b><tt>property</tt></b> keyword is reserved for future use. It is
+envisioned that accepted property names and property keys would need
+to be pre-declared, so that the NED infrastructure can warn the user
+about mistyped or unrecognized names.
+
+<p>
+<h3><a name="sec515"/>18.4.9 Parameters</h3>
+<a name="ch-ned-ref:sec:parameters"></a>
+
+<p>Parameters can be defined and assigned in the <b><tt>parameters</tt></b> section
+of component types. In addition, parameters can also be assigned in the
+<b><tt>parameters</tt></b> sections of submodule bodies and connection bodies,
+but those places do not allow adding new parameters.
+
+<p>The <b><tt>parameters</tt></b> keyword is optional, and can be omitted
+without change in the meaning.
+
+<p>The <b><tt>parameters</tt></b> section may also hold pattern assignments
+(<a href="chap18.html#sec516">[18.4.10]</a>) and properties
+(<a href="chap18.html#sec514">[18.4.8]</a>).
+
+<p>A parameter is identified by a name, and has a data type. A parameter
+may have value or default value, and may also have properties
+(see <a href="chap18.html#sec514">[18.4.8]</a>).
+
+<p>Accepted parameter data types are <b><tt>double</tt></b>, <b><tt>int</tt></b>,
+<b><tt>string</tt></b>, <b><tt>bool</tt></b>, and <b><tt>xml</tt></b>. Any
+of the above types can be declared <b><tt>volatile</tt></b> as well
+(<tt>volatile int</tt>, <tt>volatile string</tt>, etc.)
+
+<p>The presence of a data type keyword determines whether the given line defines
+a new parameter or refers to an existing parameter. One can assign a value or
+default value to an existing parameter, and/or modify its properties or add
+new properties.
+
+<p>Examples:
+
+<pre class="ned">
+int a;           // defines new parameter
+int b @foo;      // new parameter with property
+int c = default(5); // new parameter with default value
+int d = 5;       // new parameter with value assigned
+int e @foo = 5;  // new parameter with property and value
+f = 10;          // assignment to existing (e.g.inherited) parameter
+g = default(10); // overrides default value of existing parameter
+h;               // legal, but does nothing
+i @foo(1);       // adds a property to existing parameter
+j @foo(1) = 10;  // adds a property and value to existing parameter
+</pre>
+<p>
+Parameter values are NED expressions. Expressions are described in section
+<a href="chap18.html#sec529">[18.5]</a>.
+
+<p>For <b><tt>volatile</tt></b> parameters, the value expression is evaluated every
+time the parameter value is accessed. Non-<b><tt>volatile</tt></b> parameters
+are evaluated only once.
+
+<p><ul class="note"><b>NOTE</b><br>
+    The <b><tt>const</tt></b> keyword is reserved for future use within expressions
+    to define constant subexpressions, i.e. to denote a part within
+    an expression that should only be evaluated once. Constant subexpressions
+    are not supported yet.
+</ul>
+
+<p>The following properties are recognized for parameters: <b><tt>@unit</tt></b>,
+<b><tt>@prompt</tt></b>.
+
+<p>
+<p class="subheading">The @prompt Property</p>
+
+<p>The <b><tt>@prompt</tt></b> property defines a prompt string for the parameter. The
+prompt string is used when/if a simulation runtime user interface
+interactively prompts the user for the parameter's value.
+
+<p>The <b><tt>@prompt</tt></b> property is expected to contain one string value for the
+default key.
+
+<p>
+<p class="subheading">The @unit Property</p>
+
+<p>A parameter may have a <b><tt>@unit</tt></b> property to associate it with a measurement
+unit. The <b><tt>@unit</tt></b> property should contain one string value for the default
+key. Examples:
+
+<pre class="ned">
+@unit(s)
+@unit(second)
+</pre>
+<p>
+When present, values assigned to the parameter must be in the
+same or in a compatible (that is, convertible) unit.
+Examples:
+
+<pre class="ned">
+  double a @unit(s) = 5s;   // OK
+  double a @unit(s) = 10ms; // OK; will be converted to seconds
+  double a @unit(s) = 5;    // error: should be 5s
+  double a @unit(s) = 5kg;  // error: incompatible unit
+</pre>
+<p>
+<b><tt>@unit</tt></b> behavior for non-numeric parameters (boolean, string, XML)
+is unspecified (may be ignored or may be an error).
+
+<p>The <b><tt>@unit</tt></b> property of a parameter may not be modified via inheritance.
+
+<p>Example:
+<pre class="ned">
+simple A {
+    double p @unit(s);
+}
+simple B extends A {
+    p @unit(mW);  // illegal: cannot override @unit
+}
+</pre>
+
+<p>
+
+<p><h3><a name="sec516"/>18.4.10 Pattern Assignments</h3>
+<a name="ch-ned-ref:sec:pattern-assignments"></a>
+
+<p>Pattern assignments allow one to set more than one parameter using
+wildcards, and to assign parameters deeper down in a submodule tree.
+Pattern assignments may occur in the <b><tt>parameters</tt></b>
+section of component types, submodules and connections.
+
+<p>The syntax of a pattern assignment is <i>&lt;pattern&gt; = &lt;value&gt;</i>.
+
+<p>A pattern consists of two or more pattern elements, separated by dots.
+The pattern element syntax is defined so that it can accomodate names of
+parameters, submodules (optionally with index), gates (optionally with the
+<tt>$i</tt>/<tt>$o</tt> suffix and/or index) and connections, and their
+wildcard forms. (The default name of connection channel objects is
+<b><tt>channel</tt></b>.)
+
+<p>Wildcard forms may use:
+<ol>
+  <li> Asterisks: They match zero or more characters except dots.
+  <li> Numeric ranges, <tt>{</tt><i>&lt;start&gt;</i>..<i>&lt;end&gt;</i><tt>}</tt>
+    e.g. <tt>{5..120}</tt> or <tt>{..10}</tt>. They match numbers embedded
+    in identifiers, that is, a sequence of decimal digit characters interpreted as a
+    nonnegative integer that is within the specified <i>start..end</i>
+    range (both limits are inclusive). Both <i>start</i> and <i>end</i>
+    are optional.
+  <li> Numeric index ranges,<tt>[</tt><i>&lt;start&gt;</i>..<i>&lt;end&gt;</i><tt>]</tt>.
+    e.g. <tt>[5..120]</tt> or <tt>[..10]</tt>. They are intended for selecting
+    submodule and gate index ranges. They match a nonnegative integer
+    enclosed in square brackets that is within the specified
+    <i>start..end</i> range (both limits are inclusive).
+    Both <i>start</i> and <i>end</i> are optional.
+  <li> Double asterisks: They match zero or more characters (including dots),
+    and can be used to match more than one parameter path elements.
+</ol>
+
+<p>See the NED language grammar (Appendix <a href="chap19.html#sec536">[19]</a>)
+for a more formal definition of the pattern syntax.
+
+<p>Examples:
+<pre class="ned">
+host1.tcp.mss = 512B;
+host*.tcp.mss = 512B; // matches host, host1, host2, hostileHost, ...
+host{9..11}.tcp.mss = 512B; // matches host9/host10/host11, but nothing else
+host[9..11].tcp.mss = 512B; // matches host[9]/host[10]/host[11], but nothing else
+**.mss = 512B; // matches foo.mss, host[1].transport.tcp[0].mss, ...
+</pre>
+
+<p>
+
+<p><h3><a name="sec517"/>18.4.11 Gates</h3>
+<a name="ch-ned-ref:sec:gates"></a>
+
+<p>Gates can be defined in the <b><tt>gates</tt></b> section of component types.
+The size of a gate vector (see below) may be specified at the place of
+defining the gate, via inheritance in a derived type, and also in the
+<b><tt>gates</tt></b> block of a submodule body. A submodule body does not allow
+defining new gates.
+
+<p>A gate is identified by a name, and is characterized by a type
+(<b><tt>input</tt></b>, <b><tt>output</tt></b>, <b><tt>inout</tt></b>) and optionally a
+vector size. Gates may also have properties (see
+<a href="chap18.html#sec514">[18.4.8]</a>).
+
+<p>Gates may be scalar or vector. The vector size is specified with a numeric
+expression inside square brackets. The vector size may also be left
+unspecified by writing an empty pair of square brackets.
+
+<p>An already specified gate vector size may not be overridden in subclasses or
+in a submodule.
+
+<p>The presence of a gate type keyword determines whether the given line defines
+a new gate or refers to an existing gate. One can specify the gate vector
+size for an existing gate vector, and/or modify its properties, or add new
+properties.
+
+<p>Examples:
+
+<pre class="ned">
+gates:
+  input a;         // defines new gate
+  input b @foo;    // new gate with property
+  input c[];       // new gate vector with unspecified size
+  input d[8];      // new gate vector with size=8
+  e[10];           // set gate size for existing (e.g.inherited) gate vector
+  f @foo(bar);     // add property to existing gate
+  g[10] @foo(bar); // set gate size and add property to existing gate
+</pre>
+<p>
+Gate vector sizes are NED expressions. Expressions are described in section
+<a href="chap18.html#sec529">[18.5]</a>.
+
+<p>See the Connections section (<a href="chap18.html#sec519">[18.4.13]</a>) for more
+information on gates.
+
+<p><p class="subheading">Recognized Gate Properties</p>
+
+<p>The following properties are recognized for gates: <b><tt>@directIn</tt></b>
+and <b><tt>@loose</tt></b>. They have the same effect: When either of them is
+present on a gate, the gate is not required to be connected in the
+connections section of a compound module (see <a href="chap18.html#sec519">[18.4.13]</a>).
+
+<p><b><tt>@directIn</tt></b> should be used when the gate is an <b><tt>input</tt></b> gate that is
+intended for being used as a target for the <tt>sendDirect()</tt> method;
+<b><tt>@loose</tt></b> should be used in any other case when the gate is not
+required to be connected for some reason.
+
+<p><ul class="note"><b>NOTE</b><br>
+    The reason <b><tt>@directIn</tt></b> gates are not <i>required</i> to remain
+    unconnected is that it is often useful to wrap such modules in a compound
+    module, where the compound module also has a <b><tt>@directIn</tt></b> input gate
+    that is internally connected to the submodule's corresponding gate.
+</ul>
+
+<p>Example:
+
+<pre class="ned">
+gates:
+    input radioIn @directIn;
+</pre>
+<p>
+
+<p>
+<h3><a name="sec518"/>18.4.12 Submodules</h3>
+<a name="ch-ned-ref:sec:submodules"></a>
+
+<p>Submodules are defined in the <b><tt>submodules</tt></b> section of the compound
+module.
+
+<p>The type of the submodule may be specified statically or parametrically.
+
+<p>Submodules may be scalar or vector. The size of submodule vectors must be
+specified as a numeric expression inside square brackets.
+
+<p>Submodules may also be conditional.
+
+<p>A submodule definition may or may not have a body (a curly brace
+delimited block). An empty submodule body is equivalent to a
+missing one.
+
+<p>Syntax examples:
+<pre class="ned">
+submodules:
+    ip : IP;         // scalar submodule without body
+    tcp : TCP {}     // scalar submodule with empty body
+    app[10] : App;   // submodule vector
+</pre>
+
+<p>
+<p class="subheading">Submodule Type</p>
+
+<p>The simple or compound module type (<a href="chap18.html#sec507">[18.4.1]</a>,
+<a href="chap18.html#sec508">[18.4.2]</a>) that will be instantiated as the
+submodule may be specified either statically (with a concrete module type
+name) or parametrically.
+
+<p>
+<p class="subheading">Static Submodule Type</p>
+
+<p>Submodules with a statically defined type are those that contain a concrete
+NED module type name. Example:
+
+<pre class="ned">
+tcp : TCP;
+</pre>
+<p>
+See section <a href="chap18.html#sec524">[18.4.18]</a> for the type resolution
+rules.
+
+<p>
+<p class="subheading">Parametric Submodule Type</p>
+
+<p>Parametric submodule type means that the NED type name is given in a string
+expression. The string expression may be specified locally in the submodule
+declaration, or elsewhere using typename patterns (see later).
+
+<p>Parametric submodule types are syntactically denoted by the presence of a
+pair of angle brackets and the <b><tt>like</tt></b> keyword. The angle brackets
+contain the string expression; or if the type is not specified locally,
+they may be empty or may contain a default value for the type name
+(<tt>default(...)</tt> syntax). The syntax mandates that you also specify a
+module interface type <a href="chap18.html#sec511">[18.4.5]</a> (after the
+<b><tt>like</tt></b> keyword), which the concrete module type must implement in
+order for it to be eligible to be chosen.
+
+<p>Examples:
+
+<pre class="ned">
+tcp : &lt;tcpType&gt; like ITCP;        // type comes from parent module parameter
+tcp : &lt;"TCP_"+suffix&gt; like ITCP;  // expression using parent module parameter
+
+tcp : &lt;&gt; like ITCP;               // type must be specified elsewhere
+
+tcp : &lt;default("TCP")&gt; like ITCP; // type may be specified elsewhere;
+                                  // if not, the default is "TCP"
+tcp : &lt;default("TCP_"+suffix)&gt; like ITCP;
+                                  // type may be specified elsewhere;
+                                  // if not, the default is an expression
+</pre>
+<p>
+See the NED Grammar (Appendix <a href="chap19.html#sec536">[19]</a>) for the
+formal syntax, and section <a href="chap18.html#sec525">[18.4.19]</a>
+for the type resolution rules.
+
+<p>
+<p class="subheading">Conditional Submodules</p>
+
+<p>Submodules may be made conditional using the <b><tt>if</tt></b> keyword. The
+condition expression must evaluate to a boolean; if the result is
+<tt>false</tt>, the submodule is not created, and trying to connect its gates
+or reference its parameters will be an error.
+
+<p>An example:
+
+<pre class="ned">
+submodules:
+  tcp : TCP if withTCP { ... }
+</pre>
+<p>
+
+<p><p class="subheading">Parameters, Gates</p>
+
+<p>A submodule body may contain parameters (<a href="chap18.html#sec515">[18.4.9]</a>)
+and gates (<a href="chap18.html#sec511">[18.4.5]</a>).
+
+<p>A submodule body cannot define new parameters or gates. It is only
+allowed to assign existing parameters, and to set the vector
+size of existing gate vectors.
+
+<p>It is also allowed to add or modify submodule properties and
+parameter/gate properties.
+
+<p>
+
+<p><h3><a name="sec519"/>18.4.13 Connections</h3>
+<a name="ch-ned-ref:sec:connections"></a>
+
+<p>Connections are defined in the <b><tt>connections</tt></b> section of the compound module.
+
+<p>Connections may not span multiple hierarchy levels, that is, a connection
+may be created between two submodules, a submodule and the compound module,
+or between two gates of the compound module.
+
+<p>Normally, all gates must be connected, including submodule gates and the gates
+of the compound module. When the <b><tt>allowunconnected</tt></b> modifier is present
+after <b><tt>connections</tt></b>, gates will be allowed to be left unconnected.
+
+<p><ul class="note"><b>NOTE</b><br>
+    The <b><tt>@directIn</tt></b> and <b><tt>@loose</tt></b> gate properties are alternatives to the
+    <tt>connections allowunconnected</tt> syntax; see <a href="chap18.html#sec517">[18.4.11]</a>.
+</ul>
+
+<p>Connections may be conditional, and may be created using loops (see
+<a href="chap18.html#sec520">[18.4.14]</a>).
+
+<p>
+<p class="subheading">Connection Syntax</p>
+
+<p>The connection syntax uses arrows (<tt>--&gt;</tt>, <tt>&lt;--</tt>) to connect
+<b><tt>input</tt></b> and <b><tt>output</tt></b> gates, and double arrows
+(<tt>&lt;--&gt;</tt>) to connect <b><tt>inout</tt></b> gates. The latter is
+also said to be a bidirectional connection.
+
+<p>Arrows point from the source gate (a submodule output gate or a compound
+module input gate) to the destination gate (a submodule input gate or a
+compound module output gate). Connections may be written either left to right
+or right to left, that is, <tt>a--&gt;b</tt> is equivalent to <tt>b&lt;--a</tt>.
+
+<p>Gates are specified as <i>&lt;modulespec&gt;.&lt;gatespec&gt;</i> (to connect a submodule),
+or as <i>&lt;gatespec&gt;</i> (to connect the compound module). <i>&lt;modulespec&gt;</i>
+is either a submodule name (for scalar submodules), or a submodule name plus
+an index in square brackets (for submodule vectors). For scalar gates,
+<i>&lt;gatespec&gt;</i> is the gate name; for gate vectors it is either
+the gate name plus a numeric index expression in square brackets,
+or <i>&lt;gatename&gt;</i><tt>++</tt>.
+
+<p>The <i>&lt;gatename&gt;</i><tt>++</tt> notation causes the first unconnected gate index
+to be used. If all gates of the given gate vector are connected, the behavior
+is different for submodules and for the enclosing compound module.
+For submodules, the gate vector expands by one. For the compound module,
+it is an error to use <tt>++</tt> on a gate vector with no unconnected gates.
+
+<p>Syntax examples:
+
+<pre class="ned">
+connections:
+   a.out --&gt; b.in;   // unidirectional between two submodules
+   c.in[2] &lt;-- in;   // parent-to-child; gate vector with index
+   d.g++ &lt;--&gt; e.g++; // bidirectional, auto-expanding gate vectors
+</pre>
+<p>
+<ul class="rationale"><b>Rationale</b><br>
+    The reason it is not supported to expand the gate vector of the compound
+    module is that the module structure is built in top-down order: new gates
+    would be left unconnected on the outside, as there is no way in NED to
+    "go back" and connect them afterwards.
+</ul>
+
+<p>When the <tt>++</tt> operator is used with <tt>$i</tt> or <tt>$o</tt>
+(e.g. <tt>g$i++</tt> or <tt>g$o++</tt>, see later), it will actually add
+a gate pair (input+output) to maintain equal gate size for the two
+directions.
+
+<p>The syntax to associate a channel (see <a href="chap18.html#sec510">[18.4.4]</a>)
+with the connection is to use two arrows with a channel specification
+in between (see later). The same syntax is used to add properties such as
+<b><tt>@display</tt></b> to the connection.
+
+<p>
+
+
+<p><p class="subheading">Inout Gates</p>
+
+<p>An inout gate is represented as a gate pair: an input gate and an output gate.
+The two sub-gates may also be referenced and connected individually, by adding
+the <tt>$i</tt> and <tt>$o</tt> suffix to the name of the inout gate.
+
+<p>A bidirectional connection (which uses a double arrow to connect two inout gates),
+is also a shorthand for two uni-directional connections; that is,
+
+<pre class="ned">
+a.g &lt;--&gt; b.g;
+</pre>
+<p>
+is equivalent to
+<pre class="ned">
+a.g<i>o --&gt; b.g</i>i;
+a.g<i>i &lt;-- b.g</i>o;
+</pre>
+
+<p>In inout gate vectors, gates are always in pairs, that is,
+<tt>sizeof(g$i)==sizeof(g$o)</tt> always holds. It is maintained even
+when <tt>g$i++</tt> or <tt>g$o++</tt> is used: the <tt>++</tt> operator will
+add a gate pair, not just an input or an output gate.
+
+<p>
+<p class="subheading">Specifying Channels</p>
+
+<p>A channel specification associates a channel object with the connection.
+A channel object is an instance of a channel type (see <a href="chap18.html#sec510">[18.4.4]</a>).
+
+<p><ul class="note"><b>NOTE</b><br>
+As bidirectional connections are a shorthand for a pair of uni-directional
+connections, they will actually create <i>two</i> channel objects, one
+for each direction.
+</ul>
+
+<p>The channel type to be instantiated may be implicit, or may be specified
+statically or parametrically.
+
+<p>A connection may have a body (a curly brace delimited block) for setting
+properties and/or parameters of the channel.
+
+<p>A connection syntax allows one to specify a name for the channel object.
+When not specified, the channel name will be taken from the <tt>@defaultname</tt>
+property of the channel type; when there is no such property, it will be
+<tt>"channel"</tt>. Custom connection names can be useful for easier addressing of
+channel objects when assigning parameters using patterns.
+
+<p>See subsequent sections for details.
+
+<p>
+<p class="subheading">Implicit Channel Type</p>
+
+<p>If the connection syntax does not say anything about the channel type, it
+is implicitly determined from the set of connection parameters used.
+
+<p>Syntax examples for connections with implicit channel types:
+
+<pre class="ned">
+a.g &lt;--&gt; b.g; // no parameters
+a.g &lt;--&gt; {delay = 1ms;} &lt;--&gt; b.g;  // assigns delay
+a.g &lt;--&gt; {datarate = 100Mbps; delay = 50ns;} &lt;--&gt; b.g; // assigns delay and datarate
+</pre>
+<p>
+For such connections, the actual NED type to be used will depend on the
+parameters set in the connection:
+
+<p><ol>
+  <li> When no parameters are set, <tt>ned.IdealChannel</tt> is chosen.
+  <li> When only <tt>ned.DelayChannel</tt> parameters are used (<tt>delay</tt>
+        and <tt>disabled</tt>), <tt>ned.DelayChannel</tt> is chosen.
+  <li> When only <tt>ned.DatarateChannel</tt> parameters are used
+        (<tt>datarate</tt>, <tt>delay</tt>, <tt>ber</tt>, <tt>per</tt>, <tt>disabled</tt>),
+        the chosen channel type will be <tt>ned.DatarateChannel</tt>.
+</ol>
+
+<p>Connections with implicit channel types may not use any other parameter.
+
+<p><p class="subheading">Static Channel Type</p>
+
+<p>Connections with a statically defined channel type are those that
+contain a concrete NED channel type name.
+
+<p>Examples:
+
+<pre class="ned">
+a.g &lt;--&gt; FastEthernet &lt;--&gt; b.g;
+a.g &lt;--&gt; FastEthernet {per = 1e-6;} &lt;--&gt; b.g;
+</pre>
+<p>
+See section <a href="chap18.html#sec524">[18.4.18]</a> for the type resolution
+rules.
+
+<p>
+<p class="subheading">Parametric Channel Type</p>
+
+<p>Parametric channel types are similar to parametric submodule types,
+described in section <a href="chap18.html#sec518">[18.4.12]</a>.
+
+<p>Parametric channel type means that the NED type name is given in a string
+expression. The string expression may be specified locally in the connection
+declaration, or elsewhere using typename patterns (see later).
+
+<p>Parametric channel types are syntactically denoted by the presence of a
+pair of angle brackets and the <b><tt>like</tt></b> keyword. The angle brackets
+contain the string expression; or if the type is not specified locally,
+they may be empty or may contain a default value for the type name
+(<tt>default(...)</tt> syntax). The syntax mandates that you also specify a
+channel interface type <a href="chap18.html#sec511">[18.4.5]</a> (after the
+<b><tt>like</tt></b> keyword), which the concrete channel type must implement in
+order for it to be eligible to be chosen.
+
+<p>Examples:
+
+<pre class="ned">
+a.g++ &lt;--&gt; &lt;channelType&gt; like IMyChannel &lt;--&gt; b.g++;
+                                  // type comes from parent module parameter
+a.g++ &lt;--&gt; &lt;"Ch_"+suffix&gt; like IMyChannel &lt;--&gt; b.g++;
+                                  // expression using parent module parameter
+a.g++ &lt;--&gt; &lt;&gt; like IMyChannel &lt;--&gt; b.g++;
+                                  // type must be specified elsewhere
+a.g++ &lt;--&gt; &lt;default("MyChannel")&gt; like IMyChannel &lt;--&gt; b.g++;
+                                  // type may be specified elsewhere;
+                                  // if not, the default is "MyChannel"
+a.g++ &lt;--&gt; &lt;default("Ch_"+suffix)&gt; like IMyChannel &lt;--&gt; b.g++;
+                                  // type may be specified elsewhere;
+                                  // if not, the default is an expression
+</pre>
+<p>
+See the NED Grammar (Appendix <a href="chap19.html#sec536">[19]</a>) for the
+formal syntax, and section <a href="chap18.html#sec525">[18.4.19]</a>
+for the type resolution rules.
+
+<p>
+<p class="subheading">Channel Parameters and Properties</p>
+
+<p>A channel definition may or may not have a body (a curly brace
+delimited block). An empty channel body (<tt>{ }</tt>) is equivalent
+to a missing one.
+
+<p>A channel body may contain parameters (<a href="chap18.html#sec515">[18.4.9]</a>).
+
+<p>A channel body cannot define new parameters. It is only
+allowed to assign existing parameters.
+
+<p>It is also allowed to add or modify properties and parameter properties.
+
+<p>
+<h3><a name="sec520"/>18.4.14 Conditional and Loop Connections, Connection Groups</h3>
+<a name="ch-ned-ref:sec:connection-groups"></a>
+
+<p>The connections section may contain any number of connections and
+connection groups. A connection group is one or more connections
+grouped with curly braces.
+
+<p>Both connections and connection groups may be conditional (<b><tt>if</tt></b>
+keyword) or may be multiple (<b><tt>for</tt></b> keyword).
+
+<p>Any number of <b><tt>for</tt></b> and <b><tt>if</tt></b> clauses may be added to
+a connection or connection loop; they are interpreted as if they were
+nested in the given order. Loop variables of a <b><tt>for</tt></b> may be
+referenced from subsequent conditions and loops as well as in module and
+gate index expressions in the connections.
+
+<p>See the NED Grammar (<a href="chap19.html#sec536">[19]</a>) for the exact syntax.
+
+<p>Example connections:
+
+<pre class="ned">
+a.out --&gt; b.in;
+c.out --&gt; d.in if p&gt;0;
+e.out[i] --&gt; f[i].in for i=0..sizeof(f)-1, if i%2==0;
+</pre>
+<p>
+Example connection groups:
+
+<pre class="ned">
+if p&gt;0 {
+    a.out --&gt; b.in;
+    a.in &lt;-- b.out;
+}
+for i=0..sizeof(c)-1, if i%2==0 {
+    c[i].out --&gt; out[i];
+    c[i].in &lt;-- in[i];
+}
+for i=0..sizeof(d)-1, for j=0..sizeof(d)-1, if i!=j {
+    d[i].out[j] --&gt; d[j].in[i];
+}
+for i=0..sizeof(e)-1, for j=0..sizeof(e)-1 {
+    e[i].out[j] --&gt; e[j].in[i] if i!=j;
+}
+</pre>
+<p>
+
+<p>
+<h3><a name="sec521"/>18.4.15 Inner Types</h3>
+<a name="ch-ned-ref:sec:inner-types"></a>
+
+<p>Inner types can be defined in the <b><tt>types</tt></b> section of compound
+modules, with the same syntax as toplevel (i.e. non-inner) types.
+
+<p>Inner types may not contain further inner types, that is, type nesting
+is limited to two levels.
+
+<p>Inner types are only visible inside the enclosing component type
+and its subclasses.
+
+<p>
+
+<p><h3><a name="sec522"/>18.4.16 Name Uniqueness</h3>
+
+<p>Identifier names within a component must be unique. That is, the following
+items in a component are considered to be in the same name space and must
+not have colliding names:
+
+<p><ul>
+  <li> parameters
+  <li> gates
+  <li> submodules
+  <li> inner types
+  <li> the above items of super type(s)
+</ul>
+
+<p>For example, a gate and a submodule cannot have the same name.
+
+<p>
+<h3><a name="sec523"/>18.4.17 Parameter Assignment Order</h3>
+<a name="ch-ned-ref:sec:param-assignment-order"></a>
+
+<p>A module or channel parameter may be assigned in <b><tt>parameters</tt></b>
+blocks (see <a href="chap18.html#sec515">[18.4.9]</a>) at various places in NED: in
+the module or channel type that defines it; in the type's subclasses; in
+the submodule or connection that instantiates the type. The parameter may
+also be assigned using pattern assignments (see
+<a href="chap18.html#sec516">[18.4.10]</a>) in any compound module that uses
+the given module or channel type directly or indirectly.
+
+<p>Patterns are matched against the relative path of the parameter, which is
+the relative path of its submodule or connection, with a dot and the
+parameter name appended. The relative path is composed of a list of
+submodule names (name plus index) separated by dots; a connection is
+identified by the full name of its source gate plus the name of the channel
+object (which is currently always <tt>channel</tt>) separated by a dot.
+
+<p><ul class="note"><b>NOTE</b><br>
+As bidirectional connections are a shorthand for two unidirectional
+connections, the source gate name is qualified with <tt>$i</tt> or
+<tt>$o</tt> in the relative path.
+</ul>
+
+<p>Note that the <b><tt>parameters</tt></b> keyword itself is optional,
+and is usually not written out in submodules and connections.
+
+<p>This section describes the module and channel parameter assignments procedure.
+
+<p>The general rules are the following:
+
+<p><ol>
+  <li> A (non-default) parameter assignment may not be overridden later;
+    that is, if there are assignments in multiple places, the assignment
+    &#8220;closest&#8221; to the parameter declaration will be effective; others
+    will be flagged as errors.
+  <li> A default value is only used if a non-default value is not present
+    for the given parameter. A non-default value may also come from a source
+    external to NED, namely the simulation configuration (<tt>omnetpp.ini</tt>).
+  <li> Unlike non-default values, a default value <i>may</i> be overridden;
+    that is, if there are default value assignments in multiple places,
+    the assignment &#8220;farthest&#8221; from the parameter declaration will win.
+  <li> Among pattern assignments within the same <b><tt>parameters</tt></b>
+    block, the first match will win. Pattern assignments with default and
+    non-default values are considered to be two disjoint sets, only one of
+    which are searched at a time.
+</ol>
+
+<p>This yields the following conceptual search order for non-default parameter
+assignments:
+
+<p><ol>
+  <li> First, the NED type that contains the parameter declaration is checked;
+  <li> Then its subclasses are checked;
+  <li> Then the submodule or connection that instantiates the type is checked;
+  <li> Then the compound module that contains the submodule or connection is
+    checked for matching pattern assignments;
+  <li> Then, assuming the compound module is part of a network, the search
+    for matching pattern assignments continues up on the module tree until the root
+    (the module that represents the network). At each level (compound module),
+    first the specific submodule definition is checked, then the (parent) compound module.
+    If a compound module is subclassed before instantiated, the base type is checked
+    first.
+</ol>
+
+<p>When no (non-default) assignment is found, the same places are searched in the
+<i>reverse order</i> for default value assignments. If no default value is
+found, an error may be raised or the user may be interactively prompted.
+
+<p>To illustrate the above rules, consider the following example where we
+want to assign parameter <i>p</i>:
+
+<pre class="ned">
+simple A { double p; }
+simple A2 extends A {...}
+module B { submodules: a2: A2 {...} }
+module B2 extends B {...}
+network C { submodules: b2: B2 {...} }
+</pre>
+<p>
+Here, the search order is: <i>A, A2, a2, B, B2, b2, C</i>. NED
+conceptually searches the <b><tt>parameters</tt></b> blocks in that order for a
+(non-default) value, and then in reverse order for a default value.
+
+<p>The full search order and the form of assignment expected on each level:
+
+<p><ol>
+  <li> <tt>A  { p = ...; }</tt>
+  <li> <tt>A2 { p = ...; }</tt>
+  <li> <tt>a2 { p = ...; }</tt>
+  <li> <tt>B  { a2.p = ...; }</tt>
+  <li> <tt>B2 { a2.p = ...; }</tt>
+  <li> <tt>b2 { a2.p = ...; }</tt>
+  <li> <tt>C  { b2.a2.p = ...; }</tt>
+  <li> <tt>C  { b2.a2.p = default(...); }</tt>
+  <li> <tt>b2 { a2.p = default(...); }</tt>
+  <li> <tt>B2 { a2.p = default(...); }</tt>
+  <li> <tt>B  { a2.p = default(...); }</tt>
+  <li> <tt>a2 { p = default(...); }</tt>
+  <li> <tt>A2 { p = default(...); }</tt>
+  <li> <tt>A  { p = default(...); }</tt>
+</ol>
+
+<p>If only a default value is found or not even that, external configuration
+has a say. The configuration may contain an assignment for <tt>C.b2.a2.p</tt>;
+it may apply the default if there is one; it may ask the user interactively
+to enter a value; or if there is no default, it may raise an error
+<i>&#8220;no value for parameter&#8221;</i>.
+
+<p>
+
+<p><h3><a name="sec524"/>18.4.18 Type Name Resolution</h3>
+<a name="ch-ned-ref:sec:type-name-resolution"></a>
+
+<p>Names from other NED files can be referred to either by fully qualified
+name (&#8220;<tt>inet.networklayer.ip.RoutingTable</tt>&#8221;), or by short name
+(&#8220;<tt>RoutingTable</tt>&#8221;) if the name is visible.
+
+<p>Visible names are:
+
+<p><ul>
+  <li> inner types of the same type or its super types;
+  <li> anything from the same package;
+  <li> imported names.
+</ul>
+
+<p><p class="subheading">Imports</p>
+
+<p>Imports have a similar syntax to Java, but they are more flexible with wildcards.
+All of the following are legal:
+
+<pre class="ned">
+import inet.networklayer.ipv4.RoutingTable;
+import inet.networklayer.ipv4.*;
+import inet.networklayer.ipv4.Ro*Ta*;
+import inet.*.ipv4.*;
+import inet.**.RoutingTable;
+</pre>
+<p>
+One asterisk stands for any character sequence not containing dots; and a
+double asterisk stands for any character sequence (which may contain dots).
+No other wildcards are recognized.
+
+<p>An import not containing a wildcard must match an existing NED type.
+However, it is legal for an import that does contain wildcards
+not to match any NED type (although that might generate a warning.)
+
+<p>Inner types may not be referenced outside their enclosing types and
+their subclasses.
+
+<p><p class="subheading">Base Types and Submodules</p>
+
+<p>Fully qualified names and simple names are accepted. Simple names
+are looked up among the inner types of the enclosing type (compound
+module), then using imports, then in the same package.
+
+<p><p class="subheading">Network Name in the Ini File</p>
+
+<p>The network name in the ini file may be given as a fully qualified name
+or as a simple (unqualified) name.
+
+<p>Simple (unqualified) names are tried with the same package as the
+ini file is in (provided it is in a NED directory).
+
+<p>
+<h3><a name="sec525"/>18.4.19 Resolution of Parametric Types</h3>
+<a name="ch-ned-ref:sec:parameteric-type-resolution"></a>
+
+<p>This section describes the type resolution for submodules and connections
+that are defined using the <b><tt>like</tt></b> keyword.
+
+<p>Type resolution is done in two steps. In the first step, the type name
+string expression is found and evaluated. Then in the second step, the
+resulting type name string is resolved to an actual NED type.
+
+<p><b>Step 1.</b> The lookup of the type name string expression is similar to
+that of a parameter value lookup (<a href="chap18.html#sec523">[18.4.17]</a>).
+
+<p>The expression may be specified locally (between the angle brackets), or
+using typename pattern assignments in any compound module that
+contains the submodule or connection directly or indirectly. A
+typename pattern is a pattern that ends in <tt>.typename</tt>.
+
+<p>Patterns are matched against the relative path of the submodule or
+connection, with <tt>.typename</tt> appended. The relative path is
+composed of a list of submodule names (name plus index) separated
+by dots; a connection is identified by the full name of its source
+gate plus the name of the channel object (which is currently always
+<tt>channel</tt>) separated by a dot.
+
+<p><ul class="note"><b>NOTE</b><br>
+As bidirectional connections are a shorthand for two unidirectional
+connections, the source gate name is qualified with <tt>$i</tt> or
+<tt>$o</tt> in the relative path.
+</ul>
+
+<p>An example that uses typename pattern assignment:
+
+<pre class="ned">
+module Host {
+    submodules:
+        tcp: &lt;&gt; like ITCP;;
+        ...
+    connections:
+        tcp.ipOut --&gt; &lt;&gt; like IMyChannel --&gt; ip.tcpIn;
+}
+
+network Network {
+    parameters:
+        host[*].tcp.typename = "TCP_lwIP";
+        host[*].tcp.ipOut.channel.typename = "DebugChannel";
+    submodules:
+        host[10] : Host;
+        ...
+}
+</pre>
+<p>
+The general rules are the following:
+
+<p><ol>
+  <li> A (non-default) parameter assignment may not be overridden later;
+    that is, if there are assignments in multiple places, the assignment
+    &#8220;closest&#8221; to the submodule or connection definition will be effective;
+    others will be flagged as errors.
+  <li> A default value is only used if a non-default value is not present.
+    A non-default value may also come from a source external to NED, namely
+    the simulation configuration (<tt>omnetpp.ini</tt>).
+  <li> Unlike non-default values, a default value <i>may</i> be overridden;
+    that is, if there are default value assignments in multiple places,
+    the assignment &#8220;farthest&#8221; from the submodule or connection definition will win.
+  <li> Among pattern assignments within the same <b><tt>parameters</tt></b>
+    block, the first match will win. Patterns assignments with default and
+    non-default values are considered to be two disjoint sets, only one of
+    which are searched at a time.
+</ol>
+
+<p>This yields the following conceptual search order for typename assignments:
+
+<p><ol>
+   <li> First, the submodule or connection definition is checked (angle brackets);
+   <li> Then the compound module that contains the submodule or connection is
+     checked for matching pattern assignments;
+   <li> Then, assuming the compound module is part of a network, the search
+     for matching pattern assignments continues up on the module tree until the root
+     (the module that represents the network). At each level (compound module),
+     first the specific submodule definition is checked, then the (parent) compound module.
+     If a compound module is subclassed before instantiated, the base type is checked
+     first.
+</ol>
+
+<p>When no (non-default) assignment is found, the same places are searched in the
+<i>reverse order</i> for default value assignments. If no default value is
+found, an error may be raised or the user may be interactively prompted.
+
+<p>To illustrate the above rules, consider the following example:
+
+<pre class="ned">
+module A { submodules: h: &lt;&gt; like IFoo; }
+module A2 extends A {...}
+module B { submodules: a2: A2 {...} }
+module B2 extends B {...}
+network C { submodules: b2: B2 {...} }
+</pre>
+<p>
+Here, the search order is: <i>h, A, A2, a2, B, B2, b2, C</i>. NED
+conceptually searches the <b><tt>parameters</tt></b> blocks in that order for a
+(non-default) value, and then in reverse order for a default value.
+
+<p>The full search order and the form of assignment expected on each level:
+
+<p><ol>
+  <li> <tt>h: &lt;...&gt; like IFoo;</tt>
+  <li> <tt>A  { h.typename = ...; }</tt>
+  <li> <tt>A2 { h.typename = ...; }</tt>
+  <li> <tt>a2 { h.typename = ...; }</tt>
+  <li> <tt>B  { a2.h.typename = ...; }</tt>
+  <li> <tt>B2 { a2.h.typename = ...; }</tt>
+  <li> <tt>b2 { a2.h.typename = ...; }</tt>
+  <li> <tt>C  { b2.a2.h.typename = ...; }</tt>
+  <li> <tt>C  { b2.a2.h.typename = default(...); }</tt>
+  <li> <tt>b2 { a2.h.typename = default(...); }</tt>
+  <li> <tt>B2 { a2.h.typename = default(...); }</tt>
+  <li> <tt>B  { a2.h.typename = default(...); }</tt>
+  <li> <tt>a2 { h.typename = default(...); }</tt>
+  <li> <tt>A2 { h.typename = default(...); }</tt>
+  <li> <tt>A  { h.typename = default(...); }</tt>
+  <li> <tt>h: &lt;default(...)&gt; like IFoo;</tt>
+</ol>
+
+<p>If only a default value is found or not even that, external configuration
+has a say. The configuration may contain an assignment for
+<tt>C.b2.a2.h.typename</tt>; it may apply the default value if there is one;
+it may ask the user interactively to enter a value; or if there is no
+default value, it may raise an error <i>&#8220;cannot determine submodule
+type&#8221;</i>.
+
+<p>
+<b>Step 2.</b> The type name string is expected to hold the simple name or
+fully qualified name of the desired NED type. Resolving the type name
+string to an actual NED type differs from normal type name lookups in that
+it ignores the imports in the file altogether. Instead, a list of NED types
+that have the given simple name or fully qualified name <i>and</i>
+implement the given interface is collected. The result must be exactly one
+module or channel type.
+
+<p>
+<h3><a name="sec526"/>18.4.20 Implementing an Interface</h3>
+<a name="ch-ned-ref:sec:implementing-an-interface"></a>
+
+<p>A module type may implement one or more module interfaces, and a channel type
+may implement one or more channel interfaces, using the <b><tt>like</tt></b>
+keyword.
+
+<p>The module or channel type is required to have <i>at least</i> those
+parameters and gates that the interface has.
+
+<p>Regarding component properties, parameter properties and gate properties
+defined in the interface: the module or channel type is required to have at
+least the properties of the interface, with at least the same values.
+The component may have additional properties, and properties may add more
+keys and values.
+
+<p><ul class="note"><b>NOTE</b><br>
+  Implementing an interface does not cause the properties, parameters and
+  gates to be interited by the module or channel type; they have to be added
+  explicitly.
+</ul>
+
+<p><ul class="note"><b>NOTE</b><br>
+  A module or channel type may have extra properties, parameters and gates
+  in addition to those in the interface.
+</ul>
+
+<p>
+
+<p><h3><a name="sec527"/>18.4.21 Inheritance</h3>
+<a name="ch-ned-ref:sec:inheritance"></a>
+
+<p>Component inheritance is governed by the following rules:
+
+<p><ul>
+  <li> A simple module may only extend a simple module.
+  <li> A compound module may only extend a compound module.
+  <li> A channel may only extend a channel.
+  <li> A module interface may only extend a module interface (or several module
+        interfaces).
+  <li> A channel interface may only extend a channel interface (or several
+        channel interfaces).
+</ul>
+
+<p>A network is a shorthand for a compound module with the <b><tt>@isNetwork</tt></b>
+property set, so the same rules apply to it as to compound modules.
+
+<p>Inheritance may:
+<ul>
+    <li> add new properties, parameters, gates, inner types, submodules,
+          connections, as long as names do not conflict with inherited names
+    <li> modify inherited properties, and properties of inherited parameters and
+          gates
+    <li> it may not modify inherited submodules, connections and inner types
+</ul>
+
+<p>Other inheritance rules:
+<ul>
+    <li>  for inner types:
+       new inner types can be added, but inherited ones cannot be changed
+    <li>  for properties:
+       contents will be merged (rules like for display strings: values on
+       same key and same position will overwrite old ones)
+    <li> for parameters:
+       type cannot be redefined;
+       value may be redefined in subclasses or at place of usage
+    <li>  for gates:
+       type cannot be redefined;
+       vector size may be specified in subclasses or at place of usage if it was unspecified
+    <li>  for gate/parameter properties:
+       extra properties can be added;
+       existing properties can be overridden/extended as for standalone properties
+    <li>  for submodules:
+       new submodules may be added, but inherited ones cannot be modified
+    <li>  for connections:
+       new connections may be added, but inherited ones cannot be modified
+</ul>
+
+<p>The following sections will elaborate on the above rules.
+
+<p><p class="subheading">Property Inheritance</p>
+
+<p>Generally, properties may be modified via inheritance. Inheritance may:
+
+<p><ul>
+    <li> add new keys
+    <li> add/overwrite values for existing keys
+    <li> remove a value from an existing key by using hyphen as a special value
+</ul>
+
+<p>
+<p class="subheading">Parameter Inheritance</p>
+
+<p>Default values for parameters may be overridden in subclasses.
+
+<p><p class="subheading">Gate Inheritance</p>
+
+<p>Gate vector size may not be overridden in subclasses.
+
+<p>
+<h3><a name="sec528"/>18.4.22 Network Build Order</h3>
+<a name="ch-ned-ref:sec:build-order"></a>
+
+<p>When a network is instantiated for simulation, the module tree is built in
+a top-down preorder fashion. This means that starting from an empty system
+module, all submodules are created, their parameters and vector sizes are
+assigned, and they get fully connected before proceeding to go into the
+submodules to build their internals.
+
+<p>This implies that inside a compound module definition (including in
+submodules and connections), one can refer to the compound module's
+parameters and gate sizes, because they are already built at the time of
+usage.
+
+<p>The same rules apply to compound or simple modules created dynamically during
+runtime.
+
+<p>
+<h2><a name="sec529"/>18.5 Expressions</h2>
+<a name="ch-ned-ref:sec:expressions"></a>
+
+<p>NED language expressions<!--ned!expressions--> have a C-like syntax, with
+some variations on operator names (see <tt>^</tt>, <tt>#</tt>, <tt>##</tt>).
+Expressions may refer to module parameters, loop variables (inside connection
+<b><tt>for</tt></b> loops), gate vector and module vector sizes, and other attributes
+of the model. Expressions can use built-in and user-defined functions as well.
+
+<p><ul class="note"><b>NOTE</b><br>
+New NED functions can be defined in C++; see section <a href="chap7.html#sec299">[7.11]</a>.
+</ul>
+
+<p>
+<h3><a name="sec530"/>18.5.1 Operators</h3>
+<!--ned!expressions!operators-->
+
+<p>The following operators are supported (in order of decreasing precedence):
+
+<p><table border>
+<TR> <TD align=left>
+
+<p><b>Operator</b>                   </TD> <TD align=left> <b>Meaning</b> </TD></TR>
+<TR> <TD align=left> <tt>-</tt>, <tt>!</tt>, <it>~</it> </TD> <TD align=left> unary minus, negation, bitwise complement </TD></TR>
+<TR> <TD align=left> <tt>^</tt>         </TD> <TD align=left> power-of </TD></TR>
+<TR> <TD align=left> <tt>*</tt>, <tt>/</tt>, <tt>%</tt>       </TD> <TD align=left> multiply, divide, integer modulo </TD></TR>
+<TR> <TD align=left> <tt>+</tt>, <tt>-</tt>                 </TD> <TD align=left> add, subtract, string concatenation </TD></TR>
+<TR> <TD align=left> <tt>&lt;&lt;</tt>, <tt>&gt;&gt;</tt>               </TD> <TD align=left> bitwise shift </TD></TR>
+<TR> <TD align=left> <tt>&amp;</tt>, <tt>|</tt>, <tt>#</tt>      </TD> <TD align=left> bitwise and, or, xor </TD></TR>
+<TR> <TD align=left> <tt>==</tt>                         </TD> <TD align=left> equal </TD></TR>
+<TR> <TD align=left> <tt>!=</tt>                         </TD> <TD align=left> not equal </TD></TR>
+<TR> <TD align=left> <tt>&gt;</tt>, <tt>&gt;=</tt>                </TD> <TD align=left> greater than, greater than or equal to</TD></TR>
+<TR> <TD align=left> <tt>&lt;</tt>, <tt>&lt;=</tt>                </TD> <TD align=left> less than, less than or equal to </TD></TR>
+<TR> <TD align=left> <tt>&amp;&amp;</tt>, <tt>||</tt>, <tt>##</tt> </TD> <TD align=left> logical operators and, or, xor </TD></TR>
+<TR> <TD align=left> <tt>?:</tt>                         </TD> <TD align=left> the C/C++ &#8220;inline if&#8221; </TD></TR>
+</table>
+
+<p><p class="subheading">Conversions</p>
+
+<p>Values may have the same types as NED parameters: boolean, integer, double, string, or XML element.
+An integer or double value may have an associated measurement unit (<tt>s</tt>, <tt>mW</tt>, etc.)
+
+<p>Integer and double values are implicitly converted to one another where needed.
+
+<p>There is no implicit conversion between boolean and numeric types, so <tt>0</tt>
+is not a synonym for <b><tt>false</tt></b>, and nonzero numbers are not a synonym
+for <b><tt>true</tt></b>.
+
+<p>There is also no conversion between string and numeric types, so e.g. <tt>"foo"+5</tt>
+is illegal. There are functions for converting a number to string and vice versa.
+
+<p>For bitwise operators and modulo (%), doubles are converted to integers.
+
+<p><ul class="note"><b>NOTE</b><br>
+Integers are represented with the C++ type <tt>long</tt>. <tt>double</tt>-to-<tt>long</tt>
+conversions are performed using the C++ language's built-in typecast operator.
+As <tt>long</tt> is 32 bits on most 32-bit architectures, for portability reasons
+it is not recommended to use integers that do not fit into 32 bits.
+</ul>
+
+<p>
+<p class="subheading">Unit Handling</p>
+
+<p>Operations involving numbers with units work in the following way:
+
+<p>Addition, substraction, and numeric comparisons require their arguments to
+have the same unit or compatible units; in the latter case a unit conversion
+is performed before the operation. Incompatible units cause an error.
+
+<p>
+Modulo, power-of and the bitwise operations require their arguments to be
+dimensionless, otherwise the result would depend on the choice of the unit.
+
+<p><ul class="note"><b>NOTE</b><br>
+If you need a floating-point modulo operator that handles units as well, use
+the <tt>fmod()</tt> function.
+</ul>
+
+<p>
+Multiplying two numbers with units is not supported.
+
+<p>
+For division, dividing two numbers with units is only supported if the two
+units are convertible (i.e. the result will be dimensionless). Dividing
+a dimensionless number with a number with unit is not supported.
+
+<p>
+
+<p><h3><a name="sec531"/>18.5.2 Referencing Parameters and Loop Variables</h3>
+
+<p>Identifiers in expressions occurring <i>anywhere</i> in component definitions
+are interpreted as referring to parameters of the given component. For example,
+identifiers inside submodule bodies refer to the parameters of the compound
+module.
+
+<p>Expressions may also refer to parameters of submodules defined earlier
+in the NED file, using the <tt>submoduleName.paramName</tt> or the
+<tt>submoduleName[index].paramName</tt> syntax. To refer to parameters
+of the local submodule inside a submodule body, use the
+<b><tt>this</tt></b> qualifier: <tt>this.destAddress</tt>.
+
+<p>Exception: if an identifier occurs in a connection <b><tt>for</tt></b> loop and names
+a previously defined loop variable, then it is understood as referring to
+the loop variable.
+
+<p>
+<h3><a name="sec532"/>18.5.3 The <b><tt>index</tt></b> Operator</h3>
+
+<p>The <b><tt>index</tt></b> operator is only allowed in a vector submodule's body,
+and yields the index of the submodule instance.
+
+<p>
+<h3><a name="sec533"/>18.5.4 The <b><tt>sizeof()</tt></b> Operator</h3>
+
+<p>The <b><tt>sizeof()</tt></b> operator expects one argument, and it is only accepted
+in compound module definitions.
+
+<p>The <tt>sizeof(identifier)</tt> syntax occurring <i>anywhere</i> in a compound
+module yields the size of the named submodule or gate vector of the
+compound module.
+
+<p>Inside submodule bodies, the size of a gate vector of the same submodule
+can be referred to with the <b><tt>this</tt></b> qualifier: <tt>sizeof(this.out)</tt>.
+
+<p>To refer to the size of a submodule's gate vector defined earlier in the
+NED file, use the <tt>sizeof(submoduleName.gateVectorName)</tt> or
+<tt>sizeof(submoduleName[index].gateVectorName)</tt> syntax.
+
+<p>
+<h3><a name="sec534"/>18.5.5 Functions</h3>
+<!--ned!functions-->
+
+<p>The functions available in NED are listed in Appendix
+<a href="chap21.html#sec538">[21]</a>.
+
+<p>Selected functions are documented below.
+
+<p><p class="subheading">The <b><tt>xmldoc()</tt></b> Function</p>
+
+<p>The <b><tt>xmldoc()</tt></b> NED function can be used to assign <b><tt>xml</tt></b> parameters,
+that is, point them to XML files or to specific elements inside XML files.
+
+<p><b><tt>xmldoc()</tt></b> accepts a file name as well as an optional second string argument
+that contains an XPath-like expression.
+
+<p>
+The XPath expression is used to select an element within the document.
+If the expression matches several elements, the first element
+(in preorder depth-first traversal) will be selected. (This is
+unlike XPath, which selects all matching nodes.)
+
+<p>The expression syntax is the following:
+<ul>
+  <li> An expression consists of <i>path components</i> (or "steps")
+        separated by "<tt>/</tt>" or "<tt>//</tt>".
+  <li> A path component can be an element tag name, "<tt>*</tt>", "<tt>.</tt>"
+        or "<tt>..</tt>".
+  <li> "<tt>/</tt>" means child element (just as in <tt>/usr/bin/gcc</tt>);
+        "<tt>//</tt>" means an element any number of levels under the current element.
+  <li> "<tt>.</tt>", "<tt>..</tt>" and "<tt>*</tt>" mean the current element,
+        the parent element, and an element with any tag name, respectively.
+  <li> Element tag names and "<tt>*</tt>" can have an optional predicate
+        in the form "<tt>[position]</tt>" or "<tt>[@attribute='value']</tt>".
+        Positions start from zero.
+  <li> Predicates of the form "<tt>[@attribute=<i>$param</i>]</tt>" are also
+        accepted, where <tt><i>$param</i></tt> can be one of:
+        <tt>$MODULE_FULLPATH</tt>,
+        <tt>$MODULE_FULLNAME</tt>,
+        <tt>$MODULE_NAME</tt>,
+        <tt>$MODULE_INDEX</tt>,
+        <tt>$MODULE_ID</tt>,
+        <tt>$PARENTMODULE_FULLPATH</tt>,
+        <tt>$PARENTMODULE_FULLNAME</tt>,
+        <tt>$PARENTMODULE_NAME</tt>,
+        <tt>$PARENTMODULE_INDEX</tt>,
+        <tt>$PARENTMODULE_ID</tt>,
+        <tt>$GRANDPARENTMODULE_FULLPATH</tt>,
+        <tt>$GRANDPARENTMODULE_FULLNAME</tt>,
+        <tt>$GRANDPARENTMODULE_NAME</tt>,
+        <tt>$GRANDPARENTMODULE_INDEX</tt>,
+        <tt>$GRANDPARENTMODULE_ID</tt>.
+</ul>
+
+<p><p class="subheading">The <b><tt>xml()</tt></b> Function</p>
+
+<p>The <b><tt>xml()</tt></b> NED function can be used to parse a string as an
+XML document, and assign the result to an <b><tt>xml</tt></b> parameter.
+
+<p><b><tt>xml()</tt></b> accepts the string to be parsed as well as an optional
+second string argument that contains an XPath-like expression.
+
+<p>The XPath expression is used in the same manner as with the
+<b><tt>xmldoc()</tt></b> function.
+
+<p>
+<h3><a name="sec535"/>18.5.6 Units of Measurement</h3>
+<a name="ch-ned-ref:sec:units"></a>
+
+<p>The following measurements units are recognized in constants. Other units can
+be used as well, but there are no conversions available for them (i.e.
+<tt>parsec</tt> and <tt>kiloparsec</tt> will be treated as two completely unrelated
+units.)
+
+<p><table border>
+<TR> <TD align=center>
+  
+<p>  <b>Unit</b> </TD> <TD align=center> <b>Name</b> </TD> <TD align=right> <b>Value</b> </TD></TR>
+<TR> <TD align=center>   s </TD> <TD align=center> second </TD> <TD align=right> </TD></TR>
+<TR> <TD align=center>   d </TD> <TD align=center> day </TD> <TD align=right> 86400s </TD></TR>
+<TR> <TD align=center>   h </TD> <TD align=center> hour </TD> <TD align=right> 3600s </TD></TR>
+<TR> <TD align=center>   min </TD> <TD align=center> minute </TD> <TD align=right> 60s </TD></TR>
+<TR> <TD align=center>   ms </TD> <TD align=center> millisecond </TD> <TD align=right> 1e-3s </TD></TR>
+<TR> <TD align=center>   us </TD> <TD align=center> microsecond </TD> <TD align=right> 1e-6s </TD></TR>
+<TR> <TD align=center>   ns </TD> <TD align=center> nanosecond </TD> <TD align=right> 1e-9s </TD></TR>
+<TR> <TD align=center>   ps </TD> <TD align=center> picosecond </TD> <TD align=right> 1e-12s </TD></TR>
+<TR> <TD align=center>   bps </TD> <TD align=center> bit/sec </TD> <TD align=right> </TD></TR>
+<TR> <TD align=center>   kbps </TD> <TD align=center> kilobit/sec </TD> <TD align=right> 1e3bps </TD></TR>
+<TR> <TD align=center>   Mbps </TD> <TD align=center> megabit/sec </TD> <TD align=right> 1e6bps </TD></TR>
+<TR> <TD align=center>   Gbps </TD> <TD align=center> gigabit/sec </TD> <TD align=right> 1e9bps </TD></TR>
+<TR> <TD align=center>   Tbps </TD> <TD align=center> terabit/sec </TD> <TD align=right> 1e12bps </TD></TR>
+<TR> <TD align=center>   B </TD> <TD align=center> byte </TD> <TD align=right> </TD></TR>
+<TR> <TD align=center>   KiB </TD> <TD align=center> kilo (kibi) byte </TD> <TD align=right> 1024B </TD></TR>
+<TR> <TD align=center>   MiB </TD> <TD align=center> mega (mebi) byte </TD> <TD align=right> 1.04858e6B </TD></TR>
+<TR> <TD align=center>   GiB </TD> <TD align=center> giga (gibi) byte </TD> <TD align=right> 1.07374e9B </TD></TR>
+<TR> <TD align=center>   TiB </TD> <TD align=center> tera (tebi) byte </TD> <TD align=right> 1.09951e12B </TD></TR>
+<TR> <TD align=center>   b </TD> <TD align=center> bit </TD> <TD align=right> </TD></TR>
+<TR> <TD align=center>   m </TD> <TD align=center> meter </TD> <TD align=right> </TD></TR>
+<TR> <TD align=center>   km </TD> <TD align=center> kilometer </TD> <TD align=right> 1e3m </TD></TR>
+<TR> <TD align=center>   cm </TD> <TD align=center> centimeter </TD> <TD align=right> 1e-2m </TD></TR>
+<TR> <TD align=center>   mm </TD> <TD align=center> millimeter </TD> <TD align=right> 1e-3m </TD></TR>
+<TR> <TD align=center>   W </TD> <TD align=center> watt </TD> <TD align=right> </TD></TR>
+<TR> <TD align=center>   mW </TD> <TD align=center> milliwatt </TD> <TD align=right> 1e-3W </TD></TR>
+<TR> <TD align=center>   Hz </TD> <TD align=center> hertz </TD> <TD align=right> </TD></TR>
+<TR> <TD align=center>   kHz </TD> <TD align=center> kilohertz </TD> <TD align=right> 1e3Hz </TD></TR>
+<TR> <TD align=center>   MHz </TD> <TD align=center> megahertz </TD> <TD align=right> 1e6Hz </TD></TR>
+<TR> <TD align=center>   GHz </TD> <TD align=center> gigahertz </TD> <TD align=right> 1e9Hz </TD></TR>
+<TR> <TD align=center>   g </TD> <TD align=center> gram </TD> <TD align=right> 1e-3kg </TD></TR>
+<TR> <TD align=center>   kg </TD> <TD align=center> kilogram </TD> <TD align=right> </TD></TR>
+<TR> <TD align=center>   J </TD> <TD align=center> joule </TD> <TD align=right> </TD></TR>
+<TR> <TD align=center>   kJ </TD> <TD align=center> kilojoule </TD> <TD align=right> 1e3J </TD></TR>
+<TR> <TD align=center>   MJ </TD> <TD align=center> megajoule </TD> <TD align=right> 1e6J </TD></TR>
+<TR> <TD align=center>   V </TD> <TD align=center> volt </TD> <TD align=right> </TD></TR>
+<TR> <TD align=center>   kV </TD> <TD align=center> kilovolt </TD> <TD align=right> 1e3V </TD></TR>
+<TR> <TD align=center>   mV </TD> <TD align=center> millivolt </TD> <TD align=right> 1e-3V </TD></TR>
+<TR> <TD align=center>   A </TD> <TD align=center> ampere </TD> <TD align=right> </TD></TR>
+<TR> <TD align=center>   mA </TD> <TD align=center> milliampere </TD> <TD align=right> 1e-3A </TD></TR>
+<TR> <TD align=center>   uA </TD> <TD align=center> microampere </TD> <TD align=right> 1e-6A </TD></TR>
+<TR> <TD align=center>   mps </TD> <TD align=center> meter/sec </TD> <TD align=right> </TD></TR>
+<TR> <TD align=center>   kmph </TD> <TD align=center> kilometer/hour </TD> <TD align=right> (1/3.6)mps </TD></TR>
+</table>
+
+<p>
+
+
+
+<p>
+<hr class='pgbr'><p><hr><b><a href="chap17.html">[Prev]</A>&nbsp;<a href="chap19.html">[Next]</A>&nbsp;<a href="toc.html#toc_18.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p>
+
+</body>
+</html>

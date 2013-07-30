@@ -1,0 +1,28 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Creating an Eventlog File</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="OMNeT&#8288;+&#8288;+ User Guide"><link rel="up" href="ch08.html" title="Chapter 8. Sequence Charts"><link rel="prev" href="ch08.html" title="Chapter 8. Sequence Charts"><link rel="next" href="ch08s03.html" title="Sequence Chart"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Creating an Eventlog File</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch08.html">Prev</a> </td><th width="60%" align="center">Chapter 8. Sequence Charts</th><td width="20%" align="right"> <a accesskey="n" href="ch08s03.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id280895"></a>Creating an Eventlog File</h2></div></div></div><p>
+      The INI File Editor in the OMNeT&#8288;+&#8288;+ IDE provides a group of widgets in the
+      <span class="emphasis"><em>Output Files</em></span> section to configure automatic eventlog
+      recording. To enable it, simply put a checkmark next to its checkbox, or insert the
+      line </p><pre class="screen">record-eventlog = true</pre><p> into the INI file. Additionally, you can use
+      the <span class="emphasis"><em>--record-evenlog</em></span> command line option or just click the record button
+      on the Tkenv toolbar before starting the simulation.
+    </p><div class="figure"><a name="pictures/INI-Eventlog.png"></a><p class="title"><b>Figure 8.1. INI file eventlog configuration</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/INI-Eventlog.png" align="middle" alt="INI file eventlog configuration"></div></div></div></div><br class="figure-break"><p>
+      By default, the recorded eventlog file will be put in the project's
+      <code class="filename">results</code> directory, with the name
+      <code class="filename">${configname}-${runnumber}.elog</code>.
+    </p><div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Warning</h3>
+      If you override the default file name, please make sure that the file extension is
+      <code class="filename">elog</code>, so that the OMNeT&#8288;+&#8288;+ IDE tools
+      will be able to recognize it automatically.
+    </div><p>
+      The 'recording intervals' and 'record events' configuration keys control which events will
+      be recorded based on their simulation time and on the module where they occur. The
+      'message details' configuration key specifies what will be recorded from a message's content.
+      Message content will be recorded each time a message gets sent.
+    </p><p>
+      The amount of data recorded will affect the eventlog file size, as well as the
+      execution speed of the simulation. Therefore, it is often a good idea to tailor these
+      settings to get a reasonable tradeoff between performance and details.
+    </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+      Please refer to the OMNeT&#8288;+&#8288;+ Manual for a complete description of eventlog
+      recording settings.
+    </div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch08.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch08.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch08s03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 8. Sequence Charts </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Sequence Chart</td></tr></table></div></body></html>

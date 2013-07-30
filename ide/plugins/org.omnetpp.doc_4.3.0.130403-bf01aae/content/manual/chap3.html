@@ -1,0 +1,2397 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta name="copyright" content="OpenSim Ltd.">
+  <meta NAME="Author" CONTENT="Andras Varga">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <link rel="STYLESHEET" href="../book.css"  type="text/css">
+  <title>OMNeT++ - Manual</title>
+</head>
+<body>
+
+<p><hr><b><a href="chap2.html">[Prev]</A>&nbsp;<a href="chap4.html">[Next]</A>&nbsp;<a href="toc.html#toc_3.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p><h1><a name="sec115"/>3 The NED Language</h1>
+<a name="cha:the-ned-language"></a>
+
+<p>
+<h2><a name="sec116"/>3.1 NED Overview</h2>
+
+<p>The user describes the structure of a simulation model in the NED language. NED
+stands for Network Description. NED lets the user declare simple modules, and
+connect and assemble them into compound modules. The user can label some compound
+modules as <i>networks</i>; that is, self-contained simulation models. Channels are
+another component type, whose instances can also be used in compound modules.
+
+<p>The NED language has several features which let it scale well to large projects:
+
+<p><dl>
+
+<p><li><b>Hierarchical.</b>  The traditional way to deal with complexity is by
+introducing hierarchies. In OMNeT++, any module which would be too complex as
+a single entity can be broken down into smaller modules, and used as a
+compound module.
+
+<p><li><b>Component-Based.</b>  Simple modules and compound modules are inherently
+reusable, which not only reduces code copying, but more importantly, allows
+component libraries (like the INET Framework, MiXiM, Castalia, etc.) to
+exist.
+
+<p><li><b>Interfaces.</b>  Module and channel interfaces can be used as a
+placeholder where normally a module or channel type would be used, and the
+concrete module or channel type is determined at network setup time by a
+parameter. Concrete module types have to &#8220;implement&#8221; the interface they
+can substitute. For example, given a compound module type named
+<tt>MobileHost</tt> contains a <tt>mobility</tt> submodule of the type
+<tt>IMobility</tt> (where <tt>IMobility</tt> is a module interface), the actual
+type of <tt>mobility</tt> may be chosen from the module types that implemented
+<tt>IMobility</tt> (<tt>RandomWalkMobility</tt>, <tt>TurtleMobility</tt>, etc.)
+
+<p><li><b>Inheritance.</b>  Modules and channels can be subclassed. Derived modules
+and channels may add new parameters, gates, and (in the case of compound
+modules) new submodules and connections. They may set existing parameters
+to a specific value, and also set the gate size of a gate vector. This
+makes it possible, for example, to take a <tt>GenericTCPClientApp</tt> module
+and derive an <tt>FTPClientApp</tt> from it by setting certain parameters to a fixed
+value; or to derive a <tt>WebClientHost</tt> compound module from a
+<tt>BaseHost</tt> compound module by adding a <tt>WebClientApp</tt> submodule and
+connecting it to the inherited <tt>TCP</tt> submodule.
+
+<p><li><b>Packages.</b>  The NED language features a Java-like package structure,
+to reduce the risk of name clashes between different models. <tt>NEDPATH</tt>
+(similar to Java's <tt>CLASSPATH</tt>) has also been introduced to make it easier
+to specify dependencies among simulation models.
+
+<p><li><b>Inner types.</b>  Channel types and module types used locally by a
+compound module can be defined within the compound module, in order to
+reduce namespace pollution.
+
+<p><li><b>Metadata annotations.</b>  It is possible to annotate module or channel
+types, parameters, gates and submodules by adding properties. Metadata are
+not used by the simulation kernel directly, but they can carry extra
+information for various tools, the runtime environment, or even for other
+modules in the model. For example, a module's graphical representation
+(icon, etc)  or the prompt string and measurement unit (milliwatt, etc) of a
+parameter are already specified as metadata annotations.
+
+<p></dl>
+
+<p><ul class="note"><b>NOTE</b><br>
+    The NED language has changed significantly in the 4.0 version.
+    Inheritance, interfaces, packages, inner types, metadata annotations, inout
+    gates were all added in the 4.0 release, together with many other features.
+    Since the basic syntax has changed as well, old NED files need to be
+    converted to the new syntax. There are automated tools for this purpose, so
+    manual editing is only needed to take advantage of new NED features.
+</ul>
+
+<p>The NED language has an equivalent tree representation which can be
+serialized to XML; that is, NED files can be converted to XML and back
+without loss of data, including comments. This lowers the barrier for
+programmatic manipulation of NED files; for example extracting information,
+refactoring and transforming NED, generating NED from information stored in
+other systems like SQL databases, and so on.
+
+<p><ul class="note"><b>NOTE</b><br>
+    This chapter is going to explain the NED language gradually, via examples.
+    If you are looking for a more formal and concise treatment, see
+    Appendix <a href="chap19.html#sec536">[19]</a>.
+</ul>
+
+<p>
+<h2><a name="sec117"/>3.2 NED Quickstart</h2>
+<a name="sec:ch-ned-lang:warmup"></a>
+
+<p>In this section we introduce the NED language via a complete and
+reasonably real-life example: a communication network.
+
+<p>Our hypothetical network consists of nodes. On each node there is an
+application running which generates packets at random intervals.
+The nodes are routers themselves as well. We assume that the application
+uses datagram-based communication, so that we can leave out the
+transport layer from the model.
+
+<p>
+<h3><a name="sec118"/>3.2.1 The Network</h3>
+<a name="sec:ch-ned-lang:warmup:network"></a>
+
+<p>First we'll define the network, then in the next sections we'll continue
+to define the network nodes.
+
+<p>Let the network topology be as in Figure <a href="chap3.html#fig:ned-routing-topology">below</a>.
+
+<p>
+  <br>
+  <img src="ned-routing-network.png">
+  <center><i>Figure: The network</i></center>
+  <a name="fig:ned-routing-topology"></a>
+
+<p>
+The corresponding NED description would look like this:
+
+<pre class="ned">
+//
+// A network
+//
+network Network
+{
+    submodules:
+        node1: Node;
+        node2: Node;
+        node3: Node;
+        ...
+    connections:
+        node1.port++ &lt;--&gt; {datarate=100Mbps;} &lt;--&gt; node2.port++;
+        node2.port++ &lt;--&gt; {datarate=100Mbps;} &lt;--&gt; node4.port++;
+        node4.port++ &lt;--&gt; {datarate=100Mbps;} &lt;--&gt; node6.port++;
+        ...
+}
+</pre>
+<p>
+The above code defines a network type named <tt>Network</tt>. Note that the NED
+language uses the familiar curly brace syntax, and &#8220;<tt>//</tt>&#8221; to denote
+comments.
+
+<p><ul class="note"><b>NOTE</b><br>
+    Comments in NED not only make the source code more readable, but in the
+    OMNeT++ IDE they also are displayed at various places (tooltips, content
+    assist, etc), and become part of the documentation extracted from the NED
+    files. The NED documentation system, not unlike <i>JavaDoc</i> or
+    <i>Doxygen</i>, will be described in Chapter <a href="chap14.html#sec437">[14]</a>.
+</ul>
+
+<p>The network contains several nodes, named <tt>node1</tt>, <tt>node2</tt>, etc.
+from the NED module type <tt>Node</tt>. We'll define <tt>Node</tt> in the next
+sections.
+
+<p>The second half of the declaration defines how the nodes are to be
+connected. The double arrow means bidirectional connection. The connection
+points of modules are called gates, and the <tt>port++</tt> notation adds a
+new gate to the <tt>port[]</tt> gate vector. Gates and connections will be
+covered in more detail in sections <a href="chap3.html#sec127">[3.7]</a> and
+<a href="chap3.html#sec129">[3.9]</a>. Nodes are connected with a channel that
+has a data rate of 100Mbps.
+
+<p><ul class="note"><b>NOTE</b><br>
+    In many other systems, the equivalent of OMNeT++ gates are called
+    <i>ports</i>. We have retained the term <i>gate</i> to reduce
+    collisions with other uses of the otherwise overloaded word
+    <i>port</i>: router port, TCP port, I/O port, etc.
+</ul>
+
+<p>The above code would be placed into a file named <tt>Net6.ned</tt>. It is
+a convention to put every NED definition into its own file and to name the
+file accordingly, but it is not mandatory to do so.
+
+<p>One can define any number of networks in the NED files, and for every
+simulation the user has to specify which network to set up.
+The usual way of specifying the network is to put the <b><tt>network</tt></b>
+option into the configuration (by default the <tt>omnetpp.ini</tt> file):
+
+<pre class="inifile">
+[General]
+network = Network
+</pre>
+<p>
+
+<p><h3><a name="sec119"/>3.2.2 Introducing a Channel</h3>
+
+<p>It is cumbersome to have to repeat the data rate for every connection.
+Luckily, NED provides a convenient solution: one can create a new channel
+type that encapsulates the data rate setting, and this channel type can
+be defined inside the network so that it does not litter the global
+namespace.
+
+<p>The improved network will look like this:
+
+<pre class="ned">
+//
+// A Network
+//
+network Network
+{
+    types:
+        channel C extends ned.DatarateChannel {
+            datarate = 100Mbps;
+        }
+    submodules:
+        node1: Node;
+        node2: Node;
+        node3: Node;
+        ...
+    connections:
+        node1.port++ &lt;--&gt; C &lt;--&gt; node2.port++;
+        node2.port++ &lt;--&gt; C &lt;--&gt; node4.port++;
+        node4.port++ &lt;--&gt; C &lt;--&gt; node6.port++;
+        ...
+}
+</pre>
+<p>
+Later sections will cover the concepts used (inner types, channels, the
+<tt>DatarateChannel</tt> built-in type, inheritance) in detail.
+
+<p>
+<h3><a name="sec120"/>3.2.3 The App, Routing, and Queue Simple Modules</h3>
+
+<p>Simple modules are the basic building blocks for other (compound) modules,
+denoted by the <b><tt>simple</tt></b> keyword.
+All active behavior in the model is encapsulated in <b><tt>simple</tt></b> modules.
+Behavior is defined with a C++ class; NED files only declare the externally
+visible interface of the module (gates, parameters).
+
+<p>In our example, we could define <tt>Node</tt> as a simple module. However,
+its functionality is quite complex (traffic generation, routing, etc),
+so it is better to implement it with several smaller simple module types
+which we are going to assemble into a compound module. We'll have
+one simple module for traffic generation (<tt>App</tt>), one for routing
+(<tt>Routing</tt>), and one for queueing up packets to be sent out (<tt>Queue</tt>).
+For brevity, we omit the bodies of the latter two in the code below.
+
+<pre class="ned">
+simple App
+{
+    parameters:
+        int destAddress;
+        ...
+        @display("i=block/browser");
+    gates:
+        input in;
+        output out;
+}
+
+simple Routing
+{
+    ...
+}
+
+simple Queue
+{
+    ...
+}
+</pre>
+<p>
+By convention, the above simple module declarations go into the
+<tt>App.ned</tt>, <tt>Routing.ned</tt> and <tt>Queue.ned</tt> files.
+
+<p><ul class="note"><b>NOTE</b><br>
+    Note that module type names (<tt>App</tt>, <tt>Routing</tt>, <tt>Queue</tt>)
+    begin with a capital letter, and parameter and gate names begin with
+    lowercase -- this is the recommended naming convention. Capitalization
+    matters because the language is case sensitive.
+</ul>
+
+<p>Let us look at the first simple module type declaration. <tt>App</tt> has a
+parameter called <tt>destAddress</tt> (others have been omitted for now),
+and two gates named <tt>out</tt> and <tt>in</tt> for sending and receiving
+application packets.
+
+<p>The argument of <b><tt>@display()</tt></b> is called a <i>display string</i>,
+and it defines the rendering of the module in graphical environments;
+<tt>"i=..."</tt> defines the default icon.
+
+<p>Generally, <tt>@</tt>-words like <tt>@display</tt> are called <i>properties</i>
+in NED, and they are used to annotate various objects
+with metadata. Properties can be attached to files, modules, parameters, gates,
+connections, and other objects, and parameter values have a very flexible
+syntax.
+
+<p>
+<h3><a name="sec121"/>3.2.4 The Node Compound Module</h3>
+
+<p>Now we can assemble <tt>App</tt>, <tt>Routing</tt> and <tt>Queue</tt> into the
+compound module <tt>Node</tt>. A compound module can be thought of as
+a &#8220;cardboard box&#8221; that groups other modules into a larger unit,
+which can further be used as a building block for other modules;
+networks are also a kind of compound module.
+
+<p>
+  <br>
+  <img src="ned-routing-node.png">
+  <center><i>Figure: The Node compound module</i></center>
+  <a name="fig:ned-routing-node"></a>
+
+<p>
+<pre class="ned">
+module Node
+{
+    parameters:
+        int address;
+        @display("i=misc/node_vs,gold");
+    gates:
+        inout port[];
+    submodules:
+        app: App;
+        routing: Routing;
+        queue[sizeof(port)]: Queue;
+    connections:
+        routing.localOut --&gt; app.in;
+        routing.localIn &lt;-- app.out;
+        for i=0..sizeof(port)-1 {
+            routing.out[i] --&gt; queue[i].in;
+            routing.in[i] &lt;-- queue[i].out;
+            queue[i].line &lt;--&gt; port[i];
+        }
+}
+</pre>
+
+<p>Compound modules, like simple modules, may have parameters and gates.
+Our <tt>Node</tt> module contains an <tt>address</tt> parameter, plus a
+<i>gate vector</i> of unspecified size, named <tt>port</tt>.
+The actual gate vector size will be determined implicitly by the number
+of neighbours when we create a network from nodes of this type.
+The type of <tt>port[]</tt> is <tt>inout</tt>, which allows bidirectional
+connections.
+
+<p>The modules that make up the compound module are listed under
+<b><tt>submodules</tt></b>. Our <tt>Node</tt> compound module type has an <tt>app</tt> and
+a <tt>routing</tt> <i>submodule</i>, plus a <tt>queue[]</tt> <i>submodule
+vector</i> that contains one <tt>Queue</tt> module for each port, as specified by
+<tt>[sizeof(port)]</tt>. (It is legal to refer to <tt>[sizeof(port)]</tt> because
+the network is built in top-down order, and the node is already created and
+connected at network level when its submodule structure is built out.)
+
+<p>In the <b><tt>connections</tt></b> section, the submodules are connected to each
+other and to the parent module. Single arrows are used to connect input and
+output gates, and double arrows connect inout gates, and a <b><tt>for</tt></b> loop
+is utilized to connect the <tt>routing</tt> module to each <tt>queue</tt> module, and
+to connect the outgoing/incoming link (<tt>line</tt> gate) of each queue to the
+corresponding port of the enclosing module.
+
+<p>
+<h3><a name="sec122"/>3.2.5 Putting It Together</h3>
+
+<p>We have created the NED definitions for this example, but how are they used by OMNeT++? When
+the simulation program is started, it loads the NED files. The program
+should already contain the C++ classes that implement the needed simple
+modules, <tt>App</tt>, <tt>Routing</tt> and <tt>Queue</tt>; their C++ code is either
+part of the executable or is loaded from a shared library. The simulation
+program also loads the configuration (<tt>omnetpp.ini</tt>), and determines
+from it that the simulation model to be run is the <tt>Network</tt> network.
+Then the network is instantiated for simulation.
+
+<p>The simulation model is built in a top-down preorder fashion. This means
+that starting from an empty system module, all submodules are created,
+their parameters and gate vector sizes are assigned, and they are fully connected
+before the submodule internals are built.
+
+<p><br><br>
+<center>
+* * *
+</center>
+<br><br>
+
+<p>In the following sections we'll go through the elements of the NED
+language and look at them in more detail.
+
+<p>
+
+<p><h2><a name="sec123"/>3.3 Simple Modules</h2>
+<a name="sec:ch-ned-lang:simple-modules"></a>
+
+<p>Simple modules are the active components in the model.
+Simple modules are defined with the <b><tt>simple</tt></b> keyword.
+
+<p>An example simple module:
+
+<pre class="ned">
+simple Queue
+{
+    parameters:
+        int capacity;
+        @display("i=block/queue");
+    gates:
+        input in;
+        output out;
+}
+</pre>
+<p>
+Both the <b><tt>parameters</tt></b> and <b><tt>gates</tt></b> sections are optional, that is,
+they can be left out if there is no parameter or gate. In addition, the
+<b><tt>parameters</tt></b> keyword itself is optional too; it can be left out
+even if there are parameters or properties.
+
+<p>Note that the NED definition doesn't contain any code to define the
+operation of the module: that part is expressed in C++. By default, OMNeT++
+looks for C++ classes of the same name as the NED type (so here, <tt>Queue</tt>).
+
+<p>One can explicitly specify the C++ class with the <b><tt>@class</tt></b> property.
+Classes with namespace qualifiers are also accepted, as shown in the following
+example that uses the <tt>mylib::Queue</tt> class:
+
+<pre class="ned">
+simple Queue
+{
+    parameters:
+        int capacity;
+        @class(mylib::Queue);
+        @display("i=block/queue");
+    gates:
+        input in;
+        output out;
+}
+</pre>
+<p>
+If you have several modules that are all in a common namespace, then a
+better alternative to <b><tt>@class</tt></b> is the <b><tt>@namespace</tt></b> property. The
+C++ namespace given with <b><tt>@namespace</tt></b> will be prepended to the normal
+class name. In the following example, the C++ classes will be
+<tt>mylib::App</tt>, <tt>mylib::Router</tt> and <tt>mylib::Queue</tt>:
+
+<pre class="ned">
+@namespace(mylib);
+
+simple App {
+   ...
+}
+
+simple Router {
+   ...
+}
+
+simple Queue {
+   ...
+}
+</pre>
+<p>
+As you've seen, <b><tt>@namespace</tt></b> can be specified at the file level. Moreover,
+when placed in a file called <tt>package.ned</tt>, the namespace will apply to
+all files in the same directory and all directories below.
+
+<p>The implementation C++ classes need to be subclassed from the
+<tt><a href="../api/classcSimpleModule.html">cSimpleModule</a></tt> library class; chapter <a href="chap4.html#sec138">[4]</a> of
+this manual describes in detail how to write them.
+
+<p>Simple modules can be extended (or specialized) via subclassing. The
+motivation for subclassing can be to set some open parameters or gate sizes
+to a fixed value (see <a href="chap3.html#sec126">[3.6]</a> and
+<a href="chap3.html#sec127">[3.7]</a>), or to replace the C++ class with a different
+one. Now, by default, the derived NED module type will <i>inherit</i> the
+C++ class from its base, so it is important to remember that you need to
+write out <b><tt>@class</tt></b> if you want it to use the new class.
+
+<p>The following example shows how to specialize a module by setting a parameter
+to a fixed value (and leaving the C++ class unchanged):
+
+<pre class="ned">
+simple Queue
+{
+   int capacity;
+   ...
+}
+
+simple BoundedQueue extends Queue
+{
+   capacity = 10;
+}
+</pre>
+<p>
+In the next example, the author wrote a <tt>PriorityQueue</tt> C++ class, and
+wants to have a corresponding NED type, derived from <tt>Queue</tt>. However,
+it does not work as expected:
+
+<pre class="ned">
+simple PriorityQueue extends Queue // wrong! still uses the Queue C++ class
+{
+}
+</pre>
+<p>
+The correct solution is to add a <b><tt>@class</tt></b> property to override the
+inherited C++ class:
+
+<pre class="ned">
+simple PriorityQueue extends Queue
+{
+   @class(PriorityQueue);
+}
+</pre>
+<p>
+Inheritance in general will be discussed in section <a href="chap3.html#sec136">[3.13]</a>.
+
+<p>
+
+<p><h2><a name="sec124"/>3.4 Compound Modules</h2>
+<a name="sec:ch-ned-lang:compound-modules"></a>
+
+<p>A compound module groups other modules into a larger unit. A compound
+module may have gates and parameters like a simple module, but no active
+behavior is associated with it.<br><ul><font size=-1>[Although the C++ class
+for a compound module can be overridden with the <b><tt>@class</tt></b> property,
+this is a feature that should probably never be used. Encapsulate the code
+into a simple module, and add it as a submodule.]</font></ul>
+
+<p><ul class="note"><b>NOTE</b><br>
+    When there is a temptation to add code to a compound module,
+    then encapsulate the code into a simple module, and add it as
+    a submodule.
+</ul>
+
+<p>A compound module declaration may contain several sections,
+all of them optional:
+
+<pre class="ned">
+module Host
+{
+   types:
+       ...
+   parameters:
+       ...
+   gates:
+       ...
+   submodules:
+       ...
+   connections:
+       ...
+}
+</pre>
+<p>
+Modules contained in a compound module are called submodules, and they are
+listed in the <tt>submodules</tt> section. One can create arrays of submodules
+(i.e. submodule vectors), and the submodule type may come from a parameter.
+
+<p>Connections are listed under the <tt>connections</tt> section of the
+declaration. One can create connections using simple programming constructs
+(loop, conditional). Connection behaviour can be defined by associating a
+channel with the connection; the channel type may also come from a
+parameter.
+
+<p>Module and channel types only used locally can be defined in the
+<tt>types</tt> section as inner types, so that they do not pollute the
+namespace.
+
+<p>Compound modules may be extended via subclassing. Inheritance may add new
+submodules and new connections as well, not only parameters and gates.
+Also, one may refer to inherited submodules, to inherited types etc. What
+is not possible is to "de-inherit" or modify submodules or connections.
+
+<p>In the following example, we show how to assemble common protocols
+into a "stub" for wireless hosts, and add user agents via
+subclassing.<br><ul><font size=-1>[Module types, gate names, etc. used in the example
+are fictional, not based on an actual OMNeT++-based model framework]</font></ul>
+
+<pre class="ned">
+module WirelessHostBase
+{
+   gates:
+       input radioIn;
+   submodules:
+       tcp: TCP;
+       ip: IP;
+       wlan: Ieee80211;
+   connections:
+       tcp.ipOut --&gt; ip.tcpIn;
+       tcp.ipIn &lt;-- ip.tcpOut;
+       ip.nicOut++ --&gt; wlan.ipIn;
+       ip.nicIn++ &lt;-- wlan.ipOut;
+       wlan.radioIn &lt;-- radioIn;
+}
+
+module WirelessHost extends WirelessHostBase
+{
+   submodules:
+       webAgent: WebAgent;
+   connections:
+       webAgent.tcpOut --&gt; tcp.appIn++;
+       webAgent.tcpIn &lt;-- tcp.appOut++;
+}
+</pre>
+<p>
+The <tt>WirelessHost</tt> compound module can further be extended,
+for example with an Ethernet port:
+
+<pre class="ned">
+module DesktopHost extends WirelessHost
+{
+   gates:
+       inout ethg;
+   submodules:
+       eth: EthernetNic;
+   connections:
+       ip.nicOut++ --&gt; eth.ipIn;
+       ip.nicIn++ &lt;-- eth.ipOut;
+       eth.phy &lt;--&gt; ethg;
+}
+</pre>
+<p>
+
+<p>
+<h2><a name="sec125"/>3.5 Channels</h2>
+<a name="sec:ch-ned-lang:channels"></a>
+
+<p>Channels encapsulate parameters and behaviour associated with connections.
+Channels are like simple modules, in the sense that there are C++ classes
+behind them. The rules for finding the C++ class for a NED channel type is
+the same as with simple modules: the default class name is the NED type
+name unless there is a <b><tt>@class</tt></b> property (<b><tt>@namespace</tt></b> is also
+recognized), and the C++ class is inherited when the channel is subclassed.
+
+<p>Thus, the following channel type would expect a <tt>CustomChannel</tt> C++ class
+to be present:
+
+<pre class="ned">
+channel CustomChannel  // requires a CustomChannel C++ class
+{
+}
+</pre>
+<p>
+The practical difference compared to modules is that you rarely need to write you own
+channel C++ class because there are predefined channel types that you can
+subclass from, inheriting their C++ code. The predefined types are:
+<tt>ned.IdealChannel</tt>, <tt>ned.DelayChannel</tt> and <tt>ned.DatarateChannel</tt>.
+(&#8220;<tt>ned</tt>&#8221; is the package name; you can get rid of it if you import the types
+with the <tt>import ned.*</tt> or similar directive. Packages and imports
+are described in section <a href="chap3.html#sec137">[3.14]</a>.)
+
+<p><tt>IdealChannel</tt> has no parameters, and lets through all messages without
+delay or any side effect. A connection without a channel object
+and a connection with an <tt>IdealChannel</tt> behave in the same way.
+Still, <tt>IdealChannel</tt> has its uses, for example when a channel object
+is required so that it can carry a new property or parameter that is
+going to be read by other parts of the simulation model.
+
+<p><tt>DelayChannel</tt> has two parameters:
+
+<p><ul>
+    <li> <tt>delay</tt> is a <tt>double</tt> parameter which represents the
+          propagation delay of the message. Values need to be specified
+          together with a time unit (<tt>s</tt>, <tt>ms</tt>, <tt>us</tt>, etc.)
+    <li> <tt>disabled</tt> is a boolean parameter that defaults to <tt>false</tt>;
+          when set to <tt>true</tt>, the channel object will drop all messages.
+</ul>
+
+<p><tt>DatarateChannel</tt> has a few additional parameters compared to <tt>DelayChannel</tt>:
+
+<p><ul>
+    <li> <tt>datarate</tt> is a <tt>double</tt> parameter that represents the
+          data rate of the channel. Values need to be specified
+          in bits per second or its multiples as unit (<tt>bps</tt>,
+          <tt>kbps</tt>, <tt>Mbps</tt>, <tt>Gbps</tt>, etc.) Zero is treated
+          specially and results in zero transmission duration, i.e.
+          it stands for infinite bandwidth. Zero is also the default.
+          Data rate is used for calculating the transmission duration of
+          packets.
+    <li> <tt>ber</tt> and <tt>per</tt> stand for Bit Error Rate and Packet Error Rate,
+          and allow basic error modelling. They expect a <tt>double</tt>
+          in the <i>[0,1]</i> range. When the channel decides (based on random
+          numbers) that an error occurred during transmission of a packet,
+          it sets an error flag in the packet object. The receiver
+          module is expected to check the flag, and discard the packet
+          as corrupted if it is set. The default <tt>ber</tt> and <tt>per</tt>
+          are zero.
+</ul>
+
+<p><ul class="note"><b>NOTE</b><br>
+    There is no channel parameter that specifies whether the channel
+    delivers the message object to the destination module at the end or
+    at the start of the reception; that is decided by the C++ code
+    of the target simple module. See the <tt>setDeliverOnReceptionStart()</tt>
+    method of <tt><a href="../api/classcGate.html">cGate</a></tt>.
+</ul>
+
+<p>The following example shows how to create a new channel type by
+specializing <tt>DatarateChannel</tt>:
+
+<pre class="ned">
+channel Ethernet100 extends ned.DatarateChannel
+{
+    datarate = 100Mbps;
+    delay = 100us;
+    ber = 1e-10;
+}
+</pre>
+<p>
+<ul class="note"><b>NOTE</b><br>
+    The three built-in channel types are also used for connections where
+    the channel type is not explicitly specified.
+</ul>
+
+<p>You may add parameters and properties to channels via subclassing, and
+may modify existing ones. In the following example, we introduce distance-based
+calculation of the propagation delay:
+
+<pre class="ned">
+channel DatarateChannel2 extends ned.DatarateChannel
+{
+    double distance @unit(m);
+    delay = this.distance / 200000km * 1s;
+}
+</pre>
+<p>
+Parameters are primarily useful as input to the underlying C++ class, but
+even if you reuse the underlying C++ class of built-in channel types, they
+may be read and used by other parts of the model. For example, adding a
+<tt>cost</tt> parameter (or <b><tt>@cost</tt></b> property) may be observed by the
+routing algorithm and used for routing decisions. The following example
+shows a <tt>cost</tt> parameter, and annotation using a property
+(<b><tt>@backbone</tt></b>).
+
+<pre class="ned">
+channel Backbone extends ned.DatarateChannel
+{
+    @backbone;
+    double cost = default(1);
+}
+</pre>
+<p>
+
+<p>
+<h2><a name="sec126"/>3.6 Parameters</h2>
+<a name="sec:ch-ned-lang:parameters"></a>
+
+<p>Parameters are variables that belong to a module. Parameters can be
+used in building the topology (number of nodes, etc), and to supply
+input to C++ code that implements simple modules and channels.
+
+<p>Parameters can be of type <b><tt>double</tt></b>, <b><tt>int</tt></b>,
+<b><tt>bool</tt></b>, <b><tt>string</tt></b> and <b><tt>xml</tt></b>; they can also
+be declared <b><tt>volatile</tt></b>. For the numeric types, a unit of
+measurement can also be specified (<b><tt>@unit</tt></b> property), to increase
+type safety.
+
+<p>Parameters can get their value from NED files or from the configuration
+(<tt>omnetpp.ini</tt>). A default value can also be given (<tt>default(</tt>...<tt>)</tt>),
+which is used if the parameter is not assigned otherwise.
+
+<p>The following example shows a simple module that has five parameters, three
+of which have default values:
+
+<pre class="ned">
+simple App
+{
+    parameters:
+        string protocol;       // protocol to use: "UDP" / "IP" / "ICMP" / ...
+        int destAddress;       // destination address
+        volatile double sendInterval @unit(s) = default(exponential(1s));
+                               // time between generating packets
+        volatile int packetLength @unit(byte) = default(100B);
+                               // length of one packet
+        volatile int timeToLive = default(32);
+                               // maximum number of network hops to survive
+    gates:
+        input in;
+        output out;
+}
+</pre>
+<p>
+
+<p><p class="subheading">Assigning a Value</p>
+
+<p>Parameters may get their values in several ways: from NED code, from the
+configuration (<tt>omnetpp.ini</tt>), or even, interactively from the
+user. NED lets you assign parameters at several places: in subclasses via
+inheritance; in submodule and connection definitions where the NED type is
+instantiated; and in networks and compound modules that directly or
+indirectly contain the corresponding submodule or connection.
+
+<p>For instance, one could specialize the above <tt>App</tt> module type via
+inheritance with the following definition:
+
+<pre class="ned">
+simple PingApp extends App
+{
+    parameters:
+        protocol = "ICMP/ECHO"
+        sendInterval = default(1s);
+        packetLength = default(64byte);
+}
+</pre>
+<p>
+This definition sets the <tt>protocol</tt> parameter to a fixed value
+(<tt>"ICMP/ECHO"</tt>), and changes the default values of the
+<tt>sendInterval</tt> and <tt>packetLength</tt> parameters. <tt>protocol</tt> is now
+locked down in <tt>PingApp</tt>, its value cannot be modified via further subclassing
+or other ways. <tt>sendInterval</tt> and <tt>packetLength</tt> are still unassigned
+here, only their default values have been overwritten.
+
+<p>Now, let us see the definition of a <tt>Host</tt> compound module that uses
+<tt>PingApp</tt> as submodule:
+
+<pre class="ned">
+module Host
+{
+    submodules:
+        ping : PingApp {
+            packetLength = 128B; // always ping with 128-byte packets
+        }
+        ...
+}
+</pre>
+<p>
+This definition sets the <tt>packetLength</tt> parameter to a fixed value. It
+is now hardcoded that <tt>Host</tt>s send 128-byte ping packets; this
+setting cannot be changed from NED or the configuration.
+
+<p>It is not only possible to set a parameter from the compound module that
+contains the submodule, but also from modules higher up in the module tree.
+If you had a network that employed several <tt>Host</tt> modules, it could be
+defined like this:
+
+<pre class="ned">
+network Network
+{
+    submodules:
+        host[100]: Host {
+            ping.timeToLive = default(3);
+            ping.destAddress = default(0);
+        }
+        ...
+}
+</pre>
+<p>
+Parameter assignment can also be placed into the <tt>parameters</tt> block of
+the parent compound module, which provides additional flexibility. The
+following definition sets up the hosts so that half of them pings host #50,
+and the other half pings host #0:
+
+<pre class="ned">
+network Network
+{
+    parameters:
+        host[*].ping.timeToLive = default(3);
+        host[0..49].ping.destAddress = default(50);
+        host[50..].ping.destAddress = default(0);
+
+    submodules:
+        host[100]: Host;
+        ...
+}
+</pre>
+<p>
+Note the use of asterisk to match any index, and `<tt>..</tt>' to match index ranges.
+
+<p>If you had a number of individual hosts instead of a submodule vector,
+the network definition could look like this:
+
+<pre class="ned">
+network Network
+{
+    parameters:
+        host*.ping.timeToLive = default(3);
+        host{0..49}.ping.destAddress = default(50);
+        host{50..}.ping.destAddress = default(0);
+
+    submodules:
+        host0: Host;
+        host1: Host;
+        host2: Host;
+        ...
+        host99: Host;
+}
+</pre>
+<p>
+An asterisk matches any substring not containing a dot, and a `<tt>..</tt>'
+within a pair of curly braces matches a natural number embedded in a
+string.
+
+<p>In most assigments we have seen above, the left hand side of the equal sign
+contained a dot and often a wildcard as well (asterisk or numeric range);
+we call these assignments <i>pattern assignments</i> or <i>deep
+assignments</i>.
+
+<p>There is one more wildcard that can be used in pattern assignments, and
+this is the double asterisk; it matches any sequence of characters
+including dots, so it can match multiple path elements. An example:
+
+<pre class="ned">
+network Network
+{
+    parameters:
+        **.timeToLive = default(3);
+        **.destAddress = default(0);
+    submodules:
+        host0: Host;
+        host1: Host;
+        ...
+}
+</pre>
+<p>
+Note that some assignments in the above examples changed default values,
+while others set parameters to fixed values. Parameters that received no
+fixed value in the NED files can be assigned from the configuration
+(<tt>omnetpp.ini</tt>).
+
+<p><ul class="important"><b>IMPORTANT</b><br>
+    A non-default value assigned from NED cannot be overwritten later in
+    NED or from ini files; it becomes &#8220;hardcoded&#8221; as far as ini files
+    and NED usage are concerned. In contrast, default values are possible
+    to overwrite.
+</ul>
+
+<p>A parameter can be assigned in the configuration using a similar syntax as
+NED pattern assignments (actually, it would be more historically accurate
+to say it the other way round, that NED pattern assignments use a similar
+syntax to ini files):
+
+<p>
+<pre class="inifile">
+Network.host[*].ping.sendInterval = 500ms  # for the host[100] example
+Network.host*.ping.sendInterval = 500ms    # for the host0,host1,... example
+**.sendInterval = 500ms
+</pre>
+
+<p>One often uses the double asterisk to save typing. You can write
+
+<pre class="inifile">
+**.ping.sendInterval = 500ms
+</pre>
+<p>
+Or if you are sure that you don't accidentally assign some other
+<tt>sendInterval</tt> parameter, you can just write
+
+<pre class="inifile">
+**.sendInterval = 500ms
+</pre>
+<p>
+Parameter assignments in the configuration are described in section
+<a href="chap9.html#sec336">[9.3]</a>.
+
+<p>One can also write expressions, including stochastic expressions, in
+NED files and in ini files as well. For example, here's how you can
+add jitter to the sending of ping packets:
+
+<pre class="inifile">
+**.sendInterval = 1s + normal(0s, 0.001s)  # or just: normal(1s, 0.001s)
+</pre>
+<p>
+If there is no assignment for a parameter in NED or in the ini file, the
+default value (given with <tt>=default(...)</tt> in NED) will be applied
+implicitly. If there is no default value, the user will be asked, provided
+the simulation program is allowed to do that; otherwise there will be an
+error. (Interactive mode is typically disabled for batch executions where
+it would do more harm than good.)
+
+<p>It is also possible to explicitly apply the default (this can sometimes
+be useful):
+
+<pre class="inifile">
+**.sendInterval = default
+</pre>
+<p>
+Finally, one can explicitly ask the simulator to prompt the user interactively
+for the value (again, provided that interactivity is enabled; otherwise
+this will result in an error):
+
+<pre class="inifile">
+**.sendInterval = ask
+</pre>
+<p>
+<ul class="note"><b>NOTE</b><br>
+    How do you decide whether to assign a parameter from NED or from an ini
+    file? The advantage of ini files is that they allow a cleaner separation of the <i>model</i>
+    and <i>experiments</i>. NED files (together with C++ code) are considered
+    to be part of the model, and to be more or less constant. Ini files, on
+    the other hand, are for experimenting with the model by running it
+    several times with different parameters. Thus, parameters that are expected
+    to change (or make sense to be changed) during experimentation should be
+    put into ini files.
+</ul>
+
+<p>
+<p class="subheading">Expressions</p>
+
+<p>Parameter values may be given with expressions. NED language expressions
+have a C-like syntax, with some variations on operator names: binary and
+logical XOR are <tt>#</tt> and <tt>##</tt>, while <tt>^</tt> has been reassigned
+to <i>power-of</i> instead. The <tt>+</tt> operator does string
+concatenation as well as numeric addition. Expressions can use various
+numeric, string, stochastic and other functions (<tt>fabs()</tt>, <tt>toUpper()</tt>,
+<tt>uniform()</tt>, <tt>erlang_k()</tt>, etc.).
+
+<p><ul class="note"><b>NOTE</b><br>
+    The list of NED functions can be found in Appendix <a href="chap21.html#sec538">[21]</a>.
+    The user can also extend NED with new functions.
+</ul>
+
+<p>
+Expressions may refer to module parameters, gate vector and module vector sizes
+(using the <b><tt>sizeof</tt></b> operator) and the index of the current module
+in a submodule vector (<b><tt>index</tt></b>).
+
+<p>
+Expressions may refer to parameters of the compound module being defined,
+of the current module (with the <tt>this.</tt> prefix), and to parameters
+of already defined submodules, with the syntax <tt>submodule.parametername</tt>
+(or <tt>submodule[index].parametername</tt>).
+
+<p>
+
+
+<p><p class="subheading">volatile</p>
+
+<p>The <b><tt>volatile</tt></b> modifier causes the parameter's value expression to
+be evaluated every time the parameter is read. This has significance if the
+expression is not constant, for example it involves numbers drawn from a
+random number generator. In contrast, non-volatile parameters are evaluated
+only once. (This practically means that they are evaluated and replaced
+with the resulting constant at the start of the simulation.)
+
+<p>To better understand <b><tt>volatile</tt></b>, let's suppose we have a
+<tt>Queue</tt> simple module that has a <tt>volatile double</tt> parameter
+named <tt>serviceTime</tt>.
+
+<pre class="ned">
+simple Queue
+{
+    parameters:
+        volatile double serviceTime;
+}
+</pre>
+<p>
+Because of the <b><tt>volatile</tt></b> modifier, the queue module's C++
+implementation is expected to re-read the <tt>serviceTime</tt> parameter
+whenever a value is needed; that is, for every job serviced. Thus, if
+<tt>serviceTime</tt> is assigned an expression like <tt>uniform(0.5s, 1.5s)</tt>,
+every job will have a different, random service time. To highlight this
+effect, here's how you can have a time-varying parameter by exploiting
+the <tt>simTime()</tt> NED function that returns the current simulation time:
+
+<pre class="inifile">
+**.serviceTime = simTime()&lt;1000s ? 1s : 2s  # queue that slows down after 1000s
+</pre>
+<p>
+In practice, a volatile parameters are typically used as a configurable
+source of random numbers for modules.
+
+<p><ul class="note"><b>NOTE</b><br>
+    This does not mean that a non-volatile parameter could not be assigned a
+    random value like <tt>uniform(0.5s, 1.5s)</tt>. It can, but that would
+    have a totally different effect: the simulation would use a constant
+    service time, say <tt>1.2975367s</tt>, chosen randomly at the beginning
+    of the simulation.
+</ul>
+
+<p><p class="subheading">Units</p>
+
+<p>One can declare a parameter to have an associated unit of measurement,
+by adding the <b><tt>@unit</tt></b> property. An example:
+
+<pre class="ned">
+simple App
+{
+    parameters:
+        volatile double sendInterval @unit(s) = default(exponential(350ms));
+        volatile int packetLength @unit(byte) = default(4KiB);
+    ...
+}
+</pre>
+<p>
+The <tt>@unit(s)</tt> and <tt>@unit(byte)</tt> declarations specify the measurement unit
+for the parameter. Values assigned to parameters must have the same or
+compatible unit, i.e. <tt>@unit(s)</tt> accepts milliseconds, nanoseconds,
+minutes, hours, etc., and <tt>@unit(byte)</tt> accepts kilobytes, megabytes,
+etc. as well.
+
+<p><ul class="note"><b>NOTE</b><br>
+    The list of units accepted by OMNeT++ is listed in the Appendix, see
+    <a href="chap18.html#sec535">[18.5.6]</a>. Unknown units (<tt>bogomips</tt>, etc.)
+    can also be used, but there are no conversions for them,
+    i.e. decimal prefixes will not be recognized.
+</ul>
+
+<p>The OMNeT++ runtime does a full and rigorous unit check on
+parameters to ensure &#8220;unit safety&#8221; of models. Constants should
+always include the measurement unit.
+
+<p>The <b><tt>@unit</tt></b> property of a parameter cannot be added or overridden
+in subclasses or in submodule declarations.
+
+<p>
+<p class="subheading">XML Parameters</p>
+
+<p>Sometimes modules need complex data structures as input, which is something
+that cannot be done well with module parameters. One solution is to place
+the input data into a custom configuration file, pass the file name to the
+module in a string parameter, and let the module read and parse the file.
+
+<p>It is somewhat easier if the configuration uses XML syntax, because OMNeT++
+contains built-in support for XML files. Using an XML parser (LibXML2 or
+Expat), OMNeT++ reads and DTD-validates the file (if the XML document
+contains a DOCTYPE), caches the file (so that references to it from several
+modules will result in the file being loaded only once), allows selection
+of parts of the document using an XPath-subset notation, and presents the
+contents in a DOM-like object tree.
+
+<p>This capability can be accessed via the NED parameter type <b><tt>xml</tt></b>,
+and the <b><tt>xmldoc()</tt></b> function. You can point <b><tt>xml</tt></b>-type
+module parameters to a specific XML file (or to an element inside an XML
+file) via the <b><tt>xmldoc()</tt></b> function. You can assign <b><tt>xml</tt></b>
+parameters both from NED and from <tt>omnetpp.ini</tt>.
+
+<p>The following example declares an <b><tt>xml</tt></b> parameter, and assigns an
+XML file to it. The file name is understood as being relative to the working
+directory.
+
+<pre class="ned">
+simple TrafGen {
+    parameters:
+        xml profile;
+    gates:
+        output out;
+}
+
+module Node {
+    submodules:
+        trafGen1 : TrafGen {
+            profile = xmldoc("data.xml");
+        }
+        ...
+}
+</pre>
+<p>
+It is also possible to assign an XML element within a file to the parameter,
+which is useful if you want to group the input of several modules into
+a single XML file. For example, the following XML file contains two profiles
+with the IDs <i>gen1</i> and <i>gen2</i>:
+
+<pre class="filelisting">
+&lt;?xml&gt;
+&lt;root&gt;
+    &lt;profile id="gen1"&gt;
+          &lt;param&gt;3&lt;/param&gt;
+          &lt;param&gt;5&lt;/param&gt;
+    &lt;/profile&gt;
+    &lt;profile id="gen2"&gt;
+          &lt;param&gt;9&lt;/param&gt;
+    &lt;/profile&gt;
+&lt;/root&gt;
+</pre>
+<p>
+And you can assign each profile to a corresponding submodule using an XPath-like
+expression:
+
+<pre class="ned">
+module Node {
+    submodules:
+        trafGen1 : TrafGen {
+            profile = xmldoc("all.xml", "/root/profile[@id='gen1']");
+        }
+        trafGen2 : TrafGen {
+            profile = xmldoc("all.xml", "/root/profile[@id='gen2']");
+        }
+}
+</pre>
+<p>
+It is also possible to create an XML document from a string constant, using
+the <b><tt>xml()</tt></b> function. This is especially useful for creating a
+default value for <b><tt>xml</tt></b> parameters. An example:
+
+<pre class="ned">
+simple TrafGen {
+    parameters:
+        xml profile = xml("&lt;root/&gt;"); // empty document as default
+        ...
+}
+</pre>
+<p>
+The <b><tt>xml()</tt></b> function, like <b><tt>xmldoc()</tt></b>, also supports an
+optional second XPath parameter for selecting a subtree.
+
+<p>
+
+<p>
+<h2><a name="sec127"/>3.7 Gates</h2>
+<a name="sec:ch-ned-lang:gates"></a>
+
+<p>Gates are the connection points of modules.  OMNeT++ has three types of
+gates: <i>input</i>, <i>output</i> and <i>inout</i>, the latter being
+essentially an input and an output gate glued together.
+
+<p>A gate, whether input or output, can only be connected to one other
+gate. (For compound module gates, this means one connection &#8220;outside&#8221; and
+one &#8220;inside&#8221;.)  It is possible, though generally not recommended, to
+connect the input and output sides of an inout gate separately (see section
+<a href="chap3.html#sec129">[3.9]</a>).
+
+<p>One can create single gates and gate vectors. The size of a gate vector
+can be given inside square brackets in the declaration, but it is also possible
+to leave it open by just writing a pair of empty brackets (&#8220;<tt>[]</tt>&#8221;).
+
+<p>When the gate vector size is left open, one can still specify it later,
+when subclassing the module, or when using the module for a submodule in a
+compound module. However, it does not need to be specified because
+one can create connections with the <tt><i>gate</i>++</tt> operator that
+automatically expands the gate vector.
+
+<p>The gate size can be queried from various NED expressions with the
+<tt>sizeof()</tt> operator.
+
+<p>NED normally requires that all gates be connected. To relax this
+requirement, you can annotate selected gates with the <b><tt>@loose</tt></b>
+property, which turns off the connectivity check for that gate. Also, input
+gates that solely exist so that the module can receive messages via
+<tt>sendDirect()</tt> (see <a href="chap4.html#sec170">[4.7.5]</a>) should
+be annotated with <b><tt>@directIn</tt></b>. It is also possible to turn off the connectivity
+check for all gates within a compound module by specifying the
+<b><tt>allowunconnected</tt></b> keyword in the module's connections section.
+
+<p>Let us see some examples.
+
+<p>In the following example, the <tt>Classifier</tt> module has one input for
+receiving jobs, which it will send to one of the outputs. The number of
+outputs is determined by a module parameter:
+
+<pre class="ned">
+simple Classifier {
+    parameters:
+        int numCategories;
+    gates:
+        input in;
+        output out[numCategories];
+}
+</pre>
+<p>
+The following <tt>Sink</tt> module also has its <tt>in[]</tt> gate defined
+as a vector, so that it can be connected to several modules:
+
+<pre class="ned">
+simple Sink {
+    gates:
+        input in[];
+}
+</pre>
+<p>
+The following lines define a node for building a square grid. Gates around
+the edges of the grid are expected to remain unconnected, hence the
+<b><tt>@loose</tt></b> annotation:
+
+<pre class="ned">
+simple GridNode {
+    gates:
+        inout neighbour[4] @loose;
+}
+</pre>
+<p>
+<tt>WirelessNode</tt> below is expected to receive messages (radio transmissions)
+via direct sending, so its <tt>radioIn</tt> gate is marked with <b><tt>@directIn</tt></b>.
+
+<pre class="ned">
+simple WirelessNode {
+    gates:
+        input radioIn @directIn;
+}
+</pre>
+<p>
+In the following example, we define <tt>TreeNode</tt> as having gates to connect
+any number of children, then subclass it to get a <tt>BinaryTreeNode</tt> to
+set the gate size to two:
+
+<pre class="ned">
+simple TreeNode {
+    gates:
+        inout parent;
+        inout children[];
+}
+
+simple BinaryTreeNode extends TreeNode {
+    gates:
+        children[2];
+}
+</pre>
+<p>
+An example for setting the gate vector size in a submodule, using the same
+<tt>TreeNode</tt> module type as above:
+
+<pre class="ned">
+module BinaryTree {
+    submodules:
+        nodes[31]: TreeNode {
+            gates:
+                children[2];
+        }
+    connections:
+        ...
+}
+</pre>
+<p>
+
+<p>
+<h2><a name="sec128"/>3.8 Submodules</h2>
+<a name="sec:ch-ned-lang:submodules"></a>
+
+<p>Modules that a compound module is composed of are called its submodules.
+A submodule has a name, and it is an instance of a compound or simple
+module type. In the NED definition of a submodule, this module type
+is usually given statically, but it is also possible to specify the type
+with a string expression. (The latter feature, <i>parametric submodule
+types</i>, will be discussed in section <a href="chap3.html#sec133">[3.11.1]</a>.)
+
+<p>NED supports submodule arrays (vectors) and conditional submodules as well.
+Submodule vector size, unlike gate vector size, must always be specified
+and cannot be left open as with gates.
+
+<p>It is possible to add new submodules to an existing compound module via
+subclassing; this has been described in the section
+<a href="chap3.html#sec124">[3.4]</a>.
+
+<p>The basic syntax of submodules is shown below:
+
+<pre class="ned">
+module Node
+{
+    submodules:
+        routing: Routing;   // a submodule
+        queue[sizeof(port)]: Queue;  // submodule vector
+        ...
+}
+</pre>
+<p>
+As already seen in previous code examples, a submodule may also have a
+curly brace block as body, where one can assign parameters, set the size of
+gate vectors, and add/modify properties like the display string
+(<b><tt>@display</tt></b>). It is not possible to add new parameters and gates.
+
+<p>Display strings specified here will be merged with the display string
+from the type to get the effective display string. The merge algorithm is
+described in chapter <a href="chap11.html#sec378">[11]</a>.
+
+<pre class="ned">
+module Node
+{
+    gates:
+        inout port[];
+    submodules:
+        routing: Routing {
+            parameters:   // this keyword is optional
+                routingTable = "routingtable.txt"; // assign parameter
+            gates:
+                in[sizeof(port)];  // set gate vector size
+                out[sizeof(port)];
+        }
+        queue[sizeof(port)]: Queue {
+            @display("t=queue id $id"); // modify display string
+            id = 1000+index;  // use submodule index to generate different IDs
+        }
+    connections:
+        ...
+}
+</pre>
+<p>
+An empty body may be omitted, that is,
+
+<pre class="ned">
+      queue: Queue;
+</pre>
+<p>
+is the same as
+
+<pre class="ned">
+      queue: Queue {
+      }
+</pre>
+<p>
+A submodule or submodule vector can be conditional. The <b><tt>if</tt></b>
+keyword and the condition itself goes after the submodule type, like in the
+example below:
+
+<pre class="ned">
+module Host
+{
+    parameters:
+        bool withTCP = default(true);
+    submodules:
+        tcp : TCP if withTCP;
+        ...
+}
+</pre>
+<p>
+The condition is less useful with submodule vectors, as one could also
+use a zero vector size.
+
+<p>
+<h2><a name="sec129"/>3.9 Connections</h2>
+<a name="sec:ch-ned-lang:connections"></a>
+
+<p>Connections are defined in the <b><tt>connections</tt></b> section of compound
+modules. Connections cannot span across hierarchy levels; one can connect
+two submodule gates, a submodule gate and the "inside" of the parent
+(compound) module's gates, or two gates of the parent module (though this
+is rarely useful), but it is not possible to connect to any gate outside the
+parent module, or inside compound submodules.
+
+<p>Input and output gates are connected with a normal arrow, and inout gates
+with a double-headed arrow &#8220;<tt>&lt;--&gt;</tt>&#8221;. To connect the two gates
+with a channel, use two arrows and put the channel specification in between.
+The same syntax is used to add properties such as <b><tt>@display</tt></b> to the
+connection.
+
+<p>Some examples have already been shown in the NED Quickstart section
+(<a href="chap3.html#sec117">[3.2]</a>); let's see some more.
+
+<p>
+
+It has been mentioned that an inout gate is basically an input and an
+output gate glued together. These sub-gates can also be addressed (and
+connected) individually if needed, as <tt>port$i</tt> and <tt>port$o</tt> (or
+for vector gates, as <tt>port$i[$k$]</tt> and <tt>port$o[<i>k</i>]</tt>).
+
+<p>
+Gates are specified as <i>modulespec.gatespec</i> (to connect a submodule),
+or as <i>gatespec</i> (to connect the compound module). <i>modulespec</i>
+is either a submodule name (for scalar submodules), or a submodule name plus
+an index in square brackets (for submodule vectors). For scalar gates,
+<i>gatespec</i> is the gate name; for gate vectors it is either the gate name
+plus an index in square brackets, or <i>gatename</i><tt>++</tt>.
+
+<p>The <i>gatename</i><tt>++</tt> notation causes the first unconnected gate index
+to be used. If all gates of the given gate vector are connected, the behavior
+is different for submodules and for the enclosing compound module.
+For submodules, the gate vector expands by one. For a compound module,
+after the last gate is connected, <tt>++</tt> will stop with an error.
+
+<p><ul class="note"><b>NOTE</b><br>
+    Why is it not possible to expand a gate vector of the compound
+    module? The model structure is built in top-down order, so new gates
+    would be left unconnected on the outside, as there is no way in NED to
+    "go back" and connect them afterwards.
+</ul>
+
+<p>When the <tt>++</tt> operator is used with <tt>$i</tt> or <tt>$o</tt>
+(e.g. <tt>g$i++</tt> or <tt>g$o++</tt>, see later), it will actually add
+a gate pair (input+output) to maintain equal gate sizes for the two
+directions.
+
+<p>
+
+<p><p class="subheading">Channel Specification</p>
+
+<p>Channel specifications (<tt>--&gt;<i>channelspec</i>--&gt;</tt> inside a connection)
+are similar to submodules in many respect. Let's see some examples!
+
+<p>The following connections use two user-defined channel types,
+<tt>Ethernet100</tt> and <tt>Backbone</tt>. The code shows the syntax
+for assigning parameters (<tt>cost</tt> and <tt>length</tt>) and specifying
+a display string (and NED properties in general):
+
+<pre class="ned">
+a.g++ &lt;--&gt; Ethernet100 &lt;--&gt; b.g++;
+a.g++ &lt;--&gt; Backbone {cost=100; length=52km; ber=1e-8;} &lt;--&gt; b.g++;
+a.g++ &lt;--&gt; Backbone {@display("ls=green,2");} &lt;--&gt; b.g++;
+</pre>
+<p>
+When using built-in channel types, the type name can be omitted; it
+will be inferred from the parameters you assign.
+
+<pre class="ned">
+a.g++ &lt;--&gt; {delay=10ms;} &lt;--&gt; b.g++;
+a.g++ &lt;--&gt; {delay=10ms; ber=1e-8;} &lt;--&gt; b.g++;
+a.g++ &lt;--&gt; {@display("ls=red");} &lt;--&gt; b.g++;
+</pre>
+<p>
+If <tt>datarate</tt>, <tt>ber</tt> or <tt>per</tt> is assigned,
+<tt>ned.DatarateChannel</tt> will be chosen. Otherwise, if <tt>delay</tt> or
+<tt>disabled</tt> is present, it will be <tt>ned.DelayChannel</tt>; otherwise it
+is <tt>ned.IdealChannel</tt>. Naturally, if other parameter names are assigned
+in a connection without an explicit channel type, it will be an error (with
+<i>&#8220;ned.DelayChannel has no such parameter&#8221;</i> or similar message).
+
+<p>Connection parameters, similarly to submodule parameters, can also
+be assigned using pattern assignments, albeit the channel names
+to be matched with patterns are a little more complicated and less
+convenient to use. A channel can be identified with the name of its
+source gate plus the channel name; the channel name is currently always
+<tt>channel</tt>. It is illustrated by the following example:
+
+<pre class="ned">
+module Queueing
+{
+    parameters:
+        source.out.channel.delay = 10ms;
+        queue.out.channel.delay = 20ms;
+    submodules:
+        source: Source;
+        queue: Queue;
+        sink: Sink;
+    connections:
+        source.out --&gt; ned.DelayChannel --&gt; queue.in;
+        queue.out --&gt; ned.DelayChannel &lt;--&gt; sink.in;
+</pre>
+<p>
+Using bidirectional connections is a bit trickier, because both
+directions must be covered separately:
+
+<pre class="ned">
+network Network
+{
+    parameters:
+        hostA.g$o[0].channel.datarate = 100Mbps; // the A -&gt; B connection
+        hostB.g$o[0].channel.datarate = 100Mbps; // the B -&gt; A connection
+        hostA.g$o[1].channel.datarate = 1Gbps;   // the A -&gt; C connection
+        hostC.g$o[0].channel.datarate = 1Gbps;   // the C -&gt; A connection
+    submodules:
+        hostA: Host;
+        hostB: Host;
+        hostC: Host;
+    connections:
+        hostA.g++ &lt;--&gt; ned.DatarateChannel &lt;--&gt; hostB.g++;
+        hostA.g++ &lt;--&gt; ned.DatarateChannel &lt;--&gt; hostC.g++;
+</pre>
+<p>
+Also, it is not always easy to figure out which gate indices map to the
+connections you want to configure. If connection objects could be given
+names to override the default name &#8220;<tt>channel</tt>&#8221;, that would make it
+easier to identify connections in patterns. This feature is planned for
+future OMNeT++ releases.
+
+<p>
+<p class="subheading">Channel Names</p>
+
+<p>The default name given to channel objects is <tt>"channel"</tt>. Since OMNeT++ 4.3
+it is possible to specify the name explicitly, and also to override
+the default name per channel type. The purpose of custom channel names is to make
+addressing easier when channel parameters are assigned from ini files.
+
+<p>The syntax for naming a channel in a connection is similar to submodule syntax:
+<i>name: type</i>. Since both <i>name</i> and <i>type</i> are optional,
+the colon must be there after <i>name</i> even if <i>type</i> is missing,
+in order to remove the ambiguity.
+
+<p>Examples:
+
+<pre class="ned">
+r1.pppg++ &lt;--&gt; eth1: EthernetChannel &lt;--&gt; r2.pppg++;
+a.out --&gt; foo: {delay=1ms;} --&gt; b.in;
+a.out --&gt; bar: --&gt; b.in;
+</pre>
+<p>
+In the absence of an explicit name, the channel name comes from the
+<tt>@defaultname</tt> property of the channel type if that exists.
+
+<pre class="ned">
+channel Eth10G extends ned.DatarateChannel like IEth {
+    @defaultname(eth10G);
+}
+</pre>
+<p>
+There's a catch with <tt>@defaultname</tt> though: if the channel type is
+specified with a <tt>**.<i>channelname</i>.liketype=</tt> line in an ini file, then
+the channel type's <tt>@defaultname</tt> cannot be used as <i>channelname</i>
+in that configuration line, because the channel type would only be known as a
+result of using that very configuration line. To illustrate the problem,
+consider the above <tt>Eth10G</tt> channel, and a compound module containing the
+following connection:
+
+<pre class="ned">
+r1.pppg++ &lt;--&gt; &lt;&gt; like IEth &lt;--&gt; r2.pppg++;
+</pre>
+<p>
+Then consider the following inifile:
+
+<pre class="inifile">
+**.eth10G.typename = "Eth10G"   # Won't match! The eth10G name would come from
+                                #   the Eth10G type - catch-22!
+**.channel.typename = "Eth10G"  # OK, as lookup assumes the name "channel"
+**.eth10G.datarate = 10.01Gbps  # OK, channel already exists with name "eth10G"
+</pre>
+<p>
+The anomaly can be avoided by using an explicit channel name in the connection,
+not using <tt>@defaultname</tt>, or by specifying the type via a module parameter
+(e.g. writing <tt>&lt;param&gt; like ...</tt> instead of <tt>&lt;&gt; like ...</tt>).
+
+<p>
+
+<p><h2><a name="sec130"/>3.10 Multiple Connections</h2>
+<a name="sec:ch-ned-lang:multiple-connections"></a>
+
+<p>Simple programming constructs (loop, conditional) allow creating
+multiple connections easily.
+
+<p>
+This will be shown in the following examples.
+
+<p><p class="subheading">Chain</p>
+
+<p>One can create a chain<!--chain--> of modules like this:
+
+<pre class="ned">
+module Chain
+    parameters:
+        int count;
+    submodules:
+        node[count] : Node {
+            gates:
+                port[2];
+        }
+    connections allowunconnected:
+        for i = 0..count-2 {
+            node[i].port[1] &lt;--&gt; node[i+1].port[0];
+        }
+}
+</pre>
+<p>
+
+<p><p class="subheading">Binary Tree</p>
+
+<p>One can build a binary tree<!--binary tree--> in the following way:
+
+<pre class="ned">
+simple BinaryTreeNode {
+    gates:
+        inout left;
+        inout right;
+        inout parent;
+}
+
+module BinaryTree {
+    parameters:
+        int height;
+    submodules:
+        node[2^height-1]: BinaryTreeNode;
+    connections allowunconnected:
+        for i=0..2^(height-1)-2 {
+            node[i].left &lt;--&gt; node[2*i+1].parent;
+            node[i].right &lt;--&gt; node[2*i+2].parent;
+        }
+}
+</pre>
+<p>
+Note that not every gate of the modules will be connected. By default,
+an unconnected gate produces a run-time error message when the
+simulation is started, but this error message is turned off here with
+the <b><tt>allowunconnected</tt></b> modifier.
+Consequently, it is the simple modules' responsibility not to send
+on an unconnected gate.
+
+<p>
+
+<p><p class="subheading">Random Graph</p>
+
+<p>Conditional connections can be used to generate random
+topologies<!--topology!random-->, for example. The following code
+generates a random subgraph of a full graph:
+
+<pre class="ned">
+module RandomGraph {
+    parameters:
+        int count;
+        double connectedness; // 0.0&lt;x&lt;1.0
+    submodules:
+        node[count]: Node {
+            gates:
+                in[count];
+                out[count];
+        }
+    connections allowunconnected:
+        for i=0..count-1, for j=0..count-1 {
+            node[i].out[j] --&gt; node[j].in[i]
+                if i!=j && uniform(0,1)&lt;connectedness;
+        }
+}
+</pre>
+<p>
+Note the use of the <b><tt>allowunconnected</tt></b> modifier
+here too, to turn off error messages produced by the network setup code
+for unconnected gates.
+
+<p>
+<h3><a name="sec131"/>3.10.1 Connection Patterns</h3>
+
+<p><!--module!compound!patterns-->
+<!--topology!patterns-->
+
+<p>Several approaches can be used when you want to create complex
+topologies which have a regular structure; three of them are
+described below.
+
+<p>
+<p class="subheading">&#8220;Subgraph of a Full Graph&#8221;</p>
+
+<p>
+This pattern takes a subset of the connections of a full graph.  A
+condition is used to &#8220;carve out&#8221; the necessary interconnection from
+the full graph:
+
+<pre class="ned">
+for i=0..N-1, for j=0..N-1 {
+    node[i].out[...] --&gt; node[j].in[...] if condition(i,j);
+}
+</pre>
+<p>
+The RandomGraph compound module (presented earlier) is an example of
+this pattern, but the pattern can generate any graph where an
+appropriate <i>condition(i,j)</i> can be formulated. For example,
+when generating a tree<!--topology!tree--> structure, the condition
+would return whether node <i>j</i> is a child of node <i>i</i> or
+vice versa.
+
+<p>Though this pattern is very general, its usage can be prohibitive if
+the number of nodes <i>N</i> is high and the graph is sparse (it has
+much less than <i>N<sup>2</sup></i> connections). The following
+two patterns do not suffer from this drawback.
+
+<p>
+<p class="subheading">&#8220;Connections of Each Node&#8221;</p>
+
+<p>The pattern loops through all nodes and creates the necessary
+connections for each one. It can be generalized like this:
+
+<pre class="ned">
+for i=0..Nnodes, for j=0..Nconns(i)-1 {
+    node[i].out[j] --&gt; node[rightNodeIndex(i,j)].in[j];
+}
+</pre>
+<p>
+The Hypercube<!--topology!hypercube--> compound module (to be
+presented later) is a clear example of this approach. BinaryTree can
+also be regarded as an example of this pattern where the inner j loop
+is unrolled.
+
+<p>The applicability of this pattern depends on how easily the <i>rightNodeIndex(i,j)</i>
+function can be formulated.
+
+<p>
+<p class="subheading">&#8220;Enumerate All Connections&#8221;</p>
+
+<p>
+A third pattern is to list all connections within a loop:
+
+<pre class="ned">
+for i=0..Nconnections-1 {
+    node[leftNodeIndex(i)].out[...] --&gt; node[rightNodeIndex(i)].in[...];
+}
+</pre>
+<p>
+This pattern can be used if <i>leftNodeIndex(i)</i> and <i>rightNodeIndex(i)</i>
+mapping functions can be sufficiently formulated.
+
+<p>The <tt>Chain</tt> module is an example of this approach where the mapping
+functions are extremely simple: <i>leftNodeIndex(i)=i</i> and <i>rightNodeIndex(i) = i+1</i>.
+The pattern can also be used to create a random subset of a full
+graph with a fixed number of connections.
+
+<p>In the case of irregular structures where none of the above patterns
+can be employed, you can resort to listing all connections, like you
+would do it in most existing simulators.
+
+<p>
+
+<p><h2><a name="sec132"/>3.11 Parametric Submodule and Connection Types</h2>
+
+<p><h3><a name="sec133"/>3.11.1 Parametric Submodule Types</h3>
+<a name="sec:ch-ned-lang:submodule-like"></a>
+
+<p>A submodule type may be specified with a module parameter of the type
+<b><tt>string</tt></b>, or in general, with any string-typed expression.
+The syntax uses the <b><tt>like</tt></b> keyword.
+
+<p>Let us begin with an example:
+
+<pre class="ned">
+network Net6
+{
+    parameters:
+        string nodeType;
+    submodules:
+        node[6]: &lt;nodeType&gt; like INode {
+            address = index;
+        }
+    connections:
+        ...
+}
+</pre>
+<p>
+It creates a submodule vector whose module type will come from the
+<tt>nodeType</tt> parameter. For example, if <tt>nodeType</tt> is set to <tt>"SensorNode"</tt>,
+then the module vector will consist of sensor nodes, provided such module
+type exists and it qualifies. What this means is that the <tt>INode</tt> must be
+an existing <i>module interface</i>, which the <tt>SensorNode</tt>
+module type must implement (more about this later).
+
+<p>As already mentioned, one can write an expression between the angle
+brackets. The expression may use the parameters of the parent module and of
+previously defined submodules, and has to yield a string value. For
+example, the following code is also valid:
+
+<pre class="ned">
+network Net6
+{
+    parameters:
+        string nodeTypePrefix;
+        int variant;
+    submodules:
+        node[6]: &lt;nodeTypePrefix + "Node" + string(variant)&gt; like INode {
+           ...
+}
+</pre>
+<p>
+The corresponding NED declarations:
+
+<pre class="ned">
+moduleinterface INode
+{
+    parameters:
+        int address;
+    gates:
+        inout port[];
+}
+
+module SensorNode like INode
+{
+    parameters:
+        int address;
+        ...
+    gates:
+        inout port[];
+        ...
+}
+</pre>
+<p>
+The &#8220;<tt>&lt;nodeType&gt; like INode</tt>&#8221; syntax has an issue when used
+with submodule vectors: does not allow you to specify different types
+for different indices. The following syntax is better suited for
+submodule vectors:
+
+<p>The expression between the angle brackets may be left out altogether,
+leaving you with a pair of empty angle brackets, <tt>&lt;&gt;</tt>:
+
+<pre class="ned">
+module Node
+{
+    submodules:
+        nic: &lt;&gt; like INic;  // type name expression left unspecified
+        ...
+}
+</pre>
+<p>
+Now the submodule type name is expected to be defined via typename pattern
+assignments. Typename pattern assignments look like pattern assignments for
+the submodule's parameters, only the parameter name is replaced by the
+<b><tt>typename</tt></b> keyword. Typename pattern assignments may also be
+written in the configuration file. In a network that uses the above
+<tt>Node</tt> NED type, typename pattern assignments would look like this:
+
+<pre class="ned">
+network Network
+{
+    parameters:
+        node[*].nic.typename = "Ieee80211g";
+    submodules:
+        node: Node[100];
+}
+</pre>
+<p>
+A default value may also be specified between the angle brackets;
+it will be used if there is no typename assignment for the
+module:
+
+<pre class="ned">
+module Node
+{
+    submodules:
+        nic: &lt;default("Ieee80211b")&gt; like INic;
+        ...
+}
+</pre>
+<p>
+
+<p><h3><a name="sec134"/>3.11.2 Parametric Connection Types</h3>
+<a name="sec:ch-ned-lang:connection-like"></a>
+
+<p>Parametric connection types work similarly to parametric submodule types,
+and the syntax is similar as well. A basic example that uses a parameter of
+the parent module:
+
+<pre class="ned">
+a.g++ &lt;--&gt; &lt;channelType&gt; like IMyChannel &lt;--&gt; b.g++;
+a.g++ &lt;--&gt; &lt;channelType&gt; like IMyChannel {@display("ls=red");} &lt;--&gt; b.g++;
+</pre>
+<p>
+The expression may use loop variables, parameters of the parent module
+and also parameters of submodules (e.g. <tt>host[2].channelType</tt>).
+
+<p>The type expression may also be absent, and then the type is expected to be
+specified using typename pattern assignments:
+
+<pre class="ned">
+a.g++ &lt;--&gt; &lt;&gt; like IMyChannel &lt;--&gt; b.g++;
+a.g++ &lt;--&gt; &lt;&gt; like IMyChannel {@display("ls=red");} &lt;--&gt; b.g++;
+</pre>
+<p>
+A default value may also be given:
+
+<pre class="ned">
+a.g++ &lt;--&gt; &lt;default("Ethernet100")&gt; like IMyChannel &lt;--&gt; b.g++;
+a.g++ &lt;--&gt; &lt;default(channelType)&gt; like IMyChannel &lt;--&gt; b.g++;
+</pre>
+<p>
+The corresponding type pattern assignments:
+
+<pre class="ned">
+a.g$o[0].channel.typename = "Ethernet1000";  // A -&gt; B channel
+b.g$o[0].channel.typename = "Ethernet1000";  // B -&gt; A channel
+</pre>
+<p>
+
+<p><h2><a name="sec135"/>3.12 Metadata Annotations (Properties)</h2>
+<a name="sec:ch-ned-lang:properties"></a>
+
+<p>NED properties are metadata annotations that can be added to modules, parameters,
+gates, connections, NED files, packages, and virtually anything in NED.
+<tt>@display</tt>, <tt>@class</tt>, <tt>@namespace</tt>, <tt>@unit</tt>, <tt>@prompt</tt>,
+<tt>@loose</tt>, <tt>@directIn</tt> are all properties that have been mentioned in
+previous sections, but those examples only scratch the surface of what
+properties are used for.
+
+<p>
+Using properties, one can attach extra information to NED elements. Some
+properties are interpreted by NED, by the simulation kernel; other
+properties may be read and used from within the simulation model, or
+provide hints for NED editing tools.
+
+<p>Properties are attached to the type, so you cannot have different properties defined
+per-instance. All instances of modules, connections,
+parameters, etc. created from any particular location in the NED files have
+identical properties.
+
+<p>The following example shows the syntax for annotating various NED elements:
+
+<pre class="ned">
+@namespace(foo);  // file property
+
+module Example
+{
+    parameters:
+       @node;   // module property
+       @display("i=device/pc");   // module property
+       int a @unit(s) = default(1); // parameter property
+    gates:
+       output out @loose @labels(pk);  // gate properties
+    submodules:
+       src: Source {
+           parameters:
+              @display("p=150,100");  // submodule property
+              count @prompt("Enter count:"); // adding a property to a parameter
+           gates:
+              out[] @loose;  // adding a property to a gate
+       }
+       ...
+    connections:
+       src.out++ --&gt; { @display("ls=green,2"); } --&gt; sink1.in; // connection prop.
+       src.out++ --&gt; Channel { @display("ls=green,2"); } --&gt; sink2.in;
+}
+</pre>
+<p>
+
+<p><p class="subheading">Property Indices</p>
+
+<p>Sometimes it is useful to have multiple properties with the same name,
+for example for declaring multiple statistics produced by a simple module.
+<i>Property indices</i> make this possible.
+
+<p>A property index is an identifier or a number in square brackets after the
+property name, such as <tt>eed</tt> and <tt>jitter</tt> in the following example:
+
+<pre class="ned">
+simple App {
+    @statistic[eed](title="end-to-end delay of received packets";unit=s);
+    @statistic[jitter](title="jitter of received packets");
+}
+</pre>
+<p>
+This example declares two statistics as <tt>@statistic</tt> properties,
+<tt>@statistic[eed]</tt> and <tt>@statistic[jitter]</tt>. Property values within
+the parentheses are used to supply additional info, like a more
+descriptive name (<tt>title="..."</tt> or a unit (<tt>unit=s</tt>).
+Property indices can be conveniently accessed from the C++ API as
+well; for example it is possible to ask what indices exist for the
+<tt>"statistic"</tt> property, and it will return a list containing
+<tt>"eed"</tt> and <tt>"jitter"</tt>).
+
+<p>In the <tt>@statistic</tt> example the index was textual and meaningful,
+but neither is actually required. The following dummy example
+shows the use of numeric indices which may be ignored altogether
+by the code that interprets the properties:
+
+<pre class="ned">
+simple Dummy {
+    @foo[1](what="apples";amount=2);
+    @foo[2](what="oranges";amount=5);
+}
+</pre>
+<p>
+Note that without the index, the lines would actually define the
+same <tt>@foo</tt> property, and would overwrite each other's values.
+
+<p>Indices also make it possible to override entries via inheritance:
+
+<pre class="ned">
+simple DummyExt extends Dummy {
+    @foo[2](what="grapefruits"); // 5 grapefruits instead of 5 oranges
+}
+</pre>
+<p>
+
+<p><p class="subheading">Data Model</p>
+
+<p>Properties may contain data, given in parentheses; the data model is quite
+flexible. To begin with, properties may contain no value or a single
+value:
+
+<pre class="ned">
+@node;
+@node(); // same as @node
+@class(FtpApp2);
+</pre>
+<p>
+Properties may contain lists:
+
+<pre class="ned">
+@foo(Sneezy,Sleepy,Dopey,Doc,Happy,Bashful,Grumpy);
+</pre>
+<p>
+They may contain key-value pairs, separated by semicolons:
+
+<pre class="ned">
+@foo(x=10.31; y=30.2; unit=km);
+</pre>
+<p>
+In key-value pairs, each value can be a (comma-separated) list:
+
+<pre class="ned">
+@foo(coords=47.549,19.034;labels=vehicle,router,critical);
+</pre>
+<p>
+The above examples are special cases of the general data model. According
+to the data model, properties contain <i>key-valuelist</i> pairs,
+separated by semicolons. Items in <i>valuelist</i> are separated by
+commas. Wherever <i>key</i> is missing, values go on the valuelist of the
+<i>default key</i>, the empty string.
+
+<p>Value items may contain words, numbers, string constants and some other
+characters, but not arbitrary strings.
+Whenever the syntax does not permit some value, it should be enclosed in
+quotes. This quoting does not affect the value because
+the parser automatically drops one layer of quotes; thus, <tt>@class(TCP)</tt>
+and <tt>@class("TCP")</tt> are exactly the same. If you want the quotes
+to be part of the value, use escaped quotes:
+<tt>@foo("\"some string\"")</tt>.
+
+<p>There are also some conventions. One can use properties to tag NED
+elements; for example, a <b><tt>@host</tt></b> property could be used to mark all
+module types that represent various hosts. This property could be
+recognized e.g. by editing tools, by topology discovery code inside the
+simulation model, etc.
+
+<p>The convention for such a &#8220;marker&#8221; property is that any extra data in it
+(i.e. within parens) is ignored, except a single word <tt>false</tt>, which has
+the special meaning of &#8220;turning off&#8221; the property. Thus, any simulation model
+or tool that interprets properties should handle all the following forms as
+equivalent to <tt>@host</tt>: <tt>@host()</tt>, <tt>@host(true)</tt>,
+<tt>@host(anything-but-false)</tt>, <tt>@host(a=1;b=2)</tt>; and
+<tt>@host(false)</tt> should be interpreted as the lack of the <tt>@host</tt>
+tag.
+
+<p>
+<p class="subheading">Overriding and Extending Property Values</p>
+
+<p>When you subclass a NED type, use a module type as submodule or use a channel
+type for a connection, you may add new properties to the module or channel,
+or to its parameters and gates, and you can also modify existing properties.
+
+<p>When modifying a property, the new property is merged with the old one,
+with a few simple rules. New keys simply get added. If a key already
+exists in the old property, items in its valuelist overwrite items on
+the same position in the old property. A single hyphen ($-$) as
+valuelist item serves as &#8220;antivalue&#8221;, it removes the item at the
+corresponding position.
+
+<p>Some examples:
+
+<p><table>
+<TR> <TD align=left> <i>base</i>   </TD> <TD align=left> <tt>@prop</tt>  </TD></TR>
+<TR> <TD align=left> <i>new</i>    </TD> <TD align=left> <tt>@prop(a)</tt>  </TD></TR>
+<TR> <TD align=left>
+<i>result</i> </TD> <TD align=left> <tt>@prop(a)</tt>
+</table>
+
+<p><table>
+<TR> <TD align=left> <i>base</i>   </TD> <TD align=left> <tt>@prop(a,b,c)</tt>  </TD></TR>
+<TR> <TD align=left> <i>new</i>    </TD> <TD align=left> <tt>@prop(,-)</tt>  </TD></TR>
+<TR> <TD align=left>
+<i>result</i> </TD> <TD align=left> <tt>@prop(a,,c)</tt>
+</table>
+
+<p><table>
+<TR> <TD align=left> <i>base</i>   </TD> <TD align=left> <tt>@prop(foo=a,b)</tt>  </TD></TR>
+<TR> <TD align=left> <i>new</i>    </TD> <TD align=left> <tt>@prop(foo=A,,c;bar=1,2)</tt>  </TD></TR>
+<TR> <TD align=left>
+<i>result</i> </TD> <TD align=left> <tt>@prop(foo=A,b,c;bar=1,2)</tt>
+</table>
+
+<p><ul class="note"><b>NOTE</b><br>
+    The above merge rules are part of NED, but the code that interprets
+    properties may have special rules for certain properties. For example,
+    the <tt>@unit</tt> property of parameters is not allowed to be overridden,
+    and <tt>@display</tt> is merged with special although similar rules
+    (see Chapter <a href="chap11.html#sec378">[11]</a>).
+</ul>
+
+<p>
+
+<p>
+<h2><a name="sec136"/>3.13 Inheritance</h2>
+<a name="sec:ch-ned-lang:inheritance"></a>
+
+<p>Inheritance support in the NED language is only described briefly here,
+because several details and examples have been already presented in
+previous sections.
+
+<p>In NED, a type may only extend (<b><tt>extends</tt></b> keyword) an element of
+the same component type: a simple module may only extend a simple module,
+compound module may only extend a compound module, and so on. Single
+inheritance is supported for modules and channels, and multiple inheritance
+is supported for module interfaces and channel interfaces. A network is a
+shorthand for a compound module with the <b><tt>@isNetwork</tt></b> property set, so
+the same rules apply to it as to compound modules.
+
+<p>However, a simple or compound module type may implement (<b><tt>like</tt></b>
+keyword) several module interfaces; likewise, a channel type may implement
+several channel interfaces.
+
+<p><ul class="important"><b>IMPORTANT</b><br>
+    When you extend a simple module type both in NED and in C++, you must
+    use the <b><tt>@class</tt></b> property to tell NED to use the new C++ class --
+    otherwise your new module type inherits the C++ class of the base!
+</ul>
+
+<p>Inheritance may:
+<ul>
+    <li> add new properties, parameters, gates, inner types, submodules,
+          connections, as long as names do not conflict with inherited names
+    <li> modify inherited properties, and properties of inherited parameters and
+          gates
+    <li> it may not modify inherited submodules, connections and inner types
+</ul>
+
+<p>For details and examples, see the corresponding sections of this chapter
+(simple modules <a href="chap3.html#sec123">[3.3]</a>,
+compound modules <a href="chap3.html#sec124">[3.4]</a>,
+channels <a href="chap3.html#sec125">[3.5]</a>,
+parameters <a href="chap3.html#sec126">[3.6]</a>,
+gates <a href="chap3.html#sec127">[3.7]</a>,
+submodules <a href="chap3.html#sec128">[3.8]</a>,
+connections <a href="chap3.html#sec129">[3.9]</a>,
+module interfaces and channel interfaces <a href="chap3.html#sec133">[3.11.1]</a>).
+
+<p>
+
+<p><h2><a name="sec137"/>3.14 Packages</h2>
+<a name="sec:ch-ned-lang:packages"></a>
+
+<p>Having all NED files in a single directory is fine for small simulation projects.
+When a project grows, however, it sooner or later becomes
+necessary to introduce a directory structure, and sort the NED files into
+them. NED natively supports directory trees with NED files, and calls
+directories <i>packages</i>. Packages are also useful for reducing
+name conflicts, because names can be qualified with the package name.
+
+<p><ul class="note"><b>NOTE</b><br>
+    NED packages are based on the Java package concept, with minor
+    enhancements. If you are familiar with Java, you'll find little
+    surprise in this section.
+</ul>
+
+<p><p class="subheading">Overview</p>
+
+<p>When a simulation is run, you must tell the simulation kernel the
+directory which is the root of your package tree; let's call it
+<i>NED source folder</i>. The simulation kernel will traverse
+the whole directory tree, and load all NED files from every directory.
+You can have several NED directory trees, and their roots (the NED source
+folders) should be given to the simulation kernel in the NEDPATH
+variable. NEDPATH can be specified in several ways: as an environment
+variable (<tt>NEDPATH</tt>), as a configuration option (<b><tt>ned-path</tt></b>),
+or as a command-line option to the simulation runtime (<tt>-n</tt>). NEDPATH is
+described in detail in chapter <a href="chap10.html#sec353">[10]</a>.
+
+<p>Directories in a NED source tree correspond to packages. If you have
+NED files in a <tt>&lt;root&gt;/a/b/c</tt> directory (where <tt>&lt;root&gt;</tt>
+gets listed in NEDPATH), then the package name is <tt>a.b.c</tt>.
+The package name has to be explicitly declared at the top of the NED
+files as well, like this:
+
+<pre class="ned">
+package a.b.c;
+</pre>
+<p>
+The package name that follows from the directory name and the declared
+package must match; it is an error if they don't. (The only exception
+is the root <tt>package.ned</tt> file, as described below.)
+
+<p>By convention, package names are all lowercase, and begin with either
+the project name (<tt>myproject</tt>), or the reversed domain name plus the
+project name (<tt>org.example.myproject</tt>). The latter convention
+would cause the directory tree to begin with a few levels of empty
+directories, but this can be eliminated with a toplevel <tt>package.ned</tt>.
+
+<p>NED files called <tt>package.ned</tt> have a special role, as they are meant
+to represent the whole package. For example, comments in
+<tt>package.ned</tt> are treated as documentation of the package. Also, a
+<b><tt>@namespace</tt></b> property in a <tt>package.ned</tt> file affects all NED
+files in that directory and all directories below.
+
+<p>The toplevel <tt>package.ned</tt> file can be used to designate the root
+package, which is useful for eliminating a few levels of empty directories
+resulting from the package naming convention. For example, if you have a
+project where you want to have all NED types under the <tt>org.example.myproject</tt>
+package but don't want to have the directories named <tt>org</tt>, <tt>example</tt> and
+<tt>myproject</tt> in the source tree, then you can put a <tt>package.ned</tt>
+file in the source root directory with the package declaration
+<tt>org.example.myproject</tt>. This will cause a directory <tt>foo</tt> under the
+root to be interpreted as package <tt>org.example.myproject.foo</tt>, and NED
+files in them must contain that as package declaration. Only the root
+<tt>package.ned</tt> can define the package, <tt>package.ned</tt> files
+in subdirectories must follow it.
+
+<p>Let's look at the INET Framework as example, which contains hundreds of NED
+files in several dozen packages. The directory structure looks like this:
+
+<p><pre class="verbatim">
+INET/
+    src/
+        base/
+        transport/
+            tcp/
+            udp/
+            ...
+        networklayer/
+        linklayer/
+        ...
+    examples/
+        adhoc/
+        ethernet/
+        ...
+</pre>
+
+<p>The <tt>src</tt> and <tt>examples</tt> subdirectories are denoted as NED source
+folders, so NEDPATH is the following (provided INET was unpacked in
+<tt>/home/joe</tt>):
+
+<pre class="filelisting">
+/home/joe/INET/src;/home/joe/INET/examples
+</pre>
+<p>
+Both <tt>src</tt> and <tt>examples</tt> contain <tt>package.ned</tt> files to
+define the root package:
+
+<pre class="ned">
+// INET/src/package.ned:
+package inet;
+</pre>
+<p>
+<pre class="ned">
+// INET/examples/package.ned:
+package inet.examples;
+</pre>
+
+<p>And other NED files follow the package defined in <tt>package.ned</tt>:
+
+<pre class="ned">
+// INET/src/transport/tcp/TCP.ned:
+package inet.transport.tcp;
+</pre>
+<p>
+
+<p><p class="subheading">Name Resolution, Imports</p>
+
+<p>We already mentioned that packages can be used to distinguish
+similarly named NED types. The name that includes the package name
+(<tt>a.b.c.Queue</tt> for a <tt>Queue</tt> module in the <tt>a.b.c</tt>
+package) is called <i>fully qualified name</i>; without the package
+name (<tt>Queue</tt>) it is called <i>simple name</i>.
+
+<p>Simple names alone are not enough to unambiguously identify a type.
+Here is how you can refer to an existing type:
+
+<p><ol>
+  <li> By fully qualified name. This is often cumbersome though,
+        as names tend to be too long;
+  <li> Import the type, then the simple name will be enough;
+  <li> If the type is in the same package, then it doesn't need to be
+        imported; it can be referred to by simple name
+</ol>
+
+<p>Types can be imported with the <b><tt>import</tt></b> keyword by either
+fully qualified name, or by a wildcard pattern. In wildcard patterns,
+one asterisk ("<tt>*</tt>") stands for "any character sequence not containing
+period", and two asterisks ("<tt>**</tt>") mean "any character sequence which may
+contain period".
+
+<p>So, any of the following lines can be used to import a type called
+<tt>inet.protocols.networklayer.ip.RoutingTable</tt>:
+
+<pre class="ned">
+import inet.protocols.networklayer.ip.RoutingTable;
+import inet.protocols.networklayer.ip.*;
+import inet.protocols.networklayer.ip.Ro*Ta*;
+import inet.protocols.*.ip.*;
+import inet.**.RoutingTable;
+</pre>
+<p>
+If an import explicitly names a type with its exact fully qualified name,
+then that type must exist, otherwise it is an error. Imports containing
+wildcards are more permissive, it is allowed for them not to match any
+existing NED type (although that might generate a warning.)
+
+<p>Inner types may not be referred to outside their enclosing types, so they
+cannot be imported either.
+
+<p>
+<p class="subheading">Name Resolution With "like"</p>
+
+<p>The situation is a little different for submodule and connection channel
+specifications using the <b><tt>like</tt></b> keyword, when the type name comes
+from a string-valued expression (see section
+<a href="chap3.html#sec133">[3.11.1]</a> about submodule and channel types as
+parameters). Imports are not much use here: at the time of writing the NED
+file it is not yet known what NED types will be suitable for being "plugged
+in" there, so they cannot be imported in advance.
+
+<p>There is no problem with fully qualified names, but simple names need
+to be resolved differently. What NED does is this: it determines which
+interface the module or channel type must implement (i.e. <tt>... like INode</tt>),
+and then collects the types that have the given simple name AND implement
+the given interface. There must be exactly one such type, which is then used.
+If there is none or there are more than one, it will be reported as an error.
+
+<p>Let us see the following example:
+
+<pre class="ned">
+module MobileHost
+{
+    parameters:
+        string mobilityType;
+    submodules:
+        mobility: &lt;mobilityType&gt; like IMobility;
+        ...
+}
+</pre>
+<p>
+and suppose that the following modules implement the <tt>IMobility</tt> module
+interface: <tt>inet.mobility.RandomWalk</tt>, <tt>inet.adhoc.RandomWalk</tt>,
+<tt>inet.mobility.MassMobility</tt>. Also suppose that there is a type
+called <tt>inet.examples.adhoc.MassMobility</tt> but it does not implement the
+interface.
+
+<p>So if <tt>mobilityType="MassMobility"</tt>, then
+<tt>inet.mobility.MassMobility</tt> will be selected; the other
+<tt>MassMobility</tt> doesn't interfere. However, if
+<tt>mobilityType="RandomWalk"</tt>, then it is an error because there are two
+matching <tt>RandomWalk</tt> types. Both <tt>RandomWalk</tt>'s can still be used,
+but one must explicitly choose one of them by providing a package name:
+<tt>mobilityType="inet.adhoc.RandomWalk"</tt>.
+
+<p>
+<p class="subheading">The Default Package</p>
+
+<p>It is not mandatory to make use of packages: if all NED files are in a
+single directory listed on the NEDPATH, then package declarations (and
+imports) can be omitted. Those files are said to be in the <i>default
+package</i>.
+
+<p>
+
+
+
+<p>
+<hr class='pgbr'><p><hr><b><a href="chap2.html">[Prev]</A>&nbsp;<a href="chap4.html">[Next]</A>&nbsp;<a href="toc.html#toc_3.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p>
+
+</body>
+</html>

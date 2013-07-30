@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Require-Bundle: org.eclipse.ui,org.eclipse.ui.intro,org.eclipse.ui.int
+ ro.universal,org.eclipse.help
+Bundle-Vendor: OpenSim Ltd.
+Bundle-Version: 4.3.0.130403-bf01aae
+Bundle-Name: OMNeT++ Help
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.omnetpp.doc;singleton:=true
+
+

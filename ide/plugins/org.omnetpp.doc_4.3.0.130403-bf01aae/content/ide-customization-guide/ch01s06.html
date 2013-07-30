@@ -1,0 +1,73 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Configuration Keys</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="IDE Customization Guide"><link rel="up" href="ch01.html" title="Chapter 1. Writing Wizards"><link rel="prev" href="ch01s05.html" title="Wizard Types"><link rel="next" href="ch01s07.html" title="Templates"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Configuration Keys</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch01s05.html">Prev</a> </td><th width="60%" align="center">Chapter 1. Writing Wizards</th><td width="20%" align="right"> <a accesskey="n" href="ch01s07.html">Next</a></td></tr></table><hr></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_configuration_keys"></a>Configuration Keys</h2></div></div></div><p>The <code class="literal">template.properties</code> file is a standard Java property file (<code class="literal">key = value</code> syntax)
+that can be used to supply a template name, a template description,
+and other information.</p><p>Recognized property file keys:</p><div class="variablelist"><dl><dt><span class="term">
+<code class="literal">templateName</code> 
+</span></dt><dd>
+                The template&#8217;s display name. This is the name that appears in
+                the tree in the template selection page. This property defaults
+                to the name of the folder that holds the wizard files.
+</dd><dt><span class="term">
+<code class="literal">templateDescription</code> 
+</span></dt><dd>
+                Description of the template. This may appear as a tooltip
+                or in a description page in the wizard.
+</dd><dt><span class="term">
+<code class="literal">templateCategory</code> 
+</span></dt><dd>
+                Template category is used for organizing the templates into a
+                tree in the wizard&#8217;s template selection page. Defaults to the
+                name of the project that provides the template.
+</dd><dt><span class="term">
+<code class="literal">templateImage</code> 
+</span></dt><dd>
+                Name of the icon that appears with the name in the wizard&#8217;s
+                template selection page.
+</dd><dt><span class="term">
+<code class="literal">supportedWizardTypes</code> 
+</span></dt><dd>
+                Comma-separated or JSON-syntax list of wizard types (e.g.
+                <code class="literal">nedfile</code>, <code class="literal">simplemodule</code>, <code class="literal">project</code>, <code class="literal">inifile</code>) that
+                this template supports. If not specified, the wizard will support
+                all known wizard types.
+</dd><dt><span class="term">
+<code class="literal">ignoreResources</code> 
+</span></dt><dd>
+                Comma-separated or JSON-syntax list of non-template files or
+                folders designating those files that will not get copied over to the new project.
+                The <code class="literal">template.properties</code> file and custom wizard page files
+                automatically count as non-templates, so they do not have to be listed.
+                Wildcards (<code class="literal">*</code>, <code class="literal">**</code>, <code class="literal">?</code>) are accepted. Note that <code class="literal">*.foo</code>
+                is interpreted as <code class="literal">./*.foo</code>; write <code class="literal">**/*.foo</code> to mean foo files
+                anywhere.
+</dd><dt><span class="term">
+<code class="literal">verbatimFiles</code> 
+</span></dt><dd>
+                Comma-separated or JSON-syntax list of files that need to be
+                copied over into the target project verbatim, even if they have
+                the <code class="literal">.ftl</code> extension. Wildcards (<code class="literal">*</code>, <code class="literal">**</code>, <code class="literal">?</code>) are accepted.
+                Note that <code class="literal">*.foo</code> is interpreted as <code class="literal">./*.foo</code>; write <code class="literal">**/*.foo</code>
+                to mean foo files anywhere.
+</dd></dl></div><p>The <span class="emphasis"><em>New OMNeT++ Project</em></span> wizard also recognizes the following options (these
+options can be overridden from custom wizard pages):</p><div class="variablelist"><dl><dt><span class="term">
+<code class="literal">addProjectReference</code> 
+</span></dt><dd>
+                True or false; defaults to true. If true, the template&#8217;s project
+                will be added to the referenced project&#8217;s list of the new project.
+</dd><dt><span class="term">
+<code class="literal">sourceFolders</code> 
+</span></dt><dd>
+                Comma-separated or JSON-syntax list of C&#8288;+&#8288;+ source folders
+                to be created and configured. By default, none.
+</dd><dt><span class="term">
+<code class="literal">nedSourceFolders</code> 
+</span></dt><dd>
+                Comma-separated or JSON-syntax list of NED source folders
+                to be created and configured. By default, none.
+</dd><dt><span class="term">
+<code class="literal">makemakeOptions</code> 
+</span></dt><dd>
+                Comma-separated list of items in the syntax "folder:options",
+                or a JSON-syntax map of strings; it sets opp_makemake options
+                for the given folders. There is no default.
+</dd></dl></div><p>There are additional options for adding custom pages into the wizard, as described
+in the next section.</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch01s05.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch01.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch01s07.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Wizard Types </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Templates</td></tr></table></div></body></html>

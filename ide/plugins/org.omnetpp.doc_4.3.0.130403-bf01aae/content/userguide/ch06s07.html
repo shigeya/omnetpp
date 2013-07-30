@@ -1,0 +1,45 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Controlling the Execution and Progress Reporting</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="OMNeT&#8288;+&#8288;+ User Guide"><link rel="up" href="ch06.html" title="Chapter 6. Launching and Debugging"><link rel="prev" href="ch06s06.html" title="Profiling a Simulation on Linux"><link rel="next" href="ch07.html" title="Chapter 7. The Tkenv Graphical Runtime Environment"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Controlling the Execution and Progress Reporting</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch06s06.html">Prev</a> </td><th width="60%" align="center">Chapter 6. Launching and Debugging</th><td width="20%" align="right"> <a accesskey="n" href="ch07.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id279167"></a>Controlling the Execution and Progress Reporting</h2></div></div></div><p>
+      After starting a simulation process or simulation batch you can keep track of the
+      started processes in the <span class="emphasis"><em>Debug View</em></span>. To open the <span class="emphasis"><em>Debug View</em></span> automatically during
+      launch, check the Show Debug View on Launch in the run configuration dialog, or
+      select <span class="emphasis"><em>Window | Show View... | Other... | Debug | Debug</em></span>.
+      Select a process and click the terminate button to stop a specific simulation run
+      or use the context menu for more options to control the process execution.
+    </p><div class="figure"><a name="pictures/Launch-DebugView.png"></a><p class="title"><b>Figure 6.5. Debug View</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/Launch-DebugView.png" align="middle" alt="Debug View"></div></div></div></div><br class="figure-break"><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Tip</h3>
+      Place the Debug View in a different tab group than the console so you will be able
+      to switch between the process outputs and see the process list at the same time.
+    </div><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+      You can terminate all currently running processes by selecting the root of the
+      launch. This will not cancel the whole batch; only the currently active processes. If
+      you want to cancel the whole batch, open the <span class="emphasis"><em>Progress View</em></span> and cancel the simulation
+      batch there.
+    </div><p>
+      Clicking on the process in the <span class="emphasis"><em>Debug View</em></span> switches to the output of that process in
+      the <span class="emphasis"><em>Console View</em></span>. The process may ask for user input via the console, too. Switch to the
+      appropriate console and enter the requested parameters.
+    </p><div class="figure"><a name="pictures/Launch-ConsoleView.png"></a><p class="title"><b>Figure 6.6. 
+      Displaying the output of a simulation process in Console View
+    </b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/Launch-ConsoleView.png" align="middle" alt="Displaying the output of a simulation process in Console View"></div></div></div></div><br class="figure-break"><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+      By default, the <span class="emphasis"><em>Console View</em></span> automatically activates when a process is writing to it.
+      If you are running several parallel processes, this might be an annoying behavior
+      and might prevent you from switching to the <span class="emphasis"><em>Progress View</em></span>. You can switch off the auto-activation by disabling the
+      <span class="emphasis"><em>Show Console When Standard Out/Error Changes</em></span>
+      in the <span class="emphasis"><em>Console View</em></span> toolbar.
+    </div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id279278"></a>Progress Reporting</h4></div></div></div><p>
+        If you have executed the simulation in the command line environment, you can
+        monitor the progress of the simulation in the <span class="emphasis"><em>Progress View</em></span>. See the status line
+        for the overall progress indicator and click on it to open the detailed progress
+        view. It is possible to terminate the whole batch by clicking on the cancel button
+        in the <span class="emphasis"><em>Progress View</em></span>.
+      </p><div class="figure"><a name="pictures/Launch-ProgressView.png"></a><p class="title"><b>Figure 6.7. 
+        Progress report on four parallel processes
+      </b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/Launch-ProgressView.png" align="middle" alt="Progress report on four parallel processes"></div></div></div></div><br class="figure-break"><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+        When <span class="emphasis"><em>Progress View</em></span> displays "Waiting for user input", the simulation is waiting for
+        the user. Switch to the appropriate console and provide the requested input for
+        the simulation.
+      </div><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+        By default, cmdenv reports progress only on every 100,000th event. If you want more frequent
+        progress reports, set the
+        <code class="literal">cmdenv-status-frequency</code>
+        option in your INI file to a lower value.
+      </div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch06s06.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch06.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch07.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Profiling a Simulation on Linux </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 7. The Tkenv Graphical Runtime Environment</td></tr></table></div></body></html>

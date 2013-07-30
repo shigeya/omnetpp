@@ -1,0 +1,68 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Other Features</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="OMNeT&#8288;+&#8288;+ User Guide"><link rel="up" href="ch08.html" title="Chapter 8. Sequence Charts"><link rel="prev" href="ch08s05.html" title="Filter Dialog"><link rel="next" href="ch08s07.html" title="Examples"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Other Features</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch08s05.html">Prev</a> </td><th width="60%" align="center">Chapter 8. Sequence Charts</th><td width="20%" align="right"> <a accesskey="n" href="ch08s07.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id282683"></a>Other Features</h2></div></div></div><p>
+      Both the Sequence Chart and the Eventlog Table tools can be used as an editor and
+      also as a view. The difference between an editor or a view is quite important
+      because there is only at most one instance of a view of the same kind. It means that
+      even if multiple eventlog files are open in Sequence Chart editors, there is no
+      more than one <span class="emphasis"><em>Eventlog Table</em></span> view shared between them. This single view will
+      automatically display the eventlog file of the active editor. It will also remember
+      its position and state when it switches among editors. For more details
+      on editors and views, and their differences, please refer to the
+      Eclipse documentation.
+      </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+	Despite the name "editor", which is a concept of the Eclipse platform, neither the
+	Sequence Chart, nor the Eventlog Table can be used to actually change the contents
+	of an eventlog file.
+      </div><p>
+    </p><p>
+      It is possible to open the same eventlog file in multiple editors and to navigate
+      to different locations, or use different display modes or filters in a location. Once an
+      eventlog is open in an editor, you can use the <span class="emphasis"><em>Window|New
+      Editor</em></span> to open it again.
+      </p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Tip</h3>
+	Dragging one of the editors from the tabbed pane to the side of the editor's area
+	allows you to interact with the two simultaneously.
+      </div><p>
+    </p><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id282720"></a>Settings</h3></div></div></div><p>
+	There are various settings for both tools which affect the display, such as
+	display modes, content position, filter parameters, etc. These user-specified
+	settings are automatically saved for each file and they are reused whenever the
+	file is revisited. The per file settings are stored under the OMNeT&#8288;+&#8288;+
+	workspace, in the directory
+	<code class="filename">.metadata\.plugins\org.eclipse.core.resources\.projects\&lt;project-name&gt;</code>.
+      </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id282743"></a>Large File Support</h3></div></div></div><p>
+	Since an eventlog file might be several Gigabytes, both tools are designed in a way
+	that allows for efficient displaying of such a file without requiring large amounts of
+	physical memory to load it at once. As you navigate through the file, physical
+	memory is filled up with the content lazily. Since it is difficult to reliably
+	identify when the system is getting low on physical memory, it is up to the user to
+	release the allocated memory when needed. This operation, although usually not
+	required, is available from the context menu as <span class="emphasis"><em>Release
+	Memory</em></span>. It does not affect the user interface in any way.
+      </p><p>
+	The fact that the eventlog file is loaded lazily and optionally filtered also
+	means that the exact number of lines and events it contains cannot be easily
+	determined. This affects the way scrollbars work in the lazy directions: horizontal
+	for the Sequence Chart and vertical for the Eventlog Table. These
+	scrollbars act as a non-linear approximation in that direction. For the most,
+	the user will be unaware of these approximations unless the file is really small.
+      </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id282769"></a>Viewing a Running Simulation's Results</h3></div></div></div><p>
+	Even though the simulation kernel keeps the eventlog file open for writing while the
+	simulation is running, it may be open in the OMNeT&#8288;+&#8288;+ IDE simultaneously. Both
+	tools can be guided by pressing the <span class="keycap"><strong>END</strong></span> key to follow the
+	eventlog's end as new content is appended to it. If you pause the simulation in
+	the runtime environment, then after a few seconds the tools will refresh their
+	content and jump to the very end. This process makes it possible to follow
+	the simulation step-by-step on the Sequence Chart.
+      </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id282791"></a>Caveats</h3></div></div></div><p>
+	Sometimes, drawing the Sequence Chart may take a lot of time. Zooming out too much,
+	for example, might result in slow response times. A dialog might pop up telling the user
+	that a long running eventlog operation is in progress. You can safely cancel these
+	operations at any time you like, or just wait until they finish. To restart the
+	rendering process, simply press the refresh button <span class="guibutton"><img src="icons/refresh.gif"></span> on
+	the toolbar. Before refreshing, it is a good idea to revert to some
+	defaults (e.g. default zoom level) or revert the last changes (e.g. navigate back,
+	turn filter off, etc.).
+      </p><div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Warning</h3>
+	An operation which runs for an unreasonably long time might be a sign of a
+	problem that should be reported.
+      </div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch08s05.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch08.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch08s07.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Filter Dialog </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Examples</td></tr></table></div></body></html>

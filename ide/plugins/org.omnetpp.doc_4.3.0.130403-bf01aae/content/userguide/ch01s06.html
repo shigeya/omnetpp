@@ -1,0 +1,22 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Project References</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="OMNeT&#8288;+&#8288;+ User Guide"><link rel="up" href="ch01.html" title="Chapter 1. Introduction"><link rel="prev" href="ch01s05.html" title="Creating OMNeT&#8288;+&#8288;+ Projects"><link rel="next" href="ch01s07.html" title="Getting Help"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Project References</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch01s05.html">Prev</a> </td><th width="60%" align="center">Chapter 1. Introduction</th><td width="20%" align="right"> <a accesskey="n" href="ch01s07.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id272722"></a>Project References</h2></div></div></div><p>
+      Most aspects of a project can be configured in the <span class="emphasis"><em>Project Properties</em></span> dialog.
+      The dialog is accessible via the <span class="emphasis"><em>Project | Properties...</em></span> menu item, or by right-clicking
+      the project in <span class="emphasis"><em>Project Explorer</em></span> and choosing <span class="emphasis"><em>Properties</em></span> from the context menu.
+    </p><p>
+      An important Eclipse concept is that a project may reference other projects in the workspace;
+      project references can be configured in the <span class="emphasis"><em>Project References</em></span> page of the properties
+      dialog. To update the list of referenced projects, simply check those projects in the list
+      that your project depends on, then click <span class="emphasis"><em>Apply</em></span>. Note that circular references are not allowed
+      (i.e. the dependency graph must be a tree).
+    </p><div class="figure"><a name="pictures/Intro-ProjectReferences.png"></a><p class="title"><b>Figure 1.5. Setting project dependencies</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/Intro-ProjectReferences.png" align="middle" alt="Setting project dependencies"></div></div></div></div><br class="figure-break"><p>
+      In the OMNeT&#8288;+&#8288;+ IDE, all NED types, C++ code and build artifacts (executables, libraries) in a project
+      are available to other projects that reference the given project.
+     </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+      To see an example of project references, check the <code class="literal">queuenet</code> and <code class="literal">queueinglib</code> example projects.
+      In this example, <code class="literal">queuenet</code> references <code class="literal">queueinglib</code>. <code class="literal">Queuinglib</code> provides simple
+      modules (NED files, and a prebuilt shared library that contains the code of the simple modules),
+      and makes those modules available to <code class="literal">queuenet</code> that contains simulations (networks and ini files)
+      built from them.
+    </div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch01s05.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch01.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch01s07.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Creating OMNeT&#8288;+&#8288;+
+      Projects
+     </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Getting Help</td></tr></table></div></body></html>

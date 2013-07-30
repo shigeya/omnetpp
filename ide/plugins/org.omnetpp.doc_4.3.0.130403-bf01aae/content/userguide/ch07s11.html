@@ -1,0 +1,55 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Simulation Options</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="OMNeT&#8288;+&#8288;+ User Guide"><link rel="up" href="ch07.html" title="Chapter 7. The Tkenv Graphical Runtime Environment"><link rel="prev" href="ch07s10.html" title="Logging and Module Output"><link rel="next" href="ch08.html" title="Chapter 8. Sequence Charts"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Simulation Options</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch07s10.html">Prev</a> </td><th width="60%" align="center">Chapter 7. The Tkenv Graphical Runtime Environment</th><td width="20%" align="right"> <a accesskey="n" href="ch08.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id280507"></a>Simulation Options</h2></div></div></div><p> Select <span class="emphasis"><em>Options | Simulation Options...</em></span> from the menu to display the runtime environment's
+      preferences dialog. It is possible to adjust various display, network layouting and animation
+      options in the dialog. For example, it is possible to disable various animation effects.</p><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id280522"></a>General</h3></div></div></div><div class="figure"><a name="pictures/Tkenv-sim-opts1.png"></a><p class="title"><b>Figure 7.12. General Tkenv options</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/Tkenv-sim-opts1.png" align="middle" alt="General Tkenv options"></div></div></div></div><br class="figure-break"><p>The <span class="emphasis"><em>General</em></span> tab can be used to set the default display and logging behavior. It is
+        possible to set how often the user interface will be updated during the simulation run.
+        The user can also configure default font size and family here.
+      </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id280558"></a>Configuring the Layouting Algorithm</h3></div></div></div><div class="figure"><a name="pictures/Tkenv-sim-opts2.png"></a><p class="title"><b>Figure 7.13. Layouting options</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/Tkenv-sim-opts2.png" align="middle" alt="Layouting options"></div></div></div></div><br class="figure-break"><p>Tkenv provides automatic layouting for submodules that do not have their locations
+        specified in the NED files. The layouting algorithm can be fine-tuned on the <span class="emphasis"><em>Layouting</em></span> page
+        of the configuration dialog.</p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id280593"></a>Configuring Animation</h3></div></div></div><div class="figure"><a name="pictures/Tkenv-sim-opts3.png"></a><p class="title"><b>Figure 7.14. Animation options</b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/Tkenv-sim-opts3.png" align="middle" alt="Animation options"></div></div></div></div><br class="figure-break"><p>Tkenv provides automatic animation when you run the simulation. You can fine-tune the animation
+        settings using the <span class="emphasis"><em>Animation</em></span> tab on the configuration dialog. If you do not need all visual
+        feedback Tkenv provides, you can selectively turn off some of the features:</p><div class="itemizedlist"><ul type="disc"><li>
+          Animate messages : Turns on/off the visualization of messages passing between modules.
+        </li><li>
+          Broadcast animation : Handles message broadcasts in a special way (messages sent within the
+          same event will be animated concurrently).
+        </li><li>
+          Show next event maker : Highlights the module which will receive the next event.
+        </li><li>
+          Show a flashing arrow when a <code class="literal">sendDirect()</code> method call is executed.
+        </li><li>
+          Show a flashing arrow when a method call occurs from one module to another.
+          The call is only animated if the called method contains the <code class="literal">Enter_Method()</code> macro.
+        </li><li>
+          The display of message names and classes can also be turned off.
+        </li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id280665"></a>Configuring the Timeline</h3></div></div></div><p>On the <span class="emphasis"><em>Timeline</em></span> tab, you can control which messages and events will be displayed on the Timeline View
+        in the main window.
+        Self/non-self messages can be disabled and filter expressions can be specified based on message class
+        or name.</p><p> For object names, wildcards (<code class="literal">"?"</code>, <code class="literal">"*"</code>) are allowed. <code class="literal">"{a-exz}"</code> matches any character in the range
+        <code class="literal">"a".."e"</code> plus <code class="literal">"x"</code> and <code class="literal">"z"</code>. You can match numbers: <code class="literal">"job{128..191}"</code> will match <code class="literal">"job128"</code>, <code class="literal">"job129"</code>, ...,
+        "job191". "job{128..}" and "job{..191}" are also understood. You can combine patterns with <code class="literal">AND</code>, <code class="literal">OR</code> and
+        <code class="literal">NOT</code> and parentheses (lowercase and, or, not are also acceptable). You can match against other object fields
+        such as message length, message kind, etc. with the syntax <code class="literal">"fieldname(pattern)"</code>. Put quotation marks
+        around a pattern if it contains parentheses.</p><div class="itemizedlist"><ul type="disc"><li><code class="literal">m*</code> : matches any object whose name begins with "m"
+        </li><li><code class="literal">m* AND *-{0..250}</code> : matches any object whose name begins with "m" and ends with a dash and a
+          number between 0 and 250
+        </li><li><code class="literal">not *timer*</code> : matches any object whose name does not contain the substring "timer"
+        </li><li><code class="literal">not (*timer* or *timeout*)</code> : matches any object whose name does not contain either "timer" or
+          "timeout"
+        </li><li><code class="literal">kind(3) or kind({7..9})</code> : matches messages with message kind equal to 3, 7, 8 or 9
+        </li><li><code class="literal">className(IP*) and data-*</code> : matches objects whose class name begins with "IP" and name begins
+          with "data-"
+        </li><li><code class="literal">not className(cMessage) and byteLength({1500..}) </code>: matches objects whose class is not cMessage
+          and whose byteLength is at least 1500
+        </li><li><code class="literal">"or" or "and" or "not" or "*(*" or "msg(ACK)" </code>: quotation marks needed when pattern is a
+          reserved word or contains parentheses (note: msg(ACK) without parentheses would be interpreted as an
+          object having an "msg" attribute with the value "ACK"!).
+        </li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id280799"></a>The .tkenvrc File</h3></div></div></div><p> Options in the Tkenv runtime are stored in <code class="literal">.tkenvrc</code> files. There are two <code class="literal">.tkenvrc</code>
+        files. One is stored in the current directory and contains project-specific settings like the open
+        inspector's position, size, etc. The other <code class="literal">.tkenvrc</code> can be found in the user's home directory and
+        contains global settings like font size and family.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+        Inspectors are identified by their object names. If you have several components that share the same
+        name (this is especially common for messages), you may end up with a lot of inspector windows when you
+        start the simulation. In such cases, you may simply delete the <code class="literal">.tkenvrc</code> file.
+      </div><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+          Error messages generated by the Tkenv runtime environment are logged to the <code class="literal">.tkenvlog</code> file.
+      </div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch07s10.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch07.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch08.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Logging and Module Output </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 8. Sequence Charts</td></tr></table></div></body></html>

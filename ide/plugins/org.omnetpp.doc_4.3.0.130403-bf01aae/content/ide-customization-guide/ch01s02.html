@@ -1,0 +1,57 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Overview</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="IDE Customization Guide"><link rel="up" href="ch01.html" title="Chapter 1. Writing Wizards"><link rel="prev" href="ch01.html" title="Chapter 1. Writing Wizards"><link rel="next" href="ch01s03.html" title="Using the IDE"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Overview</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch01.html">Prev</a> </td><th width="60%" align="center">Chapter 1. Writing Wizards</th><td width="20%" align="right"> <a accesskey="n" href="ch01s03.html">Next</a></td></tr></table><hr></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_overview"></a>Overview</h2></div></div></div><p>Custom wizards are read from the <code class="literal">templates/</code> folder of OMNeT++ projects.
+Wizards are implemented by mixing a templating engine (for generating
+the output files) and a GUI description language (for custom wizard pages to
+gather user input for the file generation). Because of the use of a
+templating engine, we will also refer to custom wizards as "content templates."</p><p>The IDE offers several OMNeT++ related wizard dialogs: <span class="emphasis"><em>New OMNeT++ Project</em></span>,
+<span class="emphasis"><em>New NED File</em></span>, <span class="emphasis"><em>New Simple Module</em></span>, and so on. Every content template can
+contribute to one or more of those wizard dialogs.</p><div class="figure"><a name="id272624"></a><p class="title"><b>Figure 1.2. The File | New menu</b></p><div class="figure-contents"><div class="mediaobject" align="center"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="75%"><tr><td align="center"><img src="pictures/new-menu.png" align="middle" width="100%" alt="pictures/new-menu.png"></td></tr></table></div></div></div><br class="figure-break"><p>In the <code class="literal">templates/</code> folder, every subfolder that contains a <code class="literal">template.properties</code>
+file is treated as a content template (other folders are ignored). Every
+content template folder may contain several types of files:</p><div class="itemizedlist"><ul type="disc"><li>
+The <code class="literal">template.properties</code> file contains general information about the wizard.
+  It defines the initial value for the template variables and specifies the
+  custom wizard pages to be shown when the wizard is run.
+</li><li>
+<code class="literal">*.ftl</code> files are template files that will be copied (without the <code class="literal">.ftl</code> extension)
+  into the target folder after template variable substitution.
+</li><li>
+<code class="literal">*.xswt</code> files describe custom wizard pages that gather user input.
+</li><li>
+<code class="literal">*.fti</code> (template include) files are included by <code class="literal">*.ftl</code>
+  files. This can be used to factor out common parts from the template files.
+  The wizard ignores <code class="literal">.fti</code> files (i.e. does not copy them into the new
+  project or folder).
+</li><li>
+<code class="literal">*.jar</code> files can be used to extend the wizard&#8217;s functionality
+  with dynamically loaded Java code.
+</li><li>
+All other files are regarded as files that have to be copied into the
+  target folder verbatim when the wizard runs. The wizard folder may contain
+  subdirectories which may also contain files of the above type (except
+  <code class="literal">template.properties</code>, of course).
+</li></ul></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_template_processing"></a>Template Processing</h3></div></div></div><p>Template processing uses the FreeMarker library (<span class="emphasis"><em>http://freemarker.org</em></span>) and
+all template syntax supported by FreeMarker can be used. In particular, variable
+references of the syntax <code class="literal">${varName}</code> will be replaced with the variable value.</p><p>The FreeMarker language also offers constructs that make it a full programming
+language: variable assignments, conditionals, loops, switch statement,
+functions, macros, expression evaluation, built-in operators, etc., as well
+as access to fields and methods of classes defined in Java. This means that
+any algorithm can be expressed in the FreeMarker language, and if that is
+not enough, one can directly access Java classes using FreeMarker&#8217;s Bean Wrapper.</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Tip</h3><p>Documentation for the FreeMarker template language can be found at:
+     <span class="emphasis"><em>http://freemarker.org/docs/index.html</em></span></p></div><p>Templates can use several sources for input. They can:</p><div class="itemizedlist"><ul type="disc"><li>
+gather information from the user, using custom wizard pages,
+</li><li>
+call any Java code to execute any arbitrarily complex algorithm,
+</li><li>
+call external programs, and
+</li><li>
+read and write from/to any file on the filesystem
+</li></ul></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="_defining_the_gui"></a>Defining the GUI</h3></div></div></div><p>Custom wizard pages are defined in XSWT (<span class="emphasis"><em>http://xswt.sourceforge.net</em></span>).
+XSWT is an XML based language that allows the definition of SWT (the widget set
+used by Eclipse) widget hierarchies, without the need to write any code in Java. XSWT also maps
+widget properties to XML attributes so the visual appearance of the wizard pages
+can be easily tweaked. It is also possible to invoke methods on the generated widgets
+and use the SWT layout containers, allowing further customizations. Each <code class="literal">.xswt</code> file
+in the template directory defines a separate wizard page which can be shown
+either conditionally or unconditionally.</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Tip</h3><p>XSWT documentation and a tutorial can be found at:
+      <span class="emphasis"><em>http://www.coconut-palm-software.com/the_new_visual_editor/doku.php?id=xswt:home</em></span>.</p></div><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>Currently we use XSWT 1.1.2. Newer XSWT versions from
+      <span class="emphasis"><em>http://www.coconut-palm-software.com/~xswt/integration/plugins/</em></span>
+      did not work well.</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch01.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch01.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch01s03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 1. Writing Wizards </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Using the IDE</td></tr></table></div></body></html>

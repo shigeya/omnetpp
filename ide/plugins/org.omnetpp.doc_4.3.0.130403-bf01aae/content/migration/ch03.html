@@ -1,0 +1,137 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Chapter 3. How to migrate</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="Migrating OMNeT&#8288;+&#8288;+ Simulations From Version 3.x To 4.x"><link rel="up" href="index.html" title="Migrating OMNeT&#8288;+&#8288;+ Simulations From Version 3.x To 4.x"><link rel="prev" href="ch02s05.html" title="opp_makemake"><link rel="next" href="ch03s02.html" title="Making use of new OMNeT&#8288;+&#8288;+ features"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 3. How to migrate</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch02s05.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch03s02.html">Next</a></td></tr></table><hr></div><div class="chapter" lang="en"><div class="titlepage"><div><div><h2 class="title"><a name="id274132"></a>Chapter 3. How to migrate</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="sect1"><a href="ch03.html#id274193">Getting your simulation model working</a></span></dt><dt><span class="sect1"><a href="ch03s02.html">Making use of new OMNeT&#8288;+&#8288;+ features</a></span></dt><dd><dl><dt><span class="sect2"><a href="ch03s02.html#id275123">NED files</a></span></dt><dt><span class="sect2"><a href="ch03s02.html#id275363">ini files</a></span></dt><dt><span class="sect2"><a href="ch03s02.html#id275472">C++ code</a></span></dt></dl></dd></dl></div><p>We recommend to port your simulation model in several stages:
+    </p><div class="orderedlist"><ol type="1"><li><p>Get it working with 4.x as fast as possible</p><div class="orderedlist"><ol type="a"><li><p>Run the automatic migration scripts.</p></li><li><p>Do manual changes to your model and use as few of the new features as
+            possible.</p></li><li><p>Verify whether your model is working correctly and produces the same
+            results as the old one. (either exactly or statistically)</p></li></ol></div></li><li><p>Improve it by making use of new OMNeT&#8288;+&#8288;+ features.</p></li></ol></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id274193"></a>Getting your simulation model working</h2></div></div></div><div class="orderedlist"><ol type="1"><li><p>PREREQUISITES: Have OMNeT&#8288;+&#8288;+ 4.x installed and working, and familiarize
+          yourself with the IDE.</p></li><li><p>Make a backup of your simulation model. Be prepared to start over
+          with the migration several times, until you get it right.</p></li><li><p>Change into the directory of your simulation model, and run all scripts
+          in the <code class="literal">&lt;omnetpp&gt;/migrate</code> subdirectory from there.</p><pre class="screen">$ cd MyModel
+$ ../omnetpp-4.1/migrate/migratened
+$ ../omnetpp-4.1/migrate/migrateini
+$ ../omnetpp-4.1/migrate/migratemsg
+$ ../omnetpp-4.1/migrate/migratecpp | tee migratecpp.out</pre><p>The scripts convert NED, ini, msg and C++ files to 4.x format. The result
+          will need some manual post-processing, because not everything can be converted
+          automatically. The scripts will print some hints on what you'll need to do
+          manually -- please make note of these printouts. Especially, <code class="literal">migratecpp</code> is
+          going to print a number of notes, warnings and hints -- read them
+          carefully.</p></li><li><p>If your simulation model is based on the INET Framework, have the new
+          INET installed, and similarly run the scripts in the <code class="literal">migrate/</code> subdirectory of
+          INET. They will update your source files according to changes in the INET
+          Framework.</p><pre class="screen">$ cd MyModel
+$ ../INET/migrate/migratened
+$ ../INET/migrate/migrateini
+$ ../INET/migrate/migratemsg
+$ ../INET/migrate/migratecpp | tee migratecpp.out</pre></li><li><p>You can do the rest of the migration either on the command line, or in
+          the OMNeT&#8288;+&#8288;+ IDE. We recommend the latter. To use the IDE, you need to create a
+          project for your simulation model. Select
+          <span class="guimenuitem">File | New | OMNeT&#8288;+&#8288;+ Project...</span> from the menu. A wizard comes
+          up. On the first page, uncheck <span class="guilabel">"Use default location"</span> and specify the name and
+          the directory of your simulation model, then go through the other wizard pages
+          and hit Finish at the end. You should see the new project appear in the Project
+          Explorer (left), and it should contain your files. If something goes wrong,
+          remove the project by selecting it and hitting DEL. It will ask whether you
+          also want to delete the files from the disk -- answer "no". Then start over with
+          project creation.</p></li><li><p>If your project is based on INET (or any other project), you can set up
+          the project as one that depends on the INET project. To do that, make sure the
+          INET project is imported and open, then open the Properties dialog for your
+          project (select the project, right-click it, then choose Properties from the
+          context menu), and check INET on the Project References page. This makes the
+          NED types of INET available in your project, and also puts INET directories on
+          the C++ include path. Make sure the INET project builds a (static/shared)
+          library, not an executable, so your project can link with it -- you can check
+          that by opening INET's Project Properties dialog, and going to the
+          C/C++ Build / Makemake page.</p></li><li><p>NED in 4.x has a package system, similar to Java. If your model contains
+          NED files in several subdirectories, these subdirectories now mean packages,
+          and the NED files will need package declarations and imports to be added. This
+          can be done automatically in the IDE. Have your project created and open in the
+          IDE (see previous step), then choose
+          <span class="guimenuitem">Project | Clean up NED files...</span> from the menu.
+          Select your project and click OK. The IDE will then fix all package
+          declarations and imports in your NED files.</p><p>You may want to add a <code class="literal">package.ned</code> file to define the root package --
+          this will be described in a later section.</p></li><li><p>Revise NED files. This includes:
+          </p><div class="itemizedlist"><ul type="disc"><li><p>revise <code class="literal">volatile</code> parameters if they really need to be
+              volatile</p><p>Some superfluous <code class="literal">volatile</code> qualifiers might pop up for parameters
+              where the original model did not specify <code class="literal">const</code>. It is safe to delete the
+              <code class="literal">volatile</code> qualifier from parameters which are expected to be constant over
+              the simulation. As a rule of thumb, a parameter needs to be volatile if it is
+              being read during simulation, not only in the initialization
+              phase. If it is only read from <code class="literal">initialize()</code>, remove the <code class="literal">volatile</code>
+              keyword.</p></li><li><p>revise <code class="literal">double</code> parameters whether they should rather be <code class="literal">int</code></p><p>The <code class="literal">numeric</code> parameter type from the 3.x version is automatically
+              converted to <code class="literal">double</code>, but you may need to change it to <code class="literal">int</code> if needed. Be
+              sure to change the corresponding code in your C++ files as well.</p></li><li><p><code class="literal">somepar = input;</code> lines became just <code class="literal">somepar;</code> -- you probably want
+              to remove them</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Tip</h3><p>The <code class="literal">input</code> keyword is no longer supported in NED files, but you can
+                specify the value for this parameter in the .ini file as <code class="literal">**.somepar=ask</code>,
+                which has the same effect.</p></div></li><li><p>remove superfluous network declarations</p><p>A 3.x-style network declaration denotes a compound module as network.
+              In 4.x, a compound module may be directly declared to be a network, so the
+              extra step is not needed. Example: the 3.x network declaration
+
+</p><pre class="screen">network cqn : CQN
+endmodule</pre><p>
+
+              is converted by the migration script into an inheritance:
+
+</p><pre class="screen">network cqn extends CQN {
+}</pre><p>
+
+              However, you can remove that altogether, if you change the CQN module's
+              declaration to use the <code class="literal">network</code> keyword (like: <code class="literal">network CQN {...}</code>),
+              and replace <code class="literal">network=cqn</code> with <code class="literal">network=CQN</code> in the ini files.</p></li><li><p>"like" module types should be changed into interfaces, and actual
+              types declared to be "like" them</p><p>For example, if you have a submodule
+
+</p><pre class="screen">app: &lt;appType&gt; like App;</pre><p>
+
+              then <code class="literal">App</code> should be turned into a module interface (and its name
+              prepended with "I" to conform to naming conventions), like this:
+
+</p><pre class="screen">moduleinterface IApp {
+    gates:
+        input in;
+        output out;
+}</pre><p>
+
+              and the concrete types should be modified to comply with <code class="literal">IApp</code>:
+
+</p><pre class="screen">simple BurstyApp like IApp { ... }
+simple AnotherApp like IApp { ... }</pre><p>
+
+              </p></li></ul></div></li><li><p>Compile your simulation model (right-click on the project and select
+          Build from the context menu, or close all other projects and hit Ctrl+B.) The
+          most frequent compile errors and their fixes:</p><div class="itemizedlist"><ul type="disc"><li><p>"Cannot convert SimTime to double"</p><p><code class="literal">simtime_t</code> now maps to the <code class="literal">int64</code>-based <code class="literal">SimTime</code> class and not <code class="literal">double</code>.
+              Wherever a <code class="literal">simtime_t</code> is assigned to a variable of type <code class="literal">double</code>, consider
+              changing that variable to <code class="literal">simtime_t</code> as well. The new <code class="literal">SimTime</code> class does not
+              provide implicit conversion to <code class="literal">double</code> because it would cause C++ ambiguity
+              errors. Check the output of the <code class="literal">migratecpp tool</code>, as it gives you some hints
+              what variables should be changed.</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Tip</h3><p>Where still needed, use <code class="literal">SIMTIME_DBL(t)</code> to convert a <code class="literal">simtime_t</code> to
+                <code class="literal">double</code>. In <code class="literal">printf</code>'s, use <code class="literal">"%s"</code> and <code class="literal">SIMTIME_STR(t)</code>.
+                The advantage of using these macros instead of <code class="literal">SimTime</code> methods is
+                that your model will also compile in <code class="literal">-DUSE_DOUBLE_SIMTIME</code>
+                compatibility mode (see below).</p></div><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Tip</h3><p>If your model is using <code class="literal">double</code>'s extensively for time-related
+                variables and you want to make a quickly and dirty port, OMNeT&#8288;+&#8288;+ can be
+                compiled with the original behavior, by specifying <code class="literal">-DUSE_DOUBLE_SIMTIME</code>
+                in <code class="literal">CFLAGS</code>. However, be aware that you have to recompile all OMNeT&#8288;+&#8288;+
+                libraries with this flag. We recommend to use the new <code class="literal">SimTime</code> type
+                whenever possible.</p></div></li><li><p>"No such method setBitLength/getBitLength/encapsulate/decapsulate"</p><p>Length and encapsulation have been moved to <code class="literal">cPacket</code>, a subclass of
+              <code class="literal">cMessage</code>. You likely need to change the <code class="literal">message</code> keyword in .msg files
+              to <code class="literal">packet</code>, which will cause the generated class to have <code class="literal">cPacket</code> as base
+              class.
+
+</p><pre class="screen">message ABCPacket {...} ==&gt; packet ABCPacket {...}</pre><p>
+
+              Inside <code class="literal">handleMessage()</code> and other functions, cast the <code class="literal">cMessage*</code>
+              pointer to <code class="literal">cPacket*</code>:
+
+</p><pre class="screen">cPacket *pkt = check_and_cast&lt;cPacket *&gt;(msg);</pre><p>
+
+              </p></li><li><p>"Cannot open file csimul.h" (or any other header)</p><p>Only <code class="literal">&lt;omnetpp.h&gt;</code> is public API. Other OMNeT&#8288;+&#8288;+ header files
+              should not be included directly, as they may be renamed or removed in any
+              future version.</p></li><li><p>"sendDirect() does not take 3 (or 4) arguments"</p><p><code class="literal">sendDirect()</code>'s signature has changed. It used to take a delay as
+              second argument; now it has two variants, one which takes no delay argument
+              (i.e. if you have 0.0 in your simulation, just remove it), and another one
+              that takes a propagation delay and a transmission duration. If you use the
+              second one, you'll probably want to call <code class="literal">setDeliverOnReceptionStart(true)</code>
+              on the receiver gate in the target module's <code class="literal">initialize()</code> method as
+              well.</p></li></ul></div></li><li><p>Run your simulation model. The most frequent runtime errors and their
+          fixes:
+          </p><div class="itemizedlist"><ul type="disc"><li><p>"Cannot convert unit 'none' to 'seconds'"</p><p>Physical units now have to be written out in expressions, so you need
+              to change <code class="literal">5</code> into <code class="literal">5s</code>, and <code class="literal">exponential(1)</code> into <code class="literal">exponential(1s)</code>.</p></li><li><p>"Cannot convert unit 'none' to 'bps'"</p><p>The datarate channel parameter now has unit <code class="literal">bps</code> (bit/sec), and this
+              unit must be written out. Kbps, Mbps, Gbps are also accepted.</p></li><li><p>"No such module type 'X'"</p><p>If your model creates modules dynamically, module types need to be
+              looked up by fully qualified name (like <code class="literal">"some.package.X"</code>).</p></li></ul></div></li></ol></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch02s05.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ch03s02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">opp_makemake </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Making use of new OMNeT&#8288;+&#8288;+ features</td></tr></table></div></body></html>

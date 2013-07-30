@@ -1,0 +1,17 @@
+eclipse.preferences.version=1
+repositories/http\:__download.eclipse.org_eclipse_updates_3.8/count=4
+repositories/http\:__download.eclipse.org_eclipse_updates_3.8/enabled=true
+repositories/http\:__download.eclipse.org_eclipse_updates_3.8/nickname=The Eclipse Project Updates
+repositories/http\:__download.eclipse.org_eclipse_updates_3.8/uri=http\://download.eclipse.org/eclipse/updates/3.8
+repositories/http\:__download.eclipse.org_linuxtools_update/count=11
+repositories/http\:__download.eclipse.org_linuxtools_update/enabled=false
+repositories/http\:__download.eclipse.org_linuxtools_update/nickname=Linux Tools
+repositories/http\:__download.eclipse.org_linuxtools_update/uri=http\://download.eclipse.org/linuxtools/update
+repositories/http\:__download.eclipse.org_releases_juno/count=4
+repositories/http\:__download.eclipse.org_releases_juno/enabled=true
+repositories/http\:__download.eclipse.org_releases_juno/nickname=Juno
+repositories/http\:__download.eclipse.org_releases_juno/uri=http\://download.eclipse.org/releases/juno
+repositories/http\:__omnetpp.org_update_omnetpp_4.3/count=4
+repositories/http\:__omnetpp.org_update_omnetpp_4.3/enabled=true
+repositories/http\:__omnetpp.org_update_omnetpp_4.3/nickname=OMNeT++ Updates
+repositories/http\:__omnetpp.org_update_omnetpp_4.3/uri=http\://omnetpp.org/update/omnetpp/4.3

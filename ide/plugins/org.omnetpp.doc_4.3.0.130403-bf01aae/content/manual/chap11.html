@@ -1,0 +1,753 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta name="copyright" content="OpenSim Ltd.">
+  <meta NAME="Author" CONTENT="Andras Varga">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <link rel="STYLESHEET" href="../book.css"  type="text/css">
+  <title>OMNeT++ - Manual</title>
+</head>
+<body>
+
+<p><hr><b><a href="chap10.html">[Prev]</A>&nbsp;<a href="chap12.html">[Next]</A>&nbsp;<a href="toc.html#toc_11.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p><h1><a name="sec378"/>11 Network Graphics And Animation</h1>
+<a name="cha:graphics"></a>
+
+<p><h2><a name="sec379"/>11.1 Display Strings</h2>
+<a name="sec:ch-graphics:display-strings"></a>
+
+<p>Display strings<!--display strings--> specify the arrangement and
+appearance of representations of modules in graphical user interfaces (currently only
+Tkenv); they control how the objects (compound modules, their
+submodules and connections) are displayed. Display strings are specified in
+NED's <tt>@display</tt> property.
+
+<p>Display strings can be used in the following contexts:
+<ul>
+  <li> <i>submodules</i> -- display strings may contain position, arrangement
+        (for module vectors), icon, icon color, auxiliary icon, status text,
+        communication range (as circle or filled circle), tooltip, etc.
+  <li> <i>compound modules, networks</i> -- display strings can specify
+        background color, border color, border width,
+        background image, scaling, grid, unit of measurement, etc.
+  <li> <i>connections</i> -- display strings can specify positioning, color,
+        line width, line style, text and tooltip
+  <li> <i>messages</i> -- display strings can specify icon, icon color, etc.
+</ul>
+
+<p>
+<h3><a name="sec380"/>11.1.1 Display String Syntax</h3>
+
+<p>The display string syntax is a semicolon-separated list of tags.
+Each tag consists of a key, an equal sign and a comma-separated list of
+arguments:
+
+<pre class="ned">
+@display("p=100,100;b=60,10,rect,blue,black,2")
+</pre>
+<p>
+Tag arguments may be omitted both at the end and inside the
+parameter list. If an argument is omitted, a sensible default value is used.
+
+<pre class="ned">
+@display("p=100,100;b=,,rect,blue")
+</pre>
+<p>
+<h3><a name="sec381"/>11.1.2 Display String Placement</h3>
+
+<p>The following NED sample shows where to place display strings in the code:
+
+<pre class="ned">
+simple Queue
+{
+    parameters:
+        @display("i=block/queue");
+    ...
+}
+
+network SimpleQueue
+{
+    parameters:
+        @display("bgi=maps/europe");
+    submodules:
+        sink: Sink {
+            @display("p=273,101");
+        }
+        ...
+    connections:
+        source.out --&gt; { @display("ls=red,3"); } --&gt; queue.in++;
+}
+</pre>
+<p>
+<h3><a name="sec382"/>11.1.3 Display String Inheritance</h3>
+
+<p>Every module and channel object has one single display string object,
+which controls its appearance in various contexts. The initial value of
+this display string object comes from merging the <b><tt>@display</tt></b>
+properties occurring at various places in NED files.
+This section describes the rules for merging <b><tt>@display</tt></b> properties 
+to create the module or channel's display string.
+
+<p><ul>
+  <li> Derived NED types inherit their display string from their base NED type.
+  <li> Submodules inherit their display string from their type.
+  <li> Connections inherit their display string from their channel type.
+</ul>
+
+<p>The base NED type's display string is merged into the current display string
+using the following rules:
+
+<p><ul>
+  <li> If a tag is present in the base display string, but not in the current one
+        the whole tag (with all arguments) is added to the current display string.
+        (e.g. base: <tt>"i=icon,red"</tt> current: <tt>"p=2,4"</tt> result: <tt>"p=2,4;i=icon,red"</tt>)
+  <li> If a tag is present both in the base and in the current display string
+        only tag arguments present in the base, but not in the current display string
+        will be copied.
+        (e.g. base: <tt>"b=40,20"</tt> current: <tt>"b=,30,oval"</tt> result: <tt>"b=40,30,oval"</tt>)
+  <li> If the current display string contains a tag argument with value "-" (hyphen)
+        that argument is treated as empty and will not be inherited from other
+        display strings. Requesting the value of this argument will return its the
+        default value.
+  <li> If neither the base display string nor the current one has value for a tag
+        a suitable default value will be returned and used.
+</ul>
+
+<p>Example of display string inheritance:
+
+<pre class="ned">
+simple Base {
+    @display("i=block/queue"); // use a queue icon in all instances
+}
+
+simple Derived extends Base {
+    @display("i=,red,60");  // ==&gt; "i=block/queue,red,60"
+}
+
+network SimpleQueue {
+    submodules:
+        submod: Derived {
+            @display("i=,yellow,-;p=273,101;r=70");  
+                     // ==&gt; "i=block/queue,yellow;p=273,101;r=70"
+        }
+        ...
+}
+</pre>
+<p>
+
+<p><h3><a name="sec383"/>11.1.4 Display String Tags Used in Submodule Context</h3>
+
+<p>The following tags define how a module appears on the Tkenv user interface
+if it is used as a submodule:
+<ul>
+  <li><tt>b</tt> -- shapes, colors
+  <li><tt>i</tt> -- icon
+  <li><tt>is</tt> -- icon size
+  <li><tt>i2</tt> -- alternate (status) icon placed at the upper right corner of the main icon
+  <li><tt>p</tt> -- positioning and layout
+  <li><tt>r</tt> -- range indicator
+  <li><tt>q</tt> -- queue information text
+  <li><tt>t</tt> -- text
+  <li><tt>tt</tt> -- tooltip
+</ul>
+
+<p><p class="subheading">Icons</p>
+By default, modules are represented by simple icons.
+Using images for the modules is possible with the <tt>i</tt> tag.
+See the <tt>images</tt> subfolder of your OMNeT++ installation for possible
+icons. The stock images installed with OMNeT++ have several size variants.
+Most of them have very small (vs), small (s), large (l) and
+very large (vl) variants. You can specify which variant you want to use with
+the <tt>is</tt> tag.
+
+<pre class="ned">
+@display("i=block/source;is=l"); // a large source icon from the block icons group
+</pre>
+<p>
+Sometimes you want to have similar icons for modules, but would like to
+make them look a little different to create groups or to reflect status
+information about the module. You can easily change the color of an already existing image.
+The following example colorizes the <tt>block/source</tt> icon, 20% red
+
+<pre class="ned">
+@display("i=block/source,red,20")
+</pre>
+<p>
+<center>
+<img src="graphics-itag.png">
+</center>
+
+<p>If you want to show state information about your module, you can use the <tt>i2</tt> tag to
+add a small status icon to your main icon. This icon is displayed in the upper right corner
+of your main icon. In most cases the <tt>i2</tt> tag is specified at runtime using
+the <tt>setDisplayString()</tt> method, so the icon can be changed dynamically based on the
+module's internal state.
+
+<pre class="ned">
+@display("i=block/queue;i2=status/busy")
+</pre>
+<p>
+<center>
+<img src="graphics-i2tag.png">
+</center>
+
+<p><p class="subheading">Shapes</p>
+
+<p>If you want to have simple, but resizable representation for your module, you can use
+the <tt>b</tt> tag to create geometric shapes. Currently <tt>oval</tt> and <tt>rectangle</tt>
+is supported:
+
+<pre class="ned">
+// an oval shape with 70x30 size, red background, black 4 pixel border
+@display("b=70,30,oval,red,black,4")
+</pre>
+<p>
+<center>
+<img src="graphics-btag.png">
+</center>
+
+<p><p class="subheading">Positioning, Coordinates</p>
+
+<p>To define the position of a module inside an other one use the <tt>p</tt> tag.
+If you do not specify a <tt>p</tt> tag for your module, the parent module will
+automatically choose a position based on a layout algorithm.
+The following example will place the module at the given position:
+<pre class="ned">
+@display("p=50,79");
+</pre>
+
+<p><ul class="note"><b>NOTE</b><br>
+The coordinates specified in the <tt>p</tt>, <tt>b</tt> or <tt>r</tt> tags are not necessarily
+integers and measured in pixels. You can use the parent module's <tt>bgs=<i>pix2unitratio</i>,<i>unit</i></tt> tag,
+to set the scaling parameter and the unit of measurement for your module.
+You can specify the ratio between 1 pixel and 1 unit with the <tt>bgs</tt> tag.
+</ul>
+
+<p>The <tt>p</tt> tag allows the automatic arrangement of module vectors. They can be
+arranged in a row, a column, a matrix or a ring, or you may specify their positions
+later at runtime using the <tt>setDisplayString()</tt> method. The rest of the arguments
+in the <tt>p</tt> tag depend on the layout type:
+
+<p><ul>
+  <li> <tt>row -- p=100,100,r,<i>deltaX</i></tt> (A row of modules with <i>deltaX</i> units between the modules)
+  <li> <tt>column -- p=100,100,c,<i>deltaY</i></tt> (A column of modules with <i>deltaX</i> units between the modules)
+  <li> <tt>matrix -- p=100,100,m,<i>noOfCols</i>,<i>deltaX</i>,<i>deltaY</i></tt> (A matrix with <i>noOfCols</i> columns.
+            <i>deltaX</i> and <i>deltaY</i> units between rows and columns)
+  <li> <tt>ring -- p=100,100,ri,<i>rx</i>,<i>ry</i></tt> (A ring (oval) with <i>rx</i> and <i>ry</i> as the horizontal and vertical radius.)
+  <li> <tt>exact (default) -- p=100,100,x,<i>deltaX</i>,<i>deltaY</i></tt> (Place each module at <i>(100+deltaX, 100+deltaY)</i>.
+            The coordinates are usually set at runtime.)
+</ul>
+
+<p>A matrix layout for a module vector:
+
+<pre class="ned">
+@display("p=,,m,4,50,50");
+</pre>
+<p>
+
+<p>  <center>
+    <img src="graphics-ptag.png">
+    <center><i>Figure: Matrix arrangement using the <i>p</i> tag</i></center>
+    <a name="fig:graphics-ptag"></a>
+  </center>
+
+<p>
+<p class="subheading">Wireless Range</p>
+In wireless simulations it is very useful to show some kind of range
+around your module. This can be an interference range, transmission range
+etc. The following example will place the module at a given position,
+and draw a circle with a 90-unit radius around it as a range indicator:
+
+<pre class="ned">
+submodules:
+    ap: AccessPoint {
+        @display("p=50,79;r=90");
+    }
+</pre>
+<p>
+
+<p>  <center>
+    <img src="graphics-rtag.png">
+    <center><i>Figure: Range indicator using the <i>r</i> tag</i></center>
+    <a name="fig:graphics-rtag"></a>
+  </center>
+
+<p>
+<p class="subheading">Additional Decorations</p>
+Sometimes you want to annotate your modules with additional information
+to make your model more transparent. One special case is when you want to
+show the length of a queue (<tt><a href="../api/classcQueue.html">cQueue</a></tt>) embedded somewhere in a module.
+In the following example the Server simple module contains a <tt><a href="../api/classcQueue.html">cQueue</a></tt> object,
+which was named by the <tt>queue.setName("procqueue")</tt> method.
+If we specify <tt>q=procqueue</tt> in the display string, Tkenv will descend into
+the module (several levels deep if needed) and look for a queue object
+named "procqueue". It will display the length of the queue object along the module.
+
+<pre class="ned">
+@display("q=procqueue");
+</pre>
+<p>
+<center>
+<img src="graphics-qtag.png">
+</center>
+
+<p>You can add a text description to any module using the <tt>t</tt>
+(displayed along the module) or <tt>tt</tt> tag (displayed as a tooltip).
+The following example displays a short text string along with the module
+and adds a tooltip text string that can be seen by hovering over
+them module with the mouse.
+
+<pre class="ned">
+@display("t=Packets sent: 18;tt=Additional tooltip information");
+</pre>
+<p>
+<center>
+<img src="graphics-ttag.png">
+</center>
+
+<p><ul class="note"><b>NOTE</b><br>
+  The <tt>t</tt> and <tt>tt</tt> tags, when set at runtime, can be used to display
+  various information about the module's state. The <tt>setTagArg()</tt> method
+  of <tt><a href="../api/classcDisplayString.html">cDisplayString</a></tt> can be used to update the text:
+
+  <pre class="cpp">
+char buf[64];
+sprintf(buf, "sent: %d, rcvd: %d", numPkSent, numPkReceived);
+getDisplayString().setTagArg("t", 0, buf);
+  </pre>
+<p>
+</ul>
+
+<p>For a detailed descripton of the display string tags, check
+Appendix <a href="chap23.html#sec540">[23]</a>.
+
+<p><h3><a name="sec384"/>11.1.5 Display String Tags Used in Module Background Context</h3>
+
+<p>The following tags describe what a module looks like when opened in
+Tkenv. They mostly deal with the module background.
+
+<p><ul>
+  <li> <tt>bgi</tt> -- background image
+  <li> <tt>bgtt</tt> -- tooltip above the background
+  <li> <tt>bgg</tt> -- background grid
+  <li> <tt>bgl</tt> -- child layout
+  <li> <tt>bgb</tt> -- background size, color, border
+  <li> <tt>bgs</tt> -- scaling of background coordinates
+  <li> <tt>bgp</tt> -- background coordinate offset
+</ul>
+
+<p>The <tt>bgs</tt> tag makes it possible to use a physical unit of measurement,
+(e.g. kilometers) for coordinates. <tt>bgs</tt> arguments include a pixel-per-unit
+factor (for mapping coordinates to the screen), and a unit name. When <tt>bgs</tt>
+is present, all coordinates (including submodule coordinates) are interpreted
+in the given unit of measurement. When combined with the <tt>bgi</tt> (background
+image) and <tt>bgg</tt> (grid) tags, it is possible to display maps.
+
+<p>The following example demonstrates the use the of module background tags.
+The coordinates are given in km (SI unit). The <tt>bgs=<i>pixelsperunit</i>,<i>unit</i></tt>
+specifies pixel/unit ratio, i.e. 1km is 0.075 pixel on the screen.
+The whole area is 6000x4500km (<tt>bgb=</tt>) and the map of Europe is used as a
+background and stretched to fill the module background.
+A light grey grid is drawn with a 1000km distance between major ticks,
+and 2 minor ticks per major tick (<tt>bgg=tickdistance,minorpermajorticks,color</tt>).
+See Figure <a href="chap11.html#fig:graphics-bgtags">below</a>.
+
+<pre class="ned">
+network EuropePlayground
+{
+    @display("bgb=6000,4500;bgi=maps/europe,s;bgg=1000,2,grey95;bgs=0.075,km");
+</pre>
+<p>
+
+<p>  <center>
+    <img src="graphics-bgtags.png">
+    <center><i>Figure: Background grid, scaling and image</i></center>
+    <a name="fig:graphics-bgtags"></a>
+  </center>
+
+<p>
+After specifying the above <tt>bgs</tt> tag, all your submodule coordinates will be treated as if
+they were specified in km.
+
+<p>For a detailed descripton of the display string tags, check
+Appendix <a href="chap23.html#sec540">[23]</a>.
+
+<p><h3><a name="sec385"/>11.1.6 Connection Display Strings</h3>
+
+<p>Connections may also have display strings. Connections inherit the
+display string property from their channel types, in the same way as
+submodules inherit theirs from module types. The default display
+strings are empty.
+
+<p>Connections support the following tags:
+<ul>
+  <li><tt>ls</tt> -- line style and color
+  <li><tt>t</tt> -- text
+  <li><tt>tt</tt> -- tooltip
+  <li><tt>m</tt> -- orientation and positioning
+</ul>
+
+<p>Example of a thick, red connection:
+<pre class="ned">
+source1.out --&gt; { @display("ls=red,3"); } --&gt; queue1.in++;
+</pre>
+
+<p><center>
+<img src="graphics-lstag.png">
+</center>
+
+<p><ul class="note"><b>NOTE</b><br>
+If you want to hide a connection, specify zero line width in the display
+string (<tt>"ls=,0"</tt>).
+</ul>
+
+<p>For a detailed descripton of the display string tags, check
+Appendix <a href="chap23.html#sec540">[23]</a>.
+
+<p><h3><a name="sec386"/>11.1.7 Message Display Strings</h3>
+
+<p>Message display strings affect how messages are shown during animation.
+By default, they are displayed as a small filled circle, in one of
+8 basic colors (the color is determined as <i>message kind modulo 8</i>),
+and with the message class and/or name displayed under it.
+The latter is configurable in the Tkenv Options dialog, and message kind
+dependent coloring can also be turned off there.
+
+<p><p class="subheading">Specifying Message Display Strings</p>
+
+<p>Message objects do not store a display string by default, but you can redefine
+the <tt><a href="../api/classcMessage.html">cMessage</a></tt>'s <tt>getDisplayString()</tt> method and make it return
+one.
+
+<p>Example of using an icon to represent a message:
+
+<pre class="cpp">
+const char *CustomPacket::getDisplayString() const
+{
+    return "i=msg/packet;is=vs";
+}
+</pre>
+<p>
+Alternatively, you can add the field <tt>displayString</tt> to your message
+definition (.msg file), and the message compiler will automatically generate
+<tt>setDisplayString()</tt> and <tt>getDisplayString()</tt> methods for you:
+
+<pre class="msg">
+message Job
+{
+    string displayString = "i=msg/package_s,kind";
+...
+</pre>
+<p>
+<p class="subheading">Message Display String Tags</p>
+
+<p>The following tags can be used in message display strings:
+<ul>
+  <li><tt>b</tt> -- shapes, colors
+  <li><tt>i</tt> -- icon
+  <li><tt>is</tt> -- icon size
+</ul>
+
+<p>Using a small red box icon to represent the messages:
+
+<pre class="ned">
+@display("i=msd/box,red;is=s");
+</pre>
+<p>
+Messages will be represented by a 15x15 rectangle with white background.
+Their border color will depend on the <tt>messageKind</tt> property of the message.
+
+<pre class="ned">
+@display("b=15,15,rect,white,kind,5");
+</pre>
+<p>
+<ul class="note"><b>NOTE</b><br>
+   In message display strings you may use the word <tt>kind</tt> as a special color.
+   This virtual color depends on the <tt>messageKind</tt> field in the message.
+</ul>
+
+<p>
+
+<p><h2><a name="sec387"/>11.2 Parameter Substitution</h2>
+
+<p>Parameters of the module or channel containing the
+display string can be substituted into the display string
+with the <tt>$parameterName</tt> notation:
+
+<p>Example:
+
+<pre class="ned">
+simple MobileNode
+{
+    parameters:
+        double xpos;
+        double ypos;
+        string fillColor;
+        // get the values from the module parameters xpos,ypos,fillcolor
+        @display("p=$xpos,$ypos;b=60,10,rect,$fillColor,black,2");
+}
+</pre>
+<p>
+<h2><a name="sec388"/>11.3 Colors</h2>
+<a name="sec:ch-graphics:colors"></a>
+
+<p><h3><a name="sec389"/>11.3.1 Color Names</h3>
+
+<p>Any valid Tk color specification is accepted: English color names
+(blue, lightgrey, wheat) or <i>#rgb</i>, <i>#rrggbb</i> format
+(where <i>r</i>,<i>g</i>,<i>b</i> are hex digits).
+
+<p>It is also possible to specify colors in HSB (hue-saturation-brightness) as
+<i>@hhssbb</i> (with <i>h</i>, <i>s</i>, <i>b</i> being hex digits).
+HSB makes it easier to scale colors e.g. from white to bright red.
+
+<p>You can produce a transparent background by specifying a hyphen (<i>"-"</i>)
+as background color.
+
+<p>In message display strings, <tt>kind</tt> can also be used as a special color name.
+It will map to a color depending on the message kind.
+(See the <tt>getKind()</tt> method of <tt><a href="../api/classcMessage.html">cMessage</a></tt>.)
+
+<p><h3><a name="sec390"/>11.3.2 Icon Colorization</h3>
+
+<p>The <tt>"i="</tt> display string tag allows for colorization of icons.
+It accepts a target color and a percentage as the degree of colorization.
+Percentage has no effect if the target color is missing.
+Brightness of the icon is also affected -- to keep the original brightness,
+specify a color with about 50% brightness (e.g. #808080 mid-grey,
+#008000 mid-green).
+
+<p>Examples:
+
+<p><ul>
+  <li> <tt>"i=device/server,gold"</tt> creates a gold server icon
+  <li> <tt>"i=misc/globe,#808080,100"</tt> makes the icon greyscale
+  <li> <tt>"i=block/queue,white,100"</tt> yields a "burnt-in" black-and-white icon
+</ul>
+
+<p>Colorization works with both submodule and message icons.
+
+<p>
+<h2><a name="sec391"/>11.4 Icons</h2>
+<a name="sec:ch-graphics:icon-library"></a>
+
+<p><h3><a name="sec392"/>11.4.1 The Image Path</h3>
+
+<p>In the current OMNeT++ version, module icons are PNG or GIF files. The icons shipped
+with OMNeT++ are in the <tt>images/</tt> subdirectory. Both the graphical NED editor
+and Tkenv need the exact location of this directory to load the icons.
+
+<p>Icons are loaded from all directories in the <i>image path</i>,
+a semicolon-separated list of directories.
+The default image path is compiled into Tkenv with the value
+<tt>"<i>omnetpp-dir</i>/images; ./images;./bitmaps"</tt> -- which will work fine
+as long as you don't move the directory, and you will also be able to
+load more icons from the <tt>images/</tt> subdirectory of the current
+directory. As users typically run simulation models from the model's
+directory, this practically means that custom icons placed in the
+<tt>images/</tt> subdirectory of the model's directory are automatically
+loaded.
+
+<p>The compiled-in image path can be overridden with the <tt>OMNETPP_IMAGE_PATH</tt>
+environment variable. The way of setting environment variables is system
+specific: in Unix, if you are using the bash shell, adding a line
+
+<pre class="commandline">
+export OMNETPP_IMAGE_PATH="/home/you/images;./images"
+</pre>
+<p>
+to <tt>\~/.bashrc</tt> or <tt>\~/.bash_profile</tt> will do; on Windows, environment variables
+can be set via the <i>My Computer --&gt; Properties</i> dialog.
+
+<p>You can extend the image path from <tt>omnetpp.ini</tt> with the
+<tt>tkenv-image-path</tt> option, which is prepended to the environment
+variable's value.
+
+<pre class="inifile">
+[General]
+tkenv-image-path = "/home/you/model-framework/images;/home/you/extra-images"
+</pre>
+<p>
+
+<p><h3><a name="sec393"/>11.4.2 Categorized Icons</h3>
+
+<p>Since OMNeT++ 3.0, icons are organized into several categories, represented
+by folders. These categories include:
+
+<p><ul>
+  <li> block/ - icons for subcomponents (queues, protocols, etc).
+  <li> device/ - network devices: servers, hosts, routers, etc.
+  <li> abstract/ - symbolic icons for various devices
+  <li> misc/ - node, subnet, cloud, building, town, city, etc.
+  <li> msg/ - icons that can be used for messages
+</ul>
+
+<p>Old (pre-3.0) icons are in the <tt>old/</tt> folder.
+
+<p>Tkenv and the IDE now load icons from subdirectories of all directories
+of the image path, and these icons can be referenced from display strings
+by naming the subdirectory (subdirectories) as well:
+<tt>"subdir/icon"</tt>, <tt>"subdir/subdir2/icon"</tt>, etc.
+
+<p>For compatibility, if the display string contains an icon without
+a category (i.e. subdirectory) name, OMNeT++ attempts to load it from "old/icon" as well.
+
+<p><h3><a name="sec394"/>11.4.3 Icon Size</h3>
+
+<p>Icons come in various sizes: normal, large, small, very small. Sizes are
+encoded into the icon name's suffix: <tt>_vl</tt>, <tt>_l</tt>, <tt>_s</tt>, <tt>_vs</tt>.
+In display strings, one can either use the suffix (<tt>"i=device/router_l"</tt>),
+or the <tt>"is</tt>" (<i>icon size</i>) display string tag (<tt>"i=device/router;is=l"</tt>),
+but not both at the same time (we recommend using the <tt>is</tt> tag whenever possible).
+
+
+<h2><a name="sec395"/>11.5 Layouting</h2>
+<a name="sec:ch-graphics:layouting"></a>
+
+<p>OMNeT++ implements an automatic layouting feature, using
+a variation of the SpringEmbedder algorithm. Modules which have
+not been assigned explicit positions via the <tt>"p="</tt> tag will be
+automatically placed by the algorithm.
+
+<p>SpringEmbedder is a graph layouting algorithm based on a physical model.
+Graph nodes (modules) repel each other like electric charges
+of the same sign, and connections are sort of springs which try
+to contract and pull the nodes they're attached to together. There is also friction
+built in, in order to prevent oscillation of the nodes. The layouting algorithm
+simulates this physical system until it reaches equilibrium
+(or times out). The physical rules above have been slightly tweaked
+to achieve better results.
+
+<p>The algorithm doesn't move any module which has fixed coordinates.
+Predefined row, matrix, ring or other arrangements (defined
+via the 3rd and further args of the <tt>"p="</tt> tag) will be preserved --
+you can think about them as if those modules were attached
+to a rigid framework so that they can only move as one unit.
+
+<p>Caveats:
+
+<p><ul>
+  <li> If the full graph is too big after layouting, it is scaled
+    back so that it fits on the screen, <i>unless it contains
+    any fixed-position module</i>. (For obvious reasons: if there is a module
+    with manually specified position, we don't want to move that one).
+    To prevent rescaling, you can specify a sufficiently large bounding
+    box in the background display string, e.g. <tt>"b=2000,3000"</tt>.
+  <li> Size is ignored by the present layouter, so longish modules
+    (such as an Ethernet segment) may produce funny results.
+  <li> The algorithm is prone to produce erratic results, especially
+    when the number of submodules is small, or when using predefined
+    (matrix, row, ring, etc) layouts. The "Re-layout" toobar button
+    can then be very useful. Larger networks usually produce
+    satisfactory results.
+  <li> The algorithm is starting from random positions.
+     To get the best results you may experiment with
+    different seeds by specifying them using the <tt>bgl=<i>seed</i></tt>
+    display string tag.
+</ul>
+
+<p><h2><a name="sec396"/>11.6 Enhancing Animation</h2>
+
+<p><h3><a name="sec397"/>11.6.1 Changing Display Strings at Runtime</h3>
+
+<p>Often it is useful to manipulate the display string at runtime.
+Changing colors, icon, or text may convey status change, and
+changing a module's position is useful when simulating mobile
+networks.
+
+<p>Display strings are stored in <tt><a href="../api/classcDisplayString.html">cDisplayString</a></tt> objects inside
+channels, modules and gates. <tt><a href="../api/classcDisplayString.html">cDisplayString</a></tt> also lets you
+manipulate the string.
+
+<p>To get a pointer to the <tt><a href="../api/classcDisplayString.html">cDisplayString</a></tt> object, you can call
+the components's <tt>getDisplayString()</tt> method:
+
+<pre class="cpp">
+// Setting a module's position, icon and status icon:
+<a href="../api/classcDisplayString.html">cDisplayString</a>& dispStr = getDisplayString();
+dispStr.parse("p=40,20;i=device/cellphone;i2=status/disconnect");
+</pre>
+<p>
+<ul class="note"><b>NOTE</b><br>
+The connection display string is stored in the channel object, but it
+can also be accessed via the source gate of the connection.
+</ul>
+
+<pre class="cpp">
+// Setting an outgoing connection's color to red:
+<a href="../api/classcDisplayString.html">cDisplayString</a>& connDispStr = gate("out")-&gt;getDisplayString();
+connDispStr.parse("ls=red");
+</pre>
+<p>
+<ul class="note"><b>NOTE</b><br>
+In OMNeT++ 3.x, to manipulate the appearance of a compound module you had to use
+the <tt>backgroundDisplayString()</tt> method. This method is no longer
+supported in OMNeT++ 4.0, because there is no separate background display string.
+Use the <tt>getDisplayString()</tt> method instead with the background
+specific tags, i.e. those starting with <tt>bg</tt>.
+</ul>
+
+<pre class="cpp">
+// Setting module background and grid with background display string tags:
+<a href="../api/classcDisplayString.html">cDisplayString</a>& parentDispStr = getParentModule()-&gt;getDisplayString();
+parentDispStr.parse("bgi=maps/europe;bgg=100,2");
+</pre>
+<p>
+As far as <tt><a href="../api/classcDisplayString.html">cDisplayString</a></tt> is concerned, a display string
+(e.g. <tt>"p=100,125;i=cloud"</tt>) is a string that consist of several
+<i>tags</i> separated by semicolons, and each tag has a <i>name</i>
+and after an equal sign, zero or more <i>arguments</i> separated by commas.
+
+<p>The class facilitates tasks such as finding out what tags a display string
+has, adding new tags, adding arguments to existing tags,
+removing tags or replacing arguments. The internal storage method allows
+very fast operation; it will generally be faster than direct string manipulation.
+The class doesn't try to interpret the display string in any way, nor does
+it know the meaning of the different tags; it merely parses the string
+as data elements separated by semicolons, equal signs and commas.
+
+<p>An example:
+
+<pre class="cpp">
+dispStr.parse("a=1,2;p=alpha,,3");
+dispStr.insertTag("x");
+dispStr.setTagArg("x",0,"joe");
+dispStr.setTagArg("x",2,"jim");
+dispStr.setTagArg("p",0,"beta");
+ev &lt;&lt; dispStr.str();  // result: "x=joe,,jim;a=1,2;p=beta,,3"
+</pre>
+<p>
+<h3><a name="sec398"/>11.6.2 Bubbles</h3>
+
+<p>Modules can let the user know about important events (such as a node
+going down or coming up) by displaying a bubble with a short message
+("Going down", "Coming up", etc.) This is done by the <tt>bubble()</tt> method
+of <tt><a href="../api/classcComponent.html">cComponent</a></tt>. The method takes the string to be displayed
+as a <tt>const char *</tt> pointer.
+
+<p>An example:
+<pre class="cpp">
+bubble("Collision! (2 frames)");
+</pre>
+
+<p><center>
+<img src="graphics-bubble.png">
+</center>
+
+<p>If the module contains a lot of code that modifies the display string or
+displays bubbles, it is recommended to make these calls conditional
+on <tt>ev.isGUI()</tt>. The <tt>ev.isGUI()</tt> call returns <i>false</i>
+when the simulation is run under Cmdenv, so one can make the code skip
+potentially expensive display string manipulation.
+
+<p>Better:
+<pre class="cpp">
+if (ev.isGUI())
+    bubble("Going down!");
+</pre>
+
+
+<hr class='pgbr'><p><hr><b><a href="chap10.html">[Prev]</A>&nbsp;<a href="chap12.html">[Next]</A>&nbsp;<a href="toc.html#toc_11.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p>
+
+</body>
+</html>

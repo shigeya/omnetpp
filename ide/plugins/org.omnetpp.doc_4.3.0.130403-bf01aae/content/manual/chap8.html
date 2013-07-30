@@ -1,0 +1,481 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta name="copyright" content="OpenSim Ltd.">
+  <meta NAME="Author" CONTENT="Andras Varga">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <link rel="STYLESHEET" href="../book.css"  type="text/css">
+  <title>OMNeT++ - Manual</title>
+</head>
+<body>
+
+<p><hr><b><a href="chap7.html">[Prev]</A>&nbsp;<a href="chap9.html">[Next]</A>&nbsp;<a href="toc.html#toc_8.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p><h1><a name="sec310"/>8 Building Simulation Programs</h1>
+<a name="cha:building-simulation-programs"></a>
+
+<p><h2><a name="sec311"/>8.1 Overview</h2>
+
+<p>As has already been mentioned, an OMNeT++ model consists of
+the following parts:
+
+<p><ul>
+  <li>NED language<!--ned!files--> topology description(s). These
+      are files with the <tt>.ned</tt> extension.
+  <li>Message definitions<!--message definitions-->, in files
+      with <tt>.msg</tt> extension.
+  <li>Simple module implementations and other C++ code, in <tt>.cc</tt>
+        files (or <tt>.cpp</tt>, on Windows)
+</ul>
+
+<p>
+To build an executable simulation program,
+you first need to translate the MSG files<!--msg!files-->
+into C++, using the message compiler (<tt>opp_msgc</tt>).
+After this step, the process is the same as building any C/C++
+program from source: all C++ sources need to be compiled into object files
+(<tt>.o</tt> files (using gcc on Mac, Linux) or mingw on Windows)
+
+and all object files need to be linked with the necessary libraries to get
+an executable or shared library.
+
+<p><ul class="note"><b>NOTE</b><br>
+Compiling NED files directly to C++ code is no longer supported in
+OMNeT++ 4.0. NED files are always dynamically loaded.
+</ul>
+
+<p>File names for libraries differ depending on the platform, whether it is 
+a static or shared library, and whether it is a debug or release version.
+Let us suppose you have a library called <tt>common</tt>: 
+<ul>
+  <li>The <tt>opp</tt> prefix is always prepended to all library names to avoid name clashes with other programs.
+  <li>For all platforms, where the gcc (or mingw) compiler is used the static library filename has a ".a" extension 
+         and the <tt>lib</tt> prefix is prepended to the name (e.g. <tt>liboppfoo[d].a</tt>).
+  <li>For all platforms, the debug version filename has a "d" inserted 
+            at the end of the library name  (e.g. <tt>liboppcommond.ext</tt>).
+  <li>For the Unix/Linux platform, the shared library filename has a ".so"  
+         extension (e.g. <tt>liboppcommon[d].so</tt>).
+  <li>For the Mac OS X platform, the shared library filename has a ".dylib"  
+         extension (e.g. <tt>liboppcommon[d].dylib</tt>).
+  <li>For the Windows platform, the shared library filename has a ".dll"  
+         extension (e.g. <tt>liboppfoo[d].dll</tt>).
+  
+</ul>
+
+<p>In OMNeT++ 4.0 we recommend that you use shared libraries whenever it is possible.
+You will need to link with the following libraries:
+
+<p><ul>
+  <li>The simulation kernel and class library<!--simulation!kernel-->,
+    called <i>oppsim</i> (file <tt>liboppsim.[so|dll|dylib]</tt> etc).
+  <li>User interfaces. The common part of all user interfaces is
+    the <i>oppenvir</i> library (file <tt>liboppenvir.[so|dll|dylib]</tt>, etc),
+    and the specific user interfaces are <i>opptkenv</i> and <i>oppcmdenv</i>
+    (<tt>libopptkenv.[so|dll|dylib]</tt>, <tt>liboppcmdenv.[so|dll|dylib]</tt>, etc).
+    You have to link with <i>oppenvir</i>, plus <i>opptkenv</i> or
+    <i>oppcmdenv</i> or both.
+</ul>
+
+<p>Luckily, you do not have to worry about the above details, because
+automatic tools like <tt>opp_makemake</tt> will take care of the hard
+part for you.
+
+<p>The following figure gives an overview of the process of building
+and running simulation programs.
+
+<p>
+  <center>
+    <img src="build-workflow.png">
+    <center><i>Figure: Building and running simulation</i></center>
+  </center>
+
+<p>
+
+<p>This chapter discusses how to use the simulation system on the
+following platforms:
+<ul>
+  <li>Unix (Linux/Mac OS X) with gcc
+  <li>Windows with the included MinGW compiler
+  
+</ul>
+
+<p>
+<h2><a name="sec312"/>8.2 Using gcc</h2>
+
+<p>The following section applies to using OMNeT++ on Linux, Solaris, Mac OS X, FreeBSD and
+other Unix derivatives, and also to MinGW on Windows.
+
+<p><ul class="note"><b>NOTE</b><br>
+The <tt>doc/</tt> directory of your OMNeT++ installation contains
+<tt>Readme.</tt><i>&lt;platform&gt;</i> files that provide more detailed platform specific instructions.
+</ul>
+
+<p>
+<h3><a name="sec313"/>8.2.1 The opp_makemake Tool</h3>
+
+<p>The <tt>opp_makemake</tt> tool can automatically generate a
+<tt>Makefile</tt> for your simulation program, based on the source files
+in the current directory or directory tree.
+<tt>opp_makemake</tt> has several options; <tt>opp_makemake -h</tt>
+displays help.
+
+<p>The most important options are:
+
+<p><ul>
+    <li><tt>-f, --force</tt> : Force overwriting existing Makefile
+    <li><tt>-o filename</tt> : Name of simulation executable or library to be built.
+    <li><tt>-O directory, --out directory</tt> : Specifies the name of the output directory tree
+                          for out-of-directory build
+    <li><tt>--deep</tt> : Generates a "deep" Makefile. A deep Makefile will
+                          cover the whole source tree under the make directory,
+                          not just files in that directory.
+    <li><tt>-r, --recurse</tt> : Causes make to recursively descend into all subdirectories;
+                          subdirectories are expected to contain
+                          makefiles themselves.
+    <li><tt>-X directory, -Xdirectory, --except directory</tt> :
+                          With <tt>-r</tt> and <tt>--deep</tt> option: ignore the given directory.
+    <li><tt>-dsubdir, -d subdir, --subdir subdir</tt> :
+                          Causes make to recursively descend into the given
+                          directory.
+    <li><tt>-n, --nolink</tt> :  Produce object files but do not create executable or
+                          library.
+    <li><tt>-s, --make-so</tt> : Build shared library (.so, .dll or .dylib).
+    <li><tt>-a, --make-lib</tt> : Create static library (.a or .lib).
+    <li><tt>-Idir</tt> :         Additional NED and C++ include directory.
+    <li><tt>-Ldir</tt> :         Add a directory to the library path.
+    <li><tt>-llibrary</tt> :     Additional library to link against.
+</ul>
+
+<p>
+<h3><a name="sec314"/>8.2.2 Basic Use</h3>
+
+<p>Once you have the source files (<tt>*.ned</tt>, <tt>*.msg</tt>, <tt>*.cc</tt>,
+<tt>*.h</tt>) in a directory, change the working directory to there and type:
+
+<pre class="commandline">
+$ opp_makemake
+</pre>
+<p>
+This will create a file named <tt>Makefile</tt><!--Makefile-->. If you
+type <tt>make</tt>, your simulation program should build.
+
+<p>
+If you already had a <tt>Makefile</tt> in that directory, <tt>opp_makemake</tt>
+will refuse to overwrite it. You can force overwriting the old <tt>Makefile</tt>
+with the -f option:
+
+<pre class="commandline">
+$ opp_makemake -f
+</pre>
+<p>
+The name of the output file<!--output!file--> will be derived from
+the name of the project directory (see later). You can override it
+with the <tt>-o</tt> option:
+
+<pre class="commandline">
+$ opp_makemake -f -o aloha
+</pre>
+<p>
+In addition to the default target that builds the simulation executable,
+the <tt>Makefile</tt> also contains the following targets:
+
+<p><table border>
+<TR> <TD align=left>
+
+<p><b>Target</b> </TD> <TD align=left> <b>Action</b></TD></TR>
+<TR> <TD align=left> all </TD> <TD align=left> The default target is to build the simulation executable</TD></TR>
+<TR> <TD align=left> depend </TD> <TD align=left> Adds (or refreshes) dependencies in the <tt>Makefile</tt></TD></TR>
+<TR> <TD align=left> clean </TD> <TD align=left>  Deletes all files that were produced by the make process</TD></TR>
+</table>
+
+<p>
+<h3><a name="sec315"/>8.2.3 Debug and Release Builds</h3>
+
+<p><tt>opp_makemake</tt> generates a makefile that can create both release and debug builds.
+By default it creates debug version, but it is easy to override this behavior.
+Just define the <tt>MODE</tt> variable on the <tt>make</tt> command line.
+
+<pre class="commandline">
+$ make MODE=release
+</pre>
+<p>
+If you want to create release builds by default you should use the <tt>--mode</tt> <i>mode</i>
+option for <tt>opp_makemake</tt> when generating your makefiles.
+<pre class="commandline">
+$ opp_makemake --mode release ...
+</pre>
+
+<p><h3><a name="sec316"/>8.2.4 Debugging the Makefile</h3>
+
+<p><tt>opp_makemake</tt> generates a makefile that prints only minimal information
+during the build process (only the name of the compiled file.) If you want to 
+see the full compiler commands executed by the makefile, specify <tt>V=1</tt> as 
+a command line parameter for the <tt>make</tt> command.
+
+<pre class="commandline">
+$ make V=1
+</pre>
+<p>
+
+<p><h3><a name="sec317"/>8.2.5 Using External C/C++ Libraries</h3>
+
+<p>If you are using external libraries you should specify the include path for the header files
+with the <tt>-I</tt> <i>includedir</i> option. You should specify this option if you are using
+anything outside of the source directory tree (except the system and OMNeT++ headers which are
+always included automatically)
+
+<p>To define an external library to be linked with, use <tt>-Ldir</tt> to specify
+the directory of the external library and <tt>-llibrary</tt> to specify the name of the
+external dependency.
+
+<p>
+<h3><a name="sec318"/>8.2.6 Building Directory Trees</h3>
+
+<p>It is possible to build a whole source directory tree with a single makefile.
+A source tree will generate a single output file (executable or library).
+A source directory tree will always have a <tt>Makefile</tt> in its root,
+and source files may be placed anywhere in the tree.
+
+<p>To turn on this option, use the <tt>opp_makemake --deep</tt> option.
+<tt>opp_makemake</tt> will collect all <tt>.cc</tt> and <tt>.msg</tt> files from
+the whole subdirectory tree, and generate a makefile that covers all.
+If you need to exclude a specific directory, use the <tt>-X exclude/dir/path</tt>
+option. (Multiple <tt>-X</tt> options are accepted.)
+
+<p>An example:
+
+<pre class="commandline">
+$ opp_makemake -f --deep -X experimental -X obsolete
+</pre>
+<p>
+
+<p><h3><a name="sec319"/>8.2.7 Automatic Include Dirs</h3>
+
+<p>If your source tree contains several subdirectories (maybe several levels
+deep), it can be annoying to have to specify relative paths for your
+header files in your <tt>.cc</tt> files or you should specify the include path
+explicitly by the <tt>-I includepath</tt> option. <tt>opp_makemake</tt> has a
+command line option, which adds all directories in the current source tree
+to the compiler command line. This option is turned on by default.
+
+<p><ul class="note"><b>NOTE</b><br>
+You may turn off this mechanism with the <tt>--no-deep-includes</tt> option.
+</ul>
+
+<p>The only requirement is that your <tt>#include</tt> statements must unambigously
+specify the name of the header file. (i.e. if you have two <tt>common.h</tt>
+files, one in subdir1 and the other in subdir2 specify <tt>#include
+"subdir1/common.h"</tt> instead of <tt>#include "common.h"</tt>. If you want to
+include a directory which is outside of your source directory tree you
+always must specify it with the <tt>-I external/include/dir</tt> option.
+
+<p>
+<h3><a name="sec320"/>8.2.8 Dependency Handling</h3>
+
+<p>Dependency information is used by the makefile to minimize the time required to
+compile and link your project. If your makefile contains up-to date dependency info
+-- only files changed since you last compiled your project will be re-compiled or linked.
+
+<p>
+<tt>opp_makemake</tt> automatically adds dependencies to the makefile<!--Makefile!dependencies-->.
+You can regenerate the dependencies by typing <tt>make depend</tt> any time.
+The warnings during the dependency generation process can be safely ignored.
+
+<p>
+You may generate and add dependencies to the <tt>makefile</tt> manually using the <tt>opp_makedep</tt>
+tool. Use <tt>opp_makedep -</tt>-help to display the supported command line options.
+
+<p><ul class="note"><b>NOTE</b><br>
+The dependency generator does not handle conditional macros and includes. Conditionally included header
+files are always added to the file's dependency list.
+</ul>
+
+<p>
+<h3><a name="sec321"/>8.2.9 Out-of-Directory Build</h3>
+
+<p>The build system creates object and executable files in a separate directory, called the
+<i>output directory</i>. The structure of the output directory will be the same as your
+source directory structure except that it will be placed in the <tt>out/configname</tt> directory.
+The <tt>configname</tt> part will mirror your compiler toolchain and build mode settings.
+(i.e. The result of a debug build with gcc will be placed in <tt>out/gcc-debug</tt>)
+
+<p>
+The location of the generated output file is determined by the -O option.
+(The default value is 'out', relative to the project root directory):
+
+<p>
+<pre class="commandline">
+$ opp_makemake -O ../tmp/obj
+</pre>
+
+<p>
+<ul class="note"><b>NOTE</b><br>
+The project directory is the first ancestor of the current directory which
+contains a <tt>.project</tt> file).
+</ul>
+
+<p>
+<ul class="note"><b>NOTE</b><br>
+Source files (i.e. those created by the <tt>opp_msgc</tt> compiler) will be generated in the
+source folder rather than in the output folder.
+</ul>
+
+<p>
+<h3><a name="sec322"/>8.2.10 Building Shared and Static Libraries</h3>
+
+<p>By default the makefile will create an executable file, but it is also
+possible to build shared or static libraries. Shared libraries
+are usually a better choice.
+
+<p>Use <tt>--make-so</tt> to create shared libraries, and <tt>--make-lib</tt>
+to build static libraries. The <tt>--nolink</tt> option completely avoids
+the linking step, which is useful for top-level makefiles that only invoke
+other makefiles, or if you want to do the linking manually.
+
+<p>
+
+<p>
+<h3><a name="sec323"/>8.2.11 Recursive Builds</h3>
+
+<p>
+The <tt>--recurse</tt> option enables recursive make; when you build the simulation, make
+descends into the subdirectories and runs make in them too.
+By default, <tt>--recurse</tt> decends into all subdirectories; the -X directory option
+can be used to make it ignore certain subdirectories. This option is especially useful
+for top level makefiles.
+
+<p>
+The <tt>--recurse</tt> option automatically discovers subdirectories, but this
+is sometimes inconvenient. Your source directory tree may contain
+parts which need their own hand written <tt>Makefile</tt>. This can happen if
+you include source files from an other non OMNeT++ project. With the <tt>-d dir</tt>
+or <tt>--subdir dir</tt> option, you can explicitly specify which directories to
+recurse into, and also, the directories need not be direct children of the
+current directory.
+
+<p>
+The recursive make options (<tt>--recurse</tt>, <tt>-d</tt>, <tt>--subdir</tt>)
+imply <tt>-X</tt>, that is, the directories recursed into will be
+automatically excluded from deep makefiles.
+
+<p>
+You can control the order of traversal by adding dependencies into
+the <tt>makefrag</tt> file (see <a href="chap8.html#sec324">[8.2.12]</a>)
+
+<p><ul class="note"><b>NOTE</b><br>
+With <tt>-d</tt>, it is also possible to create infinite recursions.
+<tt>opp_makemake</tt> cannot detect them, it is your responsibility that
+cycles do not occur.
+</ul>
+
+<p>
+Motivation for recursive builds:
+<ul>
+ <li>toplevel makefile
+ <li>integrating sources that have their own makefile
+</ul>
+
+<p>
+<h3><a name="sec324"/>8.2.12 Customizing the Makefile</h3>
+<a name="sec:makefrag"></a>
+
+<p>It is possible to add rules or otherwise customize the generated makefile
+by providing a <tt>makefrag</tt> file. When you run <tt>opp_makemake</tt>, it
+will automatically insert <tt>makefrag</tt> into the resulting <tt>Makefile</tt>.
+With the <tt>-i</tt> option, you can also name other files to be included into the
+<tt>Makefile</tt>.
+
+<p><tt>makefrag</tt> will be inserted after the definitions but before the first
+rule, so it is possible to override existing definitions and add new
+ones, and also to override the default target.
+
+<p><tt>makefrag</tt> can be useful if some of your source files are generated
+from other files (for example, you use generated NED files), or you need
+additional targets in your makefile or just simply want to override the
+default target in the makefile.
+
+<p>
+<h3><a name="sec325"/>8.2.13 Projects with Multiple Source Trees</h3>
+
+<p>In the case of a large project, your source files may be spread across
+several directories and your project may generate more than one executable
+file (i.e. several shared libraries, examples etc.).
+
+<p>Once you have created your makefiles with <tt>opp_makemake</tt> in
+every source directory tree, you will need a toplevel makefile.
+The toplevel makefile usually calls only the makefiles
+recursively in the source directory trees.
+
+<p>
+<h3><a name="sec326"/>8.2.14 A Multi-Directory Example</h3>
+
+<p>For a complex example of using <tt>opp_makemake</tt>, we will show how to create
+the makefiles for the Mobility Framework. First, take a look at the
+project's directory structure and find the directories that should be used as
+source trees:
+
+<pre class="verbatim">
+mobility-framework
+    bitmaps
+    contrib &lt;-- source tree (build libmfcontrib.so from this dir)
+    core &lt;-- source tree (build libmfcore.so from this dir)
+    docs
+    network
+    template
+    testSuite &lt;-- source tree (build testSuite executable from this dir)
+</pre>
+<p>
+Additionally, there are dependencies between these output files: <tt>mfcontrib</tt>
+requires <tt>mfcore</tt> and <tt>testSuite</tt> requires <tt>mfcontrib</tt> (and indirectly
+<tt>mfcore</tt>).
+
+<p>First, we create the makefile for the core directory. The makefile will build
+a shared lib from all .cc files in the <tt>core</tt> subtree, and will name it <tt>mfcore</tt>):
+
+<pre class="commandline">
+$ cd core && opp_makemake -f --deep --make-so -o mfcore -O out
+</pre>
+<p>
+The <tt>contrib</tt> directory depends on <tt>mfcore</tt> so we use the <tt>-L</tt> and <tt>-l</tt> options
+to specify the library we should link with. Note that we must also add
+the include directories manually from the <tt>core</tt> source tree, because autodiscovery works only
+in the same source tree:
+
+<pre class="commandline">
+$ cd contrib && opp_makemake -f --deep --make-so -o mfcontrib -O out \\
+  -I../core/basicModules -I../core/utils -L../out/$(CONFIGNAME)/core -lmfcore
+</pre>
+<p>
+The <tt>testSuite</tt> will be created as an executable file which depends on both
+<tt>mfcontrib</tt> and <tt>mfcore</tt>.
+
+<pre class="commandline">
+$ cd testSuite && opp_makemake -f --deep -o testSuite -O out
+    -I../core/utils -I../core/basicModules -I../contrib/utils \\
+    -I../contrib/applLayer -L../out/$(CONFIGNAME)/contrib -lmfcontrib
+</pre>
+<p>
+Now let us specify the dependencies between the above directories. 
+Add the lines below to the <tt>makefrag</tt> file in the project directory root.
+
+<pre class="filelisting">
+contrib_dir: core_dir
+testSuite_dir: contrib_dir
+</pre>
+<p>
+Now the last step is to create a top-level makefile in the root of the project that
+calls the previously created makefiles in the correct order. We will use the
+<tt>--nolink</tt> option, exclude every subdirectory from the build (<tt>-X.</tt>), and explicitly call
+the above makefiles using <tt>-d dirname</tt>. <tt>opp_makemake</tt> will automatically include
+the above created <tt>makefrag</tt> file.
+
+<pre class="commandline">
+$ opp_makemake -f --nolink -O out -d testSuite -d core -d contrib -X.
+</pre>
+<p>
+
+<p>
+
+<hr class='pgbr'><p><hr><b><a href="chap7.html">[Prev]</A>&nbsp;<a href="chap9.html">[Next]</A>&nbsp;<a href="toc.html#toc_8.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p>
+
+</body>
+</html>

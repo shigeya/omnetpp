@@ -1,0 +1,612 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta name="copyright" content="OpenSim Ltd.">
+  <meta NAME="Author" CONTENT="Andras Varga">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <link rel="STYLESHEET" href="../book.css"  type="text/css">
+  <title>OMNeT++ - Manual</title>
+</head>
+<body>
+
+<p><hr><b><a href="chap16.html">[Prev]</A>&nbsp;<a href="chap18.html">[Next]</A>&nbsp;<a href="toc.html#toc_17.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p><h1><a name="sec477"/>17 Embedding the Simulation Kernel</h1>
+<a name="cha:embedding"></a>
+
+<p><h2><a name="sec478"/>17.1 Architecture</h2>
+
+<p>OMNeT++ has a modular architecture. The following diagram illustrates  the
+high-level architecture of the OMNeT++ simulations:
+
+<p>
+  <center>
+    <img src="embed-architecture.png">
+    <center><i>Figure: Architecture of OMNeT++ simulation programs</i></center>
+  </center>
+
+<p>
+The rectangles in the picture represent the following components:
+
+<p><ul>
+  <li><b>Sim</b> is the simulation kernel and class
+    library<!--simulation!kernel-->. Sim is a library linked to
+    your simulation program.
+  <li><b>Envir</b> is another library containing all the code
+    that is common to all the user interfaces. <tt>main()</tt> also exists in the Envir library.
+    Envir provides services, like ini file handling for specific user interface
+    implementations. Envir presents itself towards Sim and the executing model
+    via the <tt>ev</tt> facade object, hiding all other user interface internals.
+    Some aspects of the Envir library can be customized<!--customization--> using plugin
+    interfaces. Embedding OMNeT++ into applications<!--embedding--> can
+    be achieved by implementing a new user interface in addition to Cmdenv
+    and Tkenv, or by replacing Envir with another implementation of <tt>ev</tt>
+    (see sections <a href="chap16.html#sec476">[16.4]</a> and
+    <a href="chap17.html#sec479">[17.2]</a>.)
+  <li><b>Cmdenv and Tkenv</b> are specific user interface
+    implementations. The simulation is linked either to the  Cmdenv or Tkenv user interfaces, or to both.
+  <li>The <b>Model Component Library</b> includes simple module definitions and
+    their C++ implementations, compound module types, channels, networks,
+    message types, and everything belonging to models that
+    have been linked to the simulation program. A simulation program can
+    run any model that contains all of the required linked components.
+  <li>The <b>Executing Model</b> is the model that is set up
+    for simulation. This model contains objects (modules, channels, and so on) that
+    are all instances of the components in the model component library.
+</ul>
+
+<p>The arrows in the figure describe how components interact with
+each other:
+
+<p><ul>
+  <li><b>Executing Model <i><==></i> Sim</b>. The simulation kernel
+    manages the future events and activates modules in the executing model
+    as events occur. The modules of the executing model are stored
+    in the main object of Sim, <tt>simulation</tt> (of class <tt><a href="../api/classcSimulation.html">cSimulation</a></tt>).
+    In turn, the executing model calls functions in the
+    simulation kernel and uses classes in the Sim library.
+  <li><b>Sim <i><==></i> Model Component Library</b>. The simulation kernel
+    instantiates simple modules and other components when the simulation model
+    is set up at the beginning of the simulation run. In addition, it refers
+    to the component library when dynamic module creation is used.
+    The mechanisms for registering and looking up components in the model
+    component library are implemented as part of Sim.
+  <li><b>Executing Model <i><==></i> Envir</b>. The <tt>ev</tt> object,
+    logically part of Envir, is the facade of the user interface towards the
+    executing model. The model uses <tt>ev</tt> to write debug logs (<tt>ev&lt;&lt;</tt>,
+    <tt>ev.printf()</tt>).
+  <li><b>Sim <i><==></i> Envir</b>. Envir is in full command of what
+    happens in the simulation program. Envir contains the <tt>main()</tt> function
+    where execution begins. Envir determines which models should be set up
+    for simulation, and instructs Sim to do so. Envir contains the main
+    simulation loop (<i>determine-next-event</i>, <i>execute-event</i>
+    sequence) and invokes the simulation kernel for the necessary
+    functionality (event scheduling and event execution are implemented in Sim).
+    Envir catches and handles errors and exceptions that occur
+    in the simulation kernel or in the library classes during execution.
+    Envir presents a single facade object (<tt>ev</tt>) that represents
+    the environment (user interface) toward Sim -- no Envir
+    internals are visible to Sim or the executing model.
+    During simulation model setup, Envir supplies parameter values for
+    Sim when Sim asks for them. Sim writes output vectors via Envir,
+    so one can redefine the output vector storing mechanism by changing Envir.
+    Sim and its classes use Envir to print debug information.
+  <li><b>Envir <i><==></i> Tkenv/Cmdenv</b>. Tkenv and Cmdenv
+    are concrete user interface implementations. When a simulation program
+    is started, the <tt>main()</tt> function (which is part of Envir) determines
+    the appropriate user interface class, creates an instance and runs it
+    by invoking its <tt>run()</tt> method. Sim's or the model's calls on the
+    <tt>ev</tt> object are delegated to the user interface.
+</ul>
+
+<p>
+<h2><a name="sec479"/>17.2 Embedding the OMNeT++ Simulation Kernel</h2>
+<a name="sec:ch-embedding:embedding"></a>
+
+<p>This section discusses the issues of embedding the simulation kernel
+or a simulation model into a larger application. We assume that you
+do not just want to change one or two aspects of the simulator
+(such as , event scheduling or result recording) or create a new user interface
+such as Cmdenv or Tkenv -- if so, see chapter <a href="chap16.html#sec464">[16]</a>.
+
+<p>For the following section, we assume that you will write the embedding
+program from scratch. Meaning, starting from a <tt>main()</tt> function.
+
+<p><h3><a name="sec480"/>17.2.1 The main() Function</h3>
+
+<p>The minimalistic program described below initializes the simulation library
+and runs two simulations. In later sections we will review the details
+of the code and discuss how to improve it.
+
+<pre class="cpp">
+#include &lt;omnetpp.h&gt;
+
+int main(int argc, char *argv[])
+{
+    // the following line MUST be at the top of main()
+    cStaticFlag dummy;
+
+    // initializations
+    <a href="../api/classExecuteOnStartup.html">ExecuteOnStartup</a>::executeAll();
+    <a href="../api/classSimTime.html">SimTime</a>::setScaleExp(-12);
+
+    // load NED files
+    <a href="../api/classcSimulation.html">cSimulation</a>::loadNedSourceFolder("./foodir");
+    <a href="../api/classcSimulation.html">cSimulation</a>::loadNedSourceFolder("./bardir");
+    <a href="../api/classcSimulation.html">cSimulation</a>::doneLoadingNedFiles();
+
+    // run two simulations
+    simulate("FooNetwork", 1000);
+    simulate("BarNetwork", 2000);
+
+    return 0;
+}
+</pre>
+<p>
+The first few lines of the code initialize the simulation library. The
+purpose of <tt>cStaticFlag</tt> is to set a global variable to <tt>true</tt>
+for the duration of the <tt>main()</tt> function, to help the simulation
+library handle exceptions correctly in extreme cases.
+<tt><a href="../api/classExecuteOnStartup.html">ExecuteOnStartup</a>::executeAll()</tt> performs various startup tasks such as,
+building registration tables out of the <tt>Define_Module()</tt>,
+<tt>Register_Class()</tt> and similar entries throughout the code.
+<tt><a href="../api/classSimTime.html">SimTime</a>::setScaleExp(-12)</tt> sets the simulation time resolution to
+picoseconds; other values can be used as well, but it is mandatory to
+choose one.
+
+<p><ul class="note"><b>NOTE</b><br>
+The simulation time exponent cannot be changed at a later stage, since it is
+a global variable, and the values of the existing <tt>simtime_t</tt> instances
+would change.
+</ul>
+
+<p>The code then loads the NED files from the <tt>foodir</tt> and
+<tt>bardir</tt> subdirectories of the working directory (as if the NED path
+was <tt>./foodir;./bardir</tt>), and runs two simulations.
+
+<p>
+<h3><a name="sec481"/>17.2.2 The simulate() Function</h3>
+
+<p>A minimalistic version of the <tt>simulate()</tt> function is shown below.
+In order to shorten the code, the exception handling code has been ommited (<tt>try</tt>/<tt>catch</tt> blocks)
+apart from the event loop. However, every line is marked with &#8220;<tt>E!</tt>&#8221; where various
+problems with the simulation model can occur and can be thrown as exceptions.
+
+<pre class="cpp">
+void simulate(const char *networkName, simtime_t limit)
+{
+    // look up network type
+    <a href="../api/classcModuleType.html">cModuleType</a> *networkType = <a href="../api/classcModuleType.html">cModuleType</a>::find(networkName);
+    if (networkType == NULL) {
+        printf("No such network: %s\n", networkName);
+        return;
+    }
+
+    // create a simulation manager and an environment for the simulation
+    <a href="../api/classcEnvir.html">cEnvir</a> *env = new CustomSimulationEnv(argc, argv, new EmptyConfig());
+    <a href="../api/classcSimulation.html">cSimulation</a> *sim = new <a href="../api/classcSimulation.html">cSimulation</a>("simulation", env);
+    <a href="../api/classcSimulation.html">cSimulation</a>::setActiveSimulation(sim);
+
+    // set up network and prepare for running it
+    sim-&gt;setupNetwork(networkType); //E!
+    sim-&gt;startRun(); //E!
+
+    // run the simulation
+    bool ok = true;
+    try {
+        while (sim-&gt;getSimTime() &lt; limit) {
+            <a href="../api/classcSimpleModule.html">cSimpleModule</a> *mod = sim-&gt;selectNextModule(); //E!
+            if (!mod)
+                break;
+            sim-&gt;doOneEvent(mod);  //E!
+        }
+        printf("Finished: time limit reached\n");
+    }
+    catch (<a href="../api/classcTerminationException.html">cTerminationException</a>& e) {
+        printf("Finished: %s\n", e.what());
+    }
+    catch (std::exception& e) {
+        ok = false;
+        printf("ERROR: %s\n", e.what());
+    }
+
+    if (ok)
+        simulation.callFinish();  //E!
+
+    // finish the simulation and clean up the network
+    sim-&gt;endRun();  //E!
+    sim-&gt;deleteNetwork();  //E!
+
+    <a href="../api/classcSimulation.html">cSimulation</a>::setActiveSimulation(NULL);
+    delete sim; // deletes env as well
+}
+</pre>
+<p>
+The function accepts a network type name (which must be fully qualified
+with a package name) and a simulation time limit.
+
+<p>In the first few lines the system looks up the network name among the modules that
+have been loaded from the  NED files, and an error message is printed if it is not found.
+
+<p>Then it is required to create and activate a simulation manager object
+(<tt><a href="../api/classcSimulation.html">cSimulation</a></tt>).
+The simulation manager requires another object, called the environment object. This environment object is used by the simulation manager
+to read the configuration. In addition, the results produced by the simulation manager are written to this environment object.
+
+<p>The environment object (<tt>CustomSimulationEnv</tt> in the above code) must
+be provided by the programmer; this is described in detail in a later section.
+
+<p><ul class="note"><b>NOTE</b><br>
+Before version 4.0, <tt>simulation</tt> and <tt>ev</tt> were global variables;
+In the current version they are macros that refer to  <tt>*<a href="../api/classcSimulation.html">cSimulation</a>::getActiveSimulation()</tt>
+and <tt>*<a href="../api/classcSimulation.html">cSimulation</a>::getActiveSimulation()-&gt;getEnvir()</tt>.
+</ul>
+
+<p>The network is then set up in the simulation manager. The
+<tt>sim-&gt;</tt><tt>setupNetwork()</tt> method creates the system module and
+recursively all modules and their interconnections; module parameters are
+also read from the configuration (where required) and assigned. If there is
+an error (for example, module type not found), an exception will be thrown. The
+exception object is some kind of <tt>std::exception</tt>, usually a
+<tt><a href="../api/classcRuntimeError.html">cRuntimeError</a></tt>.
+
+<p>If the network setup was successful, the <tt>sim-&gt;</tt><tt>startRun()</tt> function is called,
+and the <tt>initialize()</tt> methods of modules
+and channels are then activated. An exception is thrown if
+something goes wrong in any of the <tt>initialize()</tt> methods.
+
+<p>The following lines run the simulation by calling
+<tt>sim-&gt;</tt><tt>selectNextModule()</tt> and <tt>sim-&gt;</tt><tt>doOneEvent()</tt>
+in an event loop, until the simulation time limit is reached or an
+exception occurs. Exceptions that are subclassed from <tt><a href="../api/classcTerminationException.html">cTerminationException</a></tt>
+signify the normal termination of the simulation process; other exceptions indicate
+various errors.
+
+<p>If the simulation has completed successfully (<tt>ok==true</tt>), the code
+goes on to call the <tt>finish()</tt> methods of modules and channels. Then,
+regardless of whether there was an error, <tt>sim-&gt;</tt><tt>endRun()</tt> is
+called, and the network is shut down using
+<tt>sim-&gt;</tt><tt>deleteNetwork()</tt>.
+
+<p>Finally, the simulation manager object is deallocated, but the active
+simulation manager is not allowed to be deleted; therefore it is deactivated
+using <tt>setActiveSimulation(NULL)</tt>.
+
+<p>
+<h3><a name="sec482"/>17.2.3 Providing an Environment Object</h3>
+
+<p>The environment object needs to be subclassed from the <tt><a href="../api/classcEnvir.html">cEnvir</a></tt> class,
+but since it has many pure virtual methods, it is easier
+to begin by subclassing <tt><a href="../api/classcNullEnvir.html">cNullEnvir</a></tt>. <tt><a href="../api/classcNullEnvir.html">cNullEnvir</a></tt> defines all
+pure virtual methods with either an empty body or with a body that throws
+an <tt>"unsupported method called"</tt> exception. You can redefine methods
+to be more sophisticated later on, as you progress with the development.
+
+<p>You must redefine the <tt>readParameter()</tt> method. This enables
+module parameters to obtain their values. For debugging purposes, you can also
+redefine <tt>sputn()</tt> where module log messages are written to.
+<tt><a href="../api/classcNullEnvir.html">cNullEnvir</a></tt> only provides one random number generator, so if your
+simulation model uses more than one, you also need to redefine the
+<tt>getNumRNGs()</tt> and <tt>getRNG(k)</tt> methods. To print or store
+simulation records, redefine <tt>recordScalar()</tt>, <tt>recordStatistic()</tt>
+and/or the output vector related methods. Other <tt><a href="../api/classcEnvir.html">cEnvir</a></tt> methods
+are invoked from the simulation kernel to inform the environment about
+messages being sent, events scheduled and cancelled, modules created, and so on.
+
+<p>The following example shows a minimalistic environment class that is enough
+to get started:
+
+<pre class="cpp">
+class CustomSimulationEnv : public <a href="../api/classcNullEnvir.html">cNullEnvir</a>
+{
+  public:
+    // constructor
+    CustomSimulationEnv(int ac, char **av, <a href="../api/classcConfiguration.html">cConfiguration</a> *c) :
+        <a href="../api/classcNullEnvir.html">cNullEnvir</a>(ac, av, c) {}
+
+    // model parameters: accept defaults
+    virtual void readParameter(<a href="../api/classcPar.html">cPar</a> *par) {
+        if (par-&gt;containsValue())
+            par-&gt;acceptDefault();
+        else
+            throw <a href="../api/classcRuntimeError.html">cRuntimeError</a>("no value for %s", par-&gt;getFullPath().c_str());
+    }
+
+    // send module log messages to stdout
+    virtual void sputn(const char *s, int n) {
+        (void) ::fwrite(s,1,n,stdout);
+    }
+};
+</pre>
+<p>
+
+<p><h3><a name="sec483"/>17.2.4 Providing a Configuration Object</h3>
+
+<p>The configuration object needs to subclass from <tt><a href="../api/classcConfiguration.html">cConfiguration</a></tt>.
+<tt><a href="../api/classcConfiguration.html">cConfiguration</a></tt> also has several methods, but the typed ones
+(<tt>getAsBool()</tt>, <tt>getAsInt()</tt>, etc.) have default implementations
+that delegate to the much fewer string-based methods (<tt>getConfigValue()</tt>, etc.).
+
+<p>It is fairly straightforward to implement a configuration class that
+emulates an empty ini file:
+
+<pre class="cpp">
+class EmptyConfig : public <a href="../api/classcConfiguration.html">cConfiguration</a>
+{
+  protected:
+    class NullKeyValue : public KeyValue {
+      public:
+        virtual const char *getKey() const {return NULL;}
+        virtual const char *getValue() const {return NULL;}
+        virtual const char *getBaseDirectory() const {return NULL;}
+    };
+    NullKeyValue nullKeyValue;
+
+  protected:
+    virtual const char *substituteVariables(const char *value) {return value;}
+
+  public:
+    virtual const char *getConfigValue(const char *key) const
+        {return NULL;}
+    virtual const KeyValue& getConfigEntry(const char *key) const
+        {return nullKeyValue;}
+    virtual const char *getPerObjectConfigValue(const char *objectFullPath,
+        const char *keySuffix) const {return NULL;}
+    virtual const KeyValue& getPerObjectConfigEntry(const char *objectFullPath,
+        const char *keySuffix) const {return nullKeyValue;}
+};
+</pre>
+<p>
+
+<p><h3><a name="sec484"/>17.2.5 Loading NED Files</h3>
+
+<p>NED files can be loaded with any of the following static methods of
+<tt><a href="../api/classcSimulation.html">cSimulation</a></tt>: <tt>loadNedSourceFolder()</tt>, <tt>loadNedFile()</tt>,
+and <tt>loadNedText()</tt>. The first method loads an entire subdirectory tree,
+the second method loads a single NED file, and the third method takes a literal
+string containing NED code and parses it.
+
+<p><ul class="note"><b>NOTE</b><br>
+One use of <tt>loadNedText()</tt> is to parse NED sources previously converted
+to C++ string constants and linked into the executable. This enables
+creating executables that are self-contained, and do not require NED files
+to be distributed with them.
+</ul>
+
+<p>The above functions can also be mixed, but after the last call,
+<tt>doneLoadingNedFiles()</tt> must be invoked (it checks for unresolved
+NED types).
+
+<p>Loading NED files has a global effect; therefore they cannot be unloaded.
+
+<p>
+<h3><a name="sec485"/>17.2.6 How to Eliminate NED Files</h3>
+
+<p>It is possible to get rid of NED files altogether. This would also
+remove the dependency on the <tt>oppnedxml</tt> library and the code in
+<tt>sim/netbuilder</tt>, although at the cost of additional coding.
+
+<p><ul class="note"><b>NOTE</b><br>
+When the only purpose is to get rid of NED files as external dependency
+of the program, it is simpler to use <tt>loadNedText()</tt> on NED files
+converted to C++ string constants instead.
+</ul>
+
+<p>The trick is to write <tt><a href="../api/classcModuleType.html">cModuleType</a></tt> and <tt><a href="../api/classcChannelType.html">cChannelType</a></tt> objects
+for your simple module, compound module and channel types, and register them
+manually. For example, <tt><a href="../api/classcModuleType.html">cModuleType</a></tt> has pure virtual methods called
+<tt>createModuleObject()</tt>, <tt>addParametersAndGatesTo(module)</tt>,
+<tt>setupGateVectors(module)</tt>, <tt>buildInside(module)</tt>, which you
+need to implement. The body of the <tt>buildInside()</tt> method would
+be similar to C++ files generated by <tt>nedtool</tt> of OMNeT++ 3.x.
+
+<p>
+<h3><a name="sec486"/>17.2.7 Assigning Module Parameters</h3>
+
+<p>As already mentioned, modules obtain values for their input parameters
+by calling the <tt>readParameter()</tt> method of the environment object
+(<tt><a href="../api/classcEnvir.html">cEnvir</a></tt>).
+
+<p><ul class="note"><b>NOTE</b><br>
+<tt>readParameter()</tt> is only called for parameters that have not
+been set to a fixed (i.e. non-<tt>default</tt>) value in the NED files.
+</ul>
+
+<p>The <tt>readParameter()</tt> method should be written in a manner that enables it to assign
+the parameter. When doing so, it can recognize the parameter from its name
+(<tt>par-&gt;getName()</tt>), from its full path (<tt>par-&gt;getFullPath()</tt>),
+from the owner module's class (<tt>par-&gt;getOwner()-&gt;getClassName()</tt>)
+or NED type name (<tt>((<a href="../api/classcComponent.html">cComponent</a> *)par-&gt;getOwner())-&gt;getNedTypeName()</tt>).
+Then it can set the parameter using one of the typed setter methods
+(<tt>setBoolValue()</tt>, <tt>setLongValue()</tt>, etc.), or set it
+to an expression provided in string form (<tt>parse()</tt> method).
+It can also accept the default value if it exists (<tt>acceptDefault()</tt>).
+
+<p>The following code is a straightforward example that answers parameter
+value requests from a pre-filled table.
+
+<pre class="cpp">
+class CustomSimulationEnv : public <a href="../api/classcNullEnvir.html">cNullEnvir</a>
+{
+  protected:
+    // parameter (fullpath,value) pairs, needs to be pre-filled
+    std::map&lt;std::string,std::string&gt; paramValues;
+  public:
+    ...
+    virtual void readParameter(<a href="../api/classcPar.html">cPar</a> *par) {
+        if (paramValues.find(par-&gt;getFullPath())!=paramValues.end())
+            par-&gt;parse(paramValues[par-&gt;getFullPath()]);
+        else if (par-&gt;containsValue())
+            par-&gt;acceptDefault();
+        else
+            throw <a href="../api/classcRuntimeError.html">cRuntimeError</a>("no value for %s", par-&gt;getFullPath().c_str());
+    }
+};
+</pre>
+<p>
+
+<p><h3><a name="sec487"/>17.2.8 Extracting Statistics from the Model</h3>
+
+<p>There are several ways you can extract statistics from the
+simulation.
+
+<p><p class="subheading">C++ Calls into the Model</p>
+
+<p>Modules in the simulation are C++ objects. If you add the appropriate
+public getter methods to the module classes, you can call them from your
+main program to obtain statistics. Modules may be looked up with the
+<tt>getModuleByPath()</tt> method of <tt><a href="../api/classcSimulation.html">cSimulation</a></tt>, then cast to the
+specific module type via <tt>check_and_cast&lt;&gt;()</tt> so that the getter
+methods can be invoked.
+
+<pre class="cpp">
+<a href="../api/classcModule.html">cModule</a> *mod = simulation.getModuleByPath("Network.client[2].app");
+WebApp *appMod = check_and_cast&lt;WebApp *&gt;(mod);
+int numRequestsSent = appMod-&gt;getNumRequestsSent();
+double avgReplyTime = appMod-&gt;getAvgReplyTime();
+...
+</pre>
+<p>
+The drawback of this approach is that getters need to be added manually
+to all affected module classes, which might not be practical, especially
+if modules come from external projects.
+
+<p><p class="subheading"><tt><a href="../api/classcEnvir.html">cEnvir</a></tt> Callbacks</p>
+
+<p>A more general way is to catch <tt>recordScalar()</tt> method calls in the
+simulation model. The <tt><a href="../api/classcModule.html">cModule</a></tt>'s <tt>recordScalar()</tt> method
+delegates to the similar function in <tt><a href="../api/classcEnvir.html">cEnvir</a></tt>. You may define the
+latter function so that it stores all recorded scalars (for example in an
+<tt>std::map</tt>), where the main program can find them later.
+Values from output vectors can be captured in a similar manner.
+
+<p>An example implementation:
+
+<pre class="cpp">
+class CustomSimulationEnv : public <a href="../api/classcNullEnvir.html">cNullEnvir</a>
+{
+  private:
+    std::map&lt;std::string, double&gt; results;
+  public:
+    virtual void recordScalar(<a href="../api/classcComponent.html">cComponent</a> *component, const char *name,
+                              double value, <a href="../api/classopp__string__map.html">opp_string_map</a> *attributes=NULL)
+    {
+       results[component-&gt;getFullPath()+"."+name] = value;
+    }
+
+    const std::map&lt;std::string, double&gt;& getResults() {return results;}
+};
+
+...
+
+const std::map&lt;std::string, double&gt;& results = env-&gt;getResults();
+int numRequestsSent = results["Network.client[2].app.numRequestsSent"];
+double avgReplyTime = results["Network.client[2].app.avgReplyTime"];
+</pre>
+<p>
+A drawback of this approach is that compile-time checking of statistics names is lost, but
+the advantages are that any simulation model can now be used
+without changes, and that capturing additional statistics does not require
+code modification in the main program.
+
+<p>
+<h3><a name="sec488"/>17.2.9 The Simulation Loop</h3>
+
+<p>To run the simulation, the <tt>selectNextModule()</tt> and <tt>doOneEvent</tt>
+methods of <tt><a href="../api/classcSimulation.html">cSimulation</a></tt> must be called in a loop:
+
+<pre class="cpp">
+while (sim-&gt;getSimTime() &lt; limit)
+{
+    <a href="../api/classcSimpleModule.html">cSimpleModule</a> *mod = sim-&gt;selectNextModule();
+    sim-&gt;doOneEvent(mod);
+}
+</pre>
+<p>
+Depending on the concrete scheduler class, the
+<tt>selectNextModule()</tt> may return <tt>NULL</tt>. The default
+<tt><a href="../api/classcSequentialScheduler.html">cSequentialScheduler</a></tt> never returns <tt>NULL</tt>.
+
+<p>The execution may terminate in various ways. Runtime errors cause a
+<tt><a href="../api/classcRuntimeError.html">cRuntimeError</a></tt> (or other kind of <tt>std::exception</tt>) to be
+thrown. <tt><a href="../api/classcTerminationException.html">cTerminationException</a></tt> is thrown on normal termination
+conditions, such as when the simulation runs out of events to process.
+
+<p>You may customize the loop to exit on other termination conditions as well,
+such as on a simulation time limit (see above), on a CPU time limit, or when
+results reach a required accuracy. It is relatively straightforward to
+build in progress reporting and interactivity (start/stop).
+
+<p>Animation can be hooked up to the appropriate callback methods of
+<tt><a href="../api/classcEnvir.html">cEnvir</a></tt>: <tt>beginSend()</tt>, <tt>sendHop()</tt>, <tt>endSend()</tt>,
+and others.
+
+<p>
+<h3><a name="sec489"/>17.2.10 Multiple, Coexisting Simulations</h3>
+
+<p>It is possible for several instances of <tt><a href="../api/classcSimulation.html">cSimulation</a></tt> to coexist,
+and also to set up and simulate a network in each instance. However, this
+requires frequent use of <tt><a href="../api/classcSimulation.html">cSimulation</a>::setActiveSimulation()</tt>.
+Before invoking any <tt><a href="../api/classcSimulation.html">cSimulation</a></tt> method or module method,
+the corresponding <tt><a href="../api/classcSimulation.html">cSimulation</a></tt> instance needs to be designated
+as the active simulation manager. This is necessary because several models
+and simulation kernel methods refer to the active simulation manager
+instance via the <tt>simulation</tt> macro, and it is similar with the
+<tt>ev</tt> macro.
+
+<p><ul class="note"><b>NOTE</b><br>
+Before the 4.0 version, <tt>simulation</tt> and <tt>ev</tt> were global variables;
+in the current version they are macros that refer to <tt>*<a href="../api/classcSimulation.html">cSimulation</a>::getActiveSimulation()</tt>
+and <tt>*<a href="../api/classcSimulation.html">cSimulation</a>::getActiveSimulation()-&gt;getEnvir()</tt>.
+</ul>
+
+<p>Every <tt><a href="../api/classcSimulation.html">cSimulation</a></tt> instance should have its own associated
+environment object (<tt><a href="../api/classcEnvir.html">cEnvir</a></tt>). Environment objects may not be
+shared among several <tt><a href="../api/classcSimulation.html">cSimulation</a></tt> instances. The
+<tt><a href="../api/classcSimulation.html">cSimulation</a></tt>'s destructor also removes the associated
+<tt><a href="../api/classcEnvir.html">cEnvir</a></tt> instance.
+
+<p><tt><a href="../api/classcSimulation.html">cSimulation</a></tt> instances may be reused from one simulation to another,
+but it is also possible to create a new instance for each simulation run.
+
+<p><ul class="note"><b>NOTE</b><br>
+It is not possible to run different simulations concurrently from
+different theads, due to the use of global variables which are not easy
+to eliminate, such as the active simulation manager pointer and the active
+environment object pointer. Static buffers and objects (like string pools)
+are also used for efficiency reasons in some places inside the simulation
+kernel.
+</ul>
+
+<p>
+<h3><a name="sec490"/>17.2.11 Installing a Custom Scheduler</h3>
+
+<p>The default event scheduler is <tt><a href="../api/classcSequentialScheduler.html">cSequentialScheduler</a></tt>. To replace
+it with a different scheduler (e.g. <tt><a href="../api/classcRealTimeScheduler.html">cRealTimeScheduler</a></tt> or your
+own scheduler class), add a <tt>setScheduler()</tt> call into <tt>main()</tt>:
+
+<pre class="cpp">
+<a href="../api/classcScheduler.html">cScheduler</a> *scheduler = new CustomScheduler();
+simulation.setScheduler(scheduler);
+</pre>
+<p>
+It is usually not a good idea to change schedulers in the middle of
+a simulation, therefore  <tt>setScheduler()</tt> may only be called when
+no network is set up.
+
+<p>
+<h3><a name="sec491"/>17.2.12 Multi-Threaded Programs</h3>
+
+<p>The OMNeT++ simulation kernel is not reentrant; therefore it must be protected
+against concurrent access.
+
+<p>
+% </pre>
+% </pre>
+% </pre>
+% </pre>
+
+
+<hr class='pgbr'><p><hr><b><a href="chap16.html">[Prev]</A>&nbsp;<a href="chap18.html">[Next]</A>&nbsp;<a href="toc.html#toc_17.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p>
+
+</body>
+</html>

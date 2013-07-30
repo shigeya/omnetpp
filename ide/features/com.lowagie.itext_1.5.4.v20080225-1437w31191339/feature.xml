@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="com.lowagie.itext"
+      label="Lowagie iText Feature"
+      version="1.5.4.v20080225-1437w31191339"
+      provider-name="Source Forge"
+      plugin="com.lowagie.itext"
+      image="eclipse_update_120.jpg">
+
+   <description url="http://www.eclipse.org/birt">
+      %description
+   </description>
+
+   <copyright url="%copyrightURL">
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <url>
+      <update label="BIRT Updates" url="http://download.eclipse.org/birt/update-site/2.3"/>
+      <discovery label="%updateSiteName" url="http://download.eclipse.org/birt/update-site/2.3"/>
+   </url>
+
+   <plugin
+         id="com.lowagie.itext"
+         download-size="0"
+         install-size="0"
+         version="1.5.4.v20080228"/>
+
+</feature>

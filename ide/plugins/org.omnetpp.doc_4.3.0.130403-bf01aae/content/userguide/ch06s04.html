@@ -1,0 +1,36 @@
+<html><head><link rel="STYLESHEET" href="../book.css"  type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Batch Execution</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"><link rel="start" href="index.html" title="OMNeT&#8288;+&#8288;+ User Guide"><link rel="up" href="ch06.html" title="Chapter 6. Launching and Debugging"><link rel="prev" href="ch06s03.html" title="Running a Simulation"><link rel="next" href="ch06s05.html" title="Debugging a Simulation"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Batch Execution</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch06s03.html">Prev</a> </td><th width="60%" align="center">Chapter 6. Launching and Debugging</th><td width="20%" align="right"> <a accesskey="n" href="ch06s05.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id278704"></a>Batch Execution</h2></div></div></div><p>
+      In previous versions of OMNeT&#8288;+&#8288;+, to run a simulation several times with different
+      parameters, you had to create an external script that created an INI file for each
+      run and started the simulation with the specified file. In OMNeT&#8288;+&#8288;+ 4.x, it is no
+      longer needed. The improved INI file syntax allows you to specify loops for
+      specific parameters so you no longer need separate INI files for each run. In
+      addition, the IDE itself supports starting your simulation several times.
+    </p><div class="figure"><a name="pictures/Launch-BatchRun.png"></a><p class="title"><b>Figure 6.3. 
+      Iteration variable in the INI file
+    </b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/Launch-BatchRun.png" align="middle" alt="Iteration variable in the INI file"></div></div></div></div><br class="figure-break"><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>Batch running is supported only in the command line environment.</div><p>
+      If you create a <code class="literal">Configuration</code> with one or more iteration variables, you will be able
+      to run your simulations to explore the parameter space defined by those variables. Practically,
+      the IDE creates the Cartesian product from these variables and assigns a run number
+      to each product. It is possible to execute one, several or all runs of the simulation
+      by specifying the <span class="emphasis"><em>Run number</em></span>
+      field in the <span class="emphasis"><em>Run Dialog</em></span>. You can specify a single number (e.g. 3), a combination
+      of several numbers (e.g. 2,3,6,7..11) or all run numbers (using *).
+    </p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Tip</h3>
+      If you already have specified your executable, chosen the configuration which should be
+      run and selected the command line environment, you may try to hover over the
+      <span class="emphasis"><em>Run Number</em></span> field. This will give you a description of the possible runs and how they are
+      associated with the iteration variable values (the tooltip is calculated by
+      executing the simulation program with the <code class="literal">-x Configuration -G</code> options in command line mode).
+    </div><div class="figure"><a name="pictures/Launch-BatchRun2.png"></a><p class="title"><b>Figure 6.4. 
+      Iteration loop expansion in a tooltip
+    </b></p><div class="figure-contents"><div class="screenshot"><div class="mediaobject" align="center"><img src="pictures/Launch-BatchRun2.png" align="middle" alt="Iteration loop expansion in a tooltip"></div></div></div></div><br class="figure-break"><p>
+      If you have a multi-core or multi-processor system and have ample memory, you may
+      try to set the <span class="emphasis"><em>Processes to run parallel</em></span>
+      field to a higher number. This will allow the IDE to start more simulation processes
+      in parallel, resulting in a much lower overall simulation time for the whole batch.
+    </p><div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Warning</h3>
+      Be aware that you need enough memory to run all these processes in parallel. We
+      recommend using this feature only if your simulation is CPU-bound. If you do not
+      have enough memory, your operating system may start to use virtual memory,
+      dramatically decreasing the overall performance.
+    </div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch06s03.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch06.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch06s05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Running a Simulation </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Debugging a Simulation</td></tr></table></div></body></html>

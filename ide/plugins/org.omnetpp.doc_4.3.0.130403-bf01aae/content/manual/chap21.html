@@ -1,0 +1,221 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta name="copyright" content="OpenSim Ltd.">
+  <meta NAME="Author" CONTENT="Andras Varga">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <link rel="STYLESHEET" href="../book.css"  type="text/css">
+  <title>OMNeT++ - Manual</title>
+</head>
+<body>
+
+<p><hr><b><a href="chap20.html">[Prev]</A>&nbsp;<a href="chap22.html">[Next]</A>&nbsp;<a href="toc.html#toc_21.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p><h1><a name="sec538"/>21 Appendix&#58; NED Functions</h1>
+<a name="cha:ned-functions"></a>
+
+<p>The functions that can be used in NED expressions and ini files are the
+following. The question mark (as in &#8220;<tt>rng?</tt>&#8221;) marks optional arguments.
+
+
+<p class="subheading">Category "conversion":</p>
+
+<p><dl>
+<li><b>double</b> : <tt>double double(any x)</tt> <br>
+    Converts x to double, and returns the result. A boolean argument becomes 0 or 1; a string is interpreted as number; an XML argument causes an error.
+<li><b>int</b> : <tt>int int(any x)</tt> <br>
+    Converts x to an integer (C++ long), and returns the result. A boolean argument becomes 0 or 1; a double is converted using floor(); a string is interpreted as number; an XML argument causes an error.
+<li><b>string</b> : <tt>string string(any x)</tt> <br>
+    Converts x to string, and returns the result.
+
+<p></dl>
+
+<p><p class="subheading">Category "math":</p>
+
+<p><dl>
+<li><b>acos</b> : <tt>double acos(double)</tt> <br>
+    Trigonometric function; see standard C function of the same name
+<li><b>asin</b> : <tt>double asin(double)</tt> <br>
+    Trigonometric function; see standard C function of the same name
+<li><b>atan</b> : <tt>double atan(double)</tt> <br>
+    Trigonometric function; see standard C function of the same name
+<li><b>atan2</b> : <tt>double atan2(double, double)</tt> <br>
+    Trigonometric function; see standard C function of the same name
+<li><b>ceil</b> : <tt>double ceil(double)</tt> <br>
+    Rounds down; see standard C function of the same name
+<li><b>cos</b> : <tt>double cos(double)</tt> <br>
+    Trigonometric function; see standard C function of the same name
+<li><b>exp</b> : <tt>double exp(double)</tt> <br>
+    Exponential; see standard C function of the same name
+<li><b>fabs</b> : <tt>quantity fabs(quantity x)</tt> <br>
+    Returns the absolute value of the quantity.
+<li><b>floor</b> : <tt>double floor(double)</tt> <br>
+    Rounds up; see standard C function of the same name
+<li><b>fmod</b> : <tt>quantity fmod(quantity x, quantity y)</tt> <br>
+    Returns the floating-point remainder of x/y; unit conversion takes place if needed.
+<li><b>hypot</b> : <tt>double hypot(double, double)</tt> <br>
+    Length of the hypotenuse; see standard C function of the same name
+<li><b>log</b> : <tt>double log(double)</tt> <br>
+    Natural logarithm; see standard C function of the same name
+<li><b>log10</b> : <tt>double log10(double)</tt> <br>
+    Base-10 logarithm; see standard C function of the same name
+<li><b>max</b> : <tt>quantity max(quantity a, quantity b)</tt> <br>
+    Returns the greater one of the two quantities; unit conversion takes place if needed.
+<li><b>min</b> : <tt>quantity min(quantity a, quantity b)</tt> <br>
+    Returns the smaller one of the two quantities; unit conversion takes place if needed.
+<li><b>pow</b> : <tt>double pow(double, double)</tt> <br>
+    Power; see standard C function of the same name
+<li><b>sin</b> : <tt>double sin(double)</tt> <br>
+    Trigonometric function; see standard C function of the same name
+<li><b>sqrt</b> : <tt>double sqrt(double)</tt> <br>
+    Square root; see standard C function of the same name
+<li><b>tan</b> : <tt>double tan(double)</tt> <br>
+    Trigonometric function; see standard C function of the same name
+
+<p></dl>
+
+<p><p class="subheading">Category "misc":</p>
+
+<p><dl>
+<li><b>firstAvailable</b> : <tt>string firstAvailable(...)</tt> <br>
+    Accepts any number of strings, interprets them as NED type names (qualified or unqualified), and returns the first one that exists and its C++ implementation class is also available. Throws an error if none of the types are available.
+<li><b>simTime</b> : <tt>quantity simTime()</tt> <br>
+    Returns the current simulation time.
+<li><b>select</b> : <tt>any select(int index, ...)</tt> <br>
+    Returns the &lt;index&gt;th item from the rest of the argument list; numbering starts from 0.
+</dl>
+
+<p><p class="subheading">Category "ned":</p>
+
+<p><dl>
+<li><b>ancestorIndex</b> : <tt>int ancestorIndex(int numLevels)</tt> <br>
+    Returns the index of the ancestor module numLevels levels above the module or channel in context.
+<li><b>fullName</b> : <tt>string fullName()</tt> <br>
+    Returns the full name of the module or channel in context.
+<li><b>fullPath</b> : <tt>string fullPath()</tt> <br>
+    Returns the full path of the module or channel in context.
+<li><b>parentIndex</b> : <tt>int parentIndex()</tt> <br>
+    Returns the index of the parent module, which has to be part of module vector.
+
+<p></dl>
+
+<p><p class="subheading">Category "random/continuous":</p>
+
+<p><dl>
+<li><b>beta</b> : <tt>double beta(double alpha1, double alpha2, int rng?)</tt> <br>
+    Returns a random number from the Beta distribution
+<li><b>cauchy</b> : <tt>quantity cauchy(quantity a, quantity b, int rng?)</tt> <br>
+    Returns a random number from the Cauchy distribution
+<li><b>chi_square</b> : <tt>double chi_square(int k, int rng?)</tt> <br>
+    Returns a random number from the Chi-square distribution
+<li><b>erlang_k</b> : <tt>quantity erlang_k(int k, quantity mean, int rng?)</tt> <br>
+    Returns a random number from the Erlang distribution
+<li><b>exponential</b> : <tt>quantity exponential(quantity mean, int rng?)</tt> <br>
+    Returns a random number from the Exponential distribution
+<li><b>gamma_d</b> : <tt>quantity gamma_d(double alpha, quantity theta, int rng?)</tt> <br>
+    Returns a random number from the Gamma distribution
+<li><b>lognormal</b> : <tt>double lognormal(double m, double w, int rng?)</tt> <br>
+    Returns a random number from the Lognormal distribution
+<li><b>normal</b> : <tt>quantity normal(quantity mean, quantity stddev, int rng?)</tt> <br>
+    Returns a random number from the Normal distribution
+<li><b>pareto_shifted</b> : <tt>quantity pareto_shifted(double a, quantity b, quantity c, int rng?)</tt> <br>
+    Returns a random number from the Pareto-shifted distribution
+<li><b>student_t</b> : <tt>double student_t(int i, int rng?)</tt> <br>
+    Returns a random number from the Student-t distribution
+<li><b>triang</b> : <tt>quantity triang(quantity a, quantity b, quantity c, int rng?)</tt> <br>
+    Returns a random number from the Triangular distribution
+<li><b>truncnormal</b> : <tt>quantity truncnormal(quantity mean, quantity stddev, int rng?)</tt> <br>
+    Returns a random number from the truncated Normal distribution
+<li><b>uniform</b> : <tt>quantity uniform(quantity a, quantity b, int rng?)</tt> <br>
+    Returns a random number from the Uniform distribution
+<li><b>weibull</b> : <tt>quantity weibull(quantity a, quantity b, int rng?)</tt> <br>
+    Returns a random number from the Weibull distribution
+
+<p></dl>
+
+<p><p class="subheading">Category "random/discrete":</p>
+
+<p><dl>
+<li><b>bernoulli</b> : <tt>int bernoulli(double p, int rng?)</tt> <br>
+    Returns a random number from the Bernoulli distribution
+<li><b>binomial</b> : <tt>int binomial(int n, double p, int rng?)</tt> <br>
+    Returns a random number from the Binomial distribution
+<li><b>geometric</b> : <tt>int geometric(double p, int rng?)</tt> <br>
+    Returns a random number from the Geometric distribution
+<li><b>intuniform</b> : <tt>int intuniform(int a, int b, int rng?)</tt> <br>
+    Returns a random number from the Intuniform distribution
+<li><b>negbinomial</b> : <tt>int negbinomial(int n, double p, int rng?)</tt> <br>
+    Returns a random number from the Negbinomial distribution
+<li><b>poisson</b> : <tt>int poisson(double lambda, int rng?)</tt> <br>
+    Returns a random number from the Poisson distribution
+
+<p></dl>
+
+<p><p class="subheading">Category "strings":</p>
+
+<p><dl>
+<li><b>choose</b> : <tt>string choose(int index, string list)</tt> <br>
+    Interprets list as a space-separated list, and returns the item at the given index. Negative and out-of-bounds indices cause an error.
+<li><b>contains</b> : <tt>bool contains(string s, string substr)</tt> <br>
+    Returns true if string s contains substr as substring
+<li><b>endsWith</b> : <tt>bool endsWith(string s, string substr)</tt> <br>
+    Returns true if s ends with the substring substr.
+<li><b>expand</b> : <tt>string expand(string s)</tt> <br>
+    Expands $ variables ($configname, $runnumber, etc.) in the given string, and returns the result.
+<li><b>indexOf</b> : <tt>int indexOf(string s, string substr)</tt> <br>
+    Returns the position of the first occurrence of substring substr in s, or -1 if s does not contain substr.
+<li><b>length</b> : <tt>int length(string s)</tt> <br>
+    Returns the length of the string
+<li><b>replace</b> : <tt>string replace(string s, string substr, string repl, int startPos?)</tt> <br>
+    Replaces all occurrences of substr in s with the string repl. If startPos is given, search begins from position startPos in s.
+<li><b>replaceFirst</b> : <tt>string replaceFirst(string s, string substr, string repl, int startPos?)</tt> <br>
+    Replaces the first occurrence of substr in s with the string repl. If startPos is given, search begins from position startPos in s.
+<li><b>startsWith</b> : <tt>bool startsWith(string s, string substr)</tt> <br>
+    Returns true if s begins with the substring substr.
+<li><b>substring</b> : <tt>string substring(string s, int pos, int len?)</tt> <br>
+    Return the substring of s starting at the given position, either to the end of the string or maximum len characters
+<li><b>substringAfter</b> : <tt>string substringAfter(string s, string substr)</tt> <br>
+    Returns the substring of s after the first occurrence of substr, or the empty string if s does not contain substr.
+<li><b>substringAfterLast</b> : <tt>string substringAfterLast(string s, string substr)</tt> <br>
+    Returns the substring of s after the last occurrence of substr, or the empty string if s does not contain substr.
+<li><b>substringBefore</b> : <tt>string substringBefore(string s, string substr)</tt> <br>
+    Returns the substring of s before the first occurrence of substr, or the empty string if s does not contain substr.
+<li><b>substringBeforeLast</b> : <tt>string substringBeforeLast(string s, string substr)</tt> <br>
+    Returns the substring of s before the last occurrence of substr, or the empty string if s does not contain substr.
+<li><b>tail</b> : <tt>string tail(string s, int len)</tt> <br>
+    Returns the last len character of s, or the full s if it is shorter than len characters.
+<li><b>toLower</b> : <tt>string toLower(string s)</tt> <br>
+    Converts s to all lowercase, and returns the result.
+<li><b>toUpper</b> : <tt>string toUpper(string s)</tt> <br>
+    Converts s to all uppercase, and returns the result.
+<li><b>trim</b> : <tt>string trim(string s)</tt> <br>
+    Discards whitespace from the start and end of s, and returns the result.
+
+<p></dl>
+
+<p><p class="subheading">Category "units":</p>
+
+<p><dl>
+<li><b>convertUnit</b> : <tt>quantity convertUnit(quantity x, string unit)</tt> <br>
+    Converts x to the given unit.
+<li><b>dropUnit</b> : <tt>double dropUnit(quantity x)</tt> <br>
+    Removes the unit of measurement from quantity x.
+<li><b>replaceUnit</b> : <tt>quantity replaceUnit(quantity x, string unit)</tt> <br>
+    Replaces the unit of x with the given unit.
+<li><b>unitOf</b> : <tt>string unitOf(quantity x)</tt> <br>
+    Returns the unit of the given quantity.
+
+<p></dl>
+
+<p><p class="subheading">Category "xml":</p>
+
+<p><dl>
+<li><b>xml</b> : <tt>xml xml(string xmlstring, string xpath?)</tt> <br>
+    Parses the given XML string into a <a href="../api/classcXMLElement.html">cXMLElement</a> tree, and returns the root element. When called with two arguments, it returns the first element from the tree that matches the expression given in simplified XPath syntax.
+<li><b>xmldoc</b> : <tt>xml xmldoc(string filename, string xpath?)</tt> <br>
+    Parses the given XML file into a <a href="../api/classcXMLElement.html">cXMLElement</a> tree, and returns the root element. When called with two arguments, it returns the first element from the tree that matches the expression given in simplified XPath syntax.
+</dl>
+
+<hr class='pgbr'><p><hr><b><a href="chap20.html">[Prev]</A>&nbsp;<a href="chap22.html">[Next]</A>&nbsp;<a href="toc.html#toc_21.">[TOC]</a>&nbsp;<a href="usman.html">[Chapters]</a></b><hr></p>
+
+</body>
+</html>
