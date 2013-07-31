@@ -13,6 +13,10 @@
 #
 #CC=gcc
 #CXX=g++
+# for clang with C++ 11:
+#CC="clang"
+#CXX="clang++ -std=c++11 -stdlib=libc++"
+
 
 #
 # Compiler optimization switches. There are two sets of switches,
@@ -128,6 +132,7 @@ SHARED_LIBS=yes
 # or:
 #ZLIB_CFLAGS="-I$MSYS/include"
 #ZLIB_LIBS="-L$MSYS/lib -lz"
+
 
 #
 # Compiler flags used to compile JNI code.
